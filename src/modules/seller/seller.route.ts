@@ -16,7 +16,7 @@ router.post('/apply', validate(applySellerSchema), applyAsSeller);
 
 router.get('/profile', authorize('SELLER'), getProfile);
 
-/
+
 router.patch(
     '/sub-orders/:id/status', 
     authorize('SELLER'), 
