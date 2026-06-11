@@ -1,0 +1,20 @@
+model MasterOrder {
+    id  String  @id @default(uuid())
+    customerId String
+    totalAmount Decimal @db.Decimal(10, 2)
+    status MasterOrderStatus @default(PENDING_PAYMENT)
+    
+
+    //striPe Reference  
+    stripeSessionId  String? @unique
+    stripePaymentIntent String? @unique
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    customer User @relation(fields: [customerId], references: [id], onDelete: Cascade)
+    subOrders SubOrder[]
+
+    @@index([customerId, status])
+    @@map("master_orders")
+}

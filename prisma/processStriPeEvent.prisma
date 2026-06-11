@@ -1,0 +1,8 @@
+model ProcessedStripeEvent {
+  id          String   @id @default(cuid())
+  eventId     String   @unique
+  processedAt DateTime @default(now())
+
+  @@index([eventId])
+  @@map("processed_stripe_events")
+}

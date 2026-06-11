@@ -1,0 +1,23 @@
+model CartItem {
+  id        String   @id @default(cuid())
+  cartId    String
+  productId String
+  sellerId  String
+  variantId String
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart    Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  // product & variant relations (integrity should still be validated in code)
+  product Product        @relation(fields: [productId], references: [id])
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  // sellerId is used for grouping into SubOrders; seller relation not strictly required here.
+
+  @@unique([cartId, productId, variantId])
+  @@index([cartId])
+  @@index([productId, variantId])
+  @@map("cart_items")
+}

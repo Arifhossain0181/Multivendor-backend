@@ -1,0 +1,17 @@
+model User {
+    id String  @id @default(uuid())
+    email  String  @unique
+    passwordHash String
+    name String
+    role String  @default("CUSTOMER")
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    sellerProfile SellerProfile?
+    cart Cart?
+    masterOrders MasterOrder[]
+    reviews Review[]
+    productViews ProductView[]
+
+    @@map("users")
+}

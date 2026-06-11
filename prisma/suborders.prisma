@@ -1,0 +1,19 @@
+model SubOrder {
+  id            String         @id @default(cuid())
+  masterOrderId String
+  sellerId      String
+  status        SubOrderStatus @default(PENDING)
+  subtotal      Decimal        @db.Decimal(12, 2)
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  masterOrder MasterOrder   @relation(fields: [masterOrderId], references: [id], onDelete: Cascade)
+  seller      SellerProfile @relation(fields: [sellerId], references: [id])
+
+  items       SubOrderItem[]
+
+  @@index([sellerId, status])
+  @@index([masterOrderId])
+  @@map("sub_orders")
+}

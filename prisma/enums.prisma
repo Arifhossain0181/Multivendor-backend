@@ -1,0 +1,33 @@
+enum Role {
+  CUSTOMER
+  VENDOR
+  ADMIN
+}
+
+enum SellerStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  BLOCKED
+}
+
+enum MasterOrderStatus {
+  PENDING_PAYMENT
+  PAID
+  COMPLETED
+  CANCELLED
+  PAYMENT_FAILED_STOCK
+}
+
+enum SubOrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
