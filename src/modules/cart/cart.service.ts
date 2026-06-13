@@ -69,7 +69,6 @@ export const addItem = async(userID:string,productId:string,variantId:string,qua
         }
     });
     if (existingCartItem) {
-        // অলরেডি থাকলে কোয়ান্টিটি বাড়িয়ে দেওয়া (স্টক চেক করে)
         const newQuantity = existingCartItem.quantity + quantity;
         if (variant.availableQty < newQuantity) {
             throw new ApiError(400, `Cannot add more. Max stock available: ${variant.availableQty}`);
