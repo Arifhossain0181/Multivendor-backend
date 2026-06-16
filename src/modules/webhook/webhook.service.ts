@@ -1,8 +1,10 @@
-
+import { prisma } from "../../prisma/client.js";
+import { ApiError } from "../../utlits/ApiError.js";
+import * as inventoryService from "../inventory/inventory.service.js";
 
 export const handleSuccessfulPayment = async (masterOrderId:string, stripeEventId: string) =>{
     const alreadyProcessed = await prisma.processedStripeEvent.findUnique({
-        where: { id: stripeEventId }
+        where: { eventId: stripeEventId }
     });
     if (alreadyProcessed) {
         console.log(`[Webhook Check] Event ${stripeEventId} already processed. Skipping.`);
@@ -19,7 +21,7 @@ export const handleSuccessfulPayment = async (masterOrderId:string, stripeEventI
         }
     });
     if (!masterOrder) {
-        throw new ApiError(404, 'Master order not found for webhook');
+        throw ApiError.notFound('Master order not found for webhook');
     }
 
     if (masterOrder.status === 'PAID') return;
@@ -35,11 +37,10 @@ export const handleSuccessfulPayment = async (masterOrderId:string, stripeEventI
                 data: { status: 'PAID' }
             });
             await tx.processedStripeEvent.create({
-                data: { id: stripeEventId }
+                data: { eventId: stripeEventId }
             });
         });
         console.log(`[Webhook Success] Master Order ${masterOrderId} successfully marked as PAID.`);
-    }
     } catch (error: any) {
         console.error(`[Webhook Failure] Transaction failed for Master Order ${masterOrderId}:`, error.message);
 
@@ -51,3 +52,4 @@ export const handleSuccessfulPayment = async (masterOrderId:string, stripeEventI
 
         throw error;
     }
+};

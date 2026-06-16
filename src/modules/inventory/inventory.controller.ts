@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { prisma } from '../../config/db';
+import { prisma } from '../../prisma/client';
 import * as inventoryService from './inventory.service';
 
 // ১. Get Variant Stock Details
@@ -39,7 +39,7 @@ export const updateVariantStock = async (req: Request, res: Response) => {
         const { id: productId, vid: variantId } = req.params;
         const { quantity } = req.body;
 
-        // ওনারশিপ চেক: যে সেলার আপডেট করছে সে কি এই প্রোডাক্টের মালিক?
+        // 
         const product = await prisma.product.findUnique({
             where: { id: productId },
             select: { sellerId: true }
@@ -51,7 +51,7 @@ export const updateVariantStock = async (req: Request, res: Response) => {
             return res.status(403).json({ success: false, error: 'Forbidden: You do not own this product' });
         }
 
-        // স্টক ওভাররাইট/আপডেট করা
+        // stock 
         const updatedVariant = await prisma.productVariant.update({
             where: { id: variantId },
             data: { availableQty: quantity },

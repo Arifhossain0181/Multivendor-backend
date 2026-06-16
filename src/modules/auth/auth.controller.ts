@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import {
-    registerUser,
-    loginUser,
-    refreshAccessToken,
+    register as registerUser,
+    login as loginUser,
+    refreshToken as refreshAccessToken,
     getme,
     updateMe,
 } from './auth.service.js';

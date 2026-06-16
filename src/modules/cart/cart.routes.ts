@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { getCart, addItemToCart, removeItemFromCart, emptyCart } from './cart.controller';
-import { authenticate } from '../../middlewares/authenticate';
-import { validate } from '../../middlewares/validate';
+import { authenticate } from '../../middleware/authenticate';
+import { validate } from '../../middleware/validation';
 import { addCartItemSchema, removeCartItemSchema } from './cart.schema';
 
 const router = Router();

@@ -1,17 +1,17 @@
 import { Router } from 'express';
 import { getVariantStock, updateVariantStock } from './inventory.controller';
-import { authenticate } from '../../middlewares/authenticate';
-import { authorize } from '../../middlewares/authorize';
-import { validate } from '../../middlewares/validate';
+import { authenticate } from '../../middleware/authenticate.js';
+import { authorize } from '../../middleware/authorize.js';
+import { validate } from '../../middleware/validation.js';
 import { updateStockSchema } from './inventory.schema';
 
 const router = Router();
 
-// এই মডিউলের সব রাউটের জন্য লগইন চেক মাস্ট
+// 
 router.use(authenticate);
 
-// ১. সেলার বা কাস্টমার যেকোনো ভ্যারিয়েন্টের স্টক দেখতে পারবে
-// GET /api/products/:id/variants/:vid/stock
+// ১. 
+// 
 router.get('/:id/variants/:vid/stock', getVariantStock);
 
 // PATCH /api/products/:id/variants/:vid/stock

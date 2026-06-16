@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { create, list, update, remove } from './category.controller';
-import { authenticate } from '../../middlewares/authenticate';
-import { authorize } from '../../middlewares/authorize';
-import { validate } from '../../middlewares/validate';
-import { createCategorySchema, updateCategorySchema } from './category.schema';
+import { create, list, update, remove } from './category.controller.js';
+import { authenticate } from '../../middleware/authenticate.js';
+import { authorize } from '../../middleware/authorize.js';
+import { validate } from '../../middleware/validation.js';
+import { createCategorySchema, updateCategorySchema } from './category.scheama.js';
 
 const router = Router();
 
@@ -21,7 +21,6 @@ router.post('/', validate(createCategorySchema), create);
 
 router.patch('/:id', validate(updateCategorySchema), update);
 
-/
 router.delete('/:id', remove);
 
 export default router;

@@ -1,4 +1,4 @@
-
+import { prisma } from "../../prisma/client.js";
 
 export const batchFetchStock = async (variantIds: string[]) => {
     return await prisma.productVariant.findMany({
@@ -16,18 +16,19 @@ export const batchFetchStock = async (variantIds: string[]) => {
     })
 }
 export const atomicDeduct = async(tx:any,variantId:string,quantity:number) => {
-    const variant = await tx.productVariant.findUnique({
-        where:{id:variantId},
-        availableQty:{
-            gte:quantity
+    const updated = await tx.productInventory.updateMany({
+        where: {
+            variantId,
+            availableQty: {
+                gte: quantity
+            }
+        },
+        data: {
+            availableQty: {
+                decrement: quantity
+            }
         }
-    },
-    data:{
-        availableQty:{
-            decrement:quantity
-        }
-    }
-)
+    });
 if(updated.count === 0){
     throw new Error(`Failed to deduct stock for variant ${variantId}. Insufficient quantity or variant not found.`);
 }
@@ -38,7 +39,7 @@ export const restoreStock = async (tx: any, variantId: string, quantity: number)
         where: { id: variantId },
         data: {
             availableQty: {
-                increment: quantity // অ্যাটমিকালি স্টক বাড়িয়ে দেওয়া হচ্ছে
+                increment: quantity //
             }
         }
     });

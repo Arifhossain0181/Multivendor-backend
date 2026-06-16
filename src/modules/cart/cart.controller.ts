@@ -41,7 +41,7 @@ export const addItemToCart = async (req: Request, res: Response) => {
 export const removeItemFromCart = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user.id;
-        const cartItemId = req.params.id;
+        const cartItemId = req.params.id as string;
 
         await cartService.removeItem(userId, cartItemId);
 

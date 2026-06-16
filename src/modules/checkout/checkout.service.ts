@@ -1,41 +1,53 @@
+import Stripe from 'stripe';
+import { prisma } from '../../prisma/client.js';
+import { ApiError } from '../../utlits/ApiError.js';
 
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '');
 
 export const processCheckout= async (userId:string,shippingAddress: string)=>{
    const cart = await prisma.cart.findUnique({
-        where: { userId },
+        where: { customerId: userId },
         include: {
             items: {
                 include: {
-                    product: { select: { title: true, price: true, sellerId: true } },
-                    variant: { select: { sku: true, availableQty: true, attributes: true } }
+                    product: { select: { name: true, sellerId: true } },
+                    variant: {
+                        select: {
+                            id: true,
+                            name: true,
+                            price: true,
+                            inventory: { select: { availableQty: true } }
+                        }
+                    }
                 }
             }
         }
     });
 
     if (!cart || cart.items.length === 0) {
-        throw new ApiError(400, 'Your cart is empty');
+        throw new ApiError(400, 'BAD_REQUEST', 'Cart is empty');
     }
     const shortages: Array<{ variantId: string; title: string; availableQty: number; requestedQty: number }> = [];
 
     for (const item of cart.items) {
-        if (item.variant.availableQty < item.quantity) {
+        const availableQty = item.variant.inventory?.availableQty ?? 0;
+        if (availableQty < item.quantity) {
             shortages.push({
                 variantId: item.variantId,
-                title: `${item.product.title} (${Object.values(item.variant.attributes).join(', ')})`,
-                availableQty: item.variant.availableQty,
+                title: `${item.product.name} (${item.variant.name})`,
+                availableQty,
                 requestedQty: item.quantity
             });
         }
     }
     if (shortages.length > 0) {
-        throw new ApiError(409, JSON.stringify({ message: 'INSUFFICIENT_STOCK', shortages }));
+        throw new ApiError(409, 'INSUFFICIENT_STOCK', 'Insufficient stock', shortages);
     }
     let totalAmount = 0;
     const itemsBySeller: Record<string, typeof cart.items> = {};
 
     for (const item of cart.items) {
-        totalAmount += item.product.price * item.quantity;
+        totalAmount += Number(item.variant.price) * item.quantity;
         
         if (!itemsBySeller[item.sellerId]) {
             itemsBySeller[item.sellerId] = [];
@@ -43,31 +55,33 @@ export const processCheckout= async (userId:string,shippingAddress: string)=>{
         itemsBySeller[item.sellerId].push(item);
     }
 
-    const { masterOrder } = await prisma.$transaction(async (tx) => {
+    const { masterOrder } = await prisma.$transaction(async (tx :any ) => {
         
         const master = await tx.masterOrder.create({
             data: {
                 userId,
+                customerId: userId,
                 totalAmount,
-                shippingAddress,
-                status: 'PENDING',
+                status: 'PENDING_PAYMENT',
             }
         });
         for (const [sellerId, sellerItems] of Object.entries(itemsBySeller)) {
-            let subTotal = sellerItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+            let subTotal = sellerItems.reduce((sum :any, item :any) => sum + (item.product.price * item.quantity), 0);
 
             await tx.subOrder.create({
                 data: {
                     masterOrderId: master.id,
                     sellerId,
-                    totalAmount: subTotal,
+                    subtotal: subTotal,
                     status: 'PENDING', 
                     items: {
-                        create: sellerItems.map(item => ({
+                        create: sellerItems.map((item:any)=> ({
                             productId: item.productId,
                             variantId: item.variantId,
+                            productName: item.product.name,
+                            variantName: item.variant.name,
                             quantity: item.quantity,
-                            price: item.product.price,
+                            unitPrice: item.variant.price,
                         }))
                     }
                 }
@@ -75,18 +89,16 @@ export const processCheckout= async (userId:string,shippingAddress: string)=>{
         }
 
         return { masterOrder: master };
-        
+    });
 
-}
-
-const lineItems = cart.items.map(item => ({
+const lineItems = cart.items.map((item:any) => ({
         price_data: {
             currency: 'usd',
             product_data: {
-                name: item.product.title,
-                description: Object.entries(item.variant.attributes).map(([k, v]) => `${k}: ${v}`).join(', '),
+                name: item.product.name,
+                description: item.variant.name,
             },
-            unit_amount: Math.round(item.product.price * 100), //  (Stripe requires cents)
+            unit_amount: Math.round(Number(item.variant.price) * 100), //  (Stripe requires cents)
         },
         quantity: item.quantity,
     }));

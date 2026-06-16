@@ -3,9 +3,8 @@
 // Catches everything thrown by asyncHandler or next(err)
 
 import { Request, Response, NextFunction } from "express";
-import { ApiError } from "../utils/ApiError";
-import { sendError } from "../utils/response";
-import { env } from "../config/env";
+import { ApiError } from "../utlits/ApiError.js";
+import { sendError } from "../utlits/resPonse.js";
 
 export const errorHandler = (
   err: Error,
@@ -14,8 +13,8 @@ export const errorHandler = (
   _next: NextFunction
 ) => {
   // Log full error in dev, minimal in production
-  if (env.NODE_ENV === "development") {
-    console.error("🔴 Error:", err);
+  if (process.env.NODE_ENV === "development") {
+    console.error(" Error:", err);
   } else {
     console.error(`[${new Date().toISOString()}] ${err.message}`);
   }

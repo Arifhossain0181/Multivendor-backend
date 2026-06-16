@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as productService from './product.service';
-import { prisma } from '../../config/db';
+
+import { prisma } from '../../prisma/client';
 
 export const createProduct = async (req: Request, res: Response) => {
     try {

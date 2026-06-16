@@ -6,7 +6,7 @@ import {
     getMe, 
     updateProfile 
 } from './auth.controller';
-import { protect } from '../../middlewares/auth.middleware'; // 
+import { authenticate } from '../../middleware/authenticate';
 
 const router = Router();
 
@@ -25,8 +25,8 @@ router.post('/refresh-token', refresh);
 // PROTECTED ROUTES
 
 
-router.get('/me', protect, getMe);
+router.get('/me', authenticate, getMe);
 
-router.patch('/update-profile', protect, updateProfile);
+router.patch('/update-profile', authenticate, updateProfile);
 
 export default router;

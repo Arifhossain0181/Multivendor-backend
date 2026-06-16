@@ -40,7 +40,7 @@ export const update = async (req: Request, res: Response) => {
         const { id } = req.params;
         const { name, slug } = req.body;
 
-        const updatedCategory = await categoryService.updateCategoryById(id, { name, slug });
+        const updatedCategory = await categoryService.updateCategoryById(id as string, { name, slug });
 
         return res.status(200).json({
             success: true,
@@ -57,7 +57,7 @@ export const update = async (req: Request, res: Response) => {
 export const remove = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        await categoryService.deleteCategoryById(id);
+        await categoryService.deleteCategoryById(id as string);
 
         return res.status(200).json({
             success: true,

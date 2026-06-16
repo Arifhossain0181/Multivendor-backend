@@ -1,5 +1,6 @@
 import { prisma } from '../../prisma/client';
 import jwt from "jsonwebtoken";
+import type { StringValue } from "ms";
 import bcrypt from 'bcryptjs';
 
 type Role = "USER" | "ADMIN" | "SELLER";
@@ -19,9 +20,9 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "default_refresh_se
 // Timing Attack 
 const DUMMY_HASH = '$2b$10$nOUIs5kJ7naTuTFkPy1Ve.7ODq6D5bGF8gYmS.uWb2O2bH2hS1z6m';
 
-// ─────────────────────────────────────────────────────────────
+
 // HELPERS
-// ─────────────────────────────────────────────────────────────
+
 
 const createHttpError = (statusCode: number, message: string) => {
   const error = new Error(message) as Error & { statusCode?: number };
@@ -30,7 +31,7 @@ const createHttpError = (statusCode: number, message: string) => {
 };
 
 // token sign
-const signToken = (payload: TokenPayload, secret: string, expiresIn: string): string => {
+const signToken = (payload: TokenPayload, secret: string, expiresIn: StringValue | number): string => {
   return jwt.sign(payload, secret, { expiresIn });
 };
 
@@ -51,15 +52,13 @@ export const buildAuthPayload = (user: any) => {
   };
 
   return {
-    accessToken: signToken(payload, JWT_ACCESS_SECRET, process.env.JWT_ACCESS_EXPIRES_IN || '15m'),
-    refreshToken: signToken(payload, JWT_REFRESH_SECRET, process.env.JWT_REFRESH_EXPIRES_IN || '7d'),
+    accessToken: signToken(payload, JWT_ACCESS_SECRET, (process.env.JWT_ACCESS_EXPIRES_IN || '15m') as StringValue),
+    refreshToken: signToken(payload, JWT_REFRESH_SECRET, (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as StringValue),
     user: getSanitizedUser(user)
   };
 };
 
-// ─────────────────────────────────────────────────────────────
 // SERVICE FUNCTIONS
-// ─────────────────────────────────────────────────────────────
 
 export const login = async (email: string, password: string) => {
   if (!email?.trim() || !password) {
@@ -124,7 +123,7 @@ export const refreshToken = async (token: string) => {
     const newPayload: TokenPayload = { userId: user.id, email: user.email, role: user.role as Role };
 
     return {
-      accessToken: signToken(newPayload, JWT_ACCESS_SECRET, process.env.JWT_ACCESS_EXPIRES_IN || '15m'),
+      accessToken: signToken(newPayload, JWT_ACCESS_SECRET, (process.env.JWT_ACCESS_EXPIRES_IN || '15m') as StringValue),
       user: getSanitizedUser(user)
     };
   } catch (error) {
