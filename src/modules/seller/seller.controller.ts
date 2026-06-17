@@ -40,14 +40,14 @@ export const getProfile = async (req: Request, res: Response) => {
 // ৩. Update Sub-Order Status (Seller Fulfillment)
 export const updateSubOrderStatus = async (req: Request, res: Response) => {
     try {
-        const userId = (req as any).user.id; // কারেন্ট লগড-ইন সেলারের আইডি
+        const userId = (req as any).user.id; // 
         const subOrderId = req.params.id;
         const { status } = req.body;
 
-        // প্রথমে ইউজারের সেলার প্রোফাইল আইডি বের করতে হবে
+        // প
         const sellerProfile = await sellerService.findById(userId);
         
-        const updatedSubOrder = await sellerService.transitionSubOrder(subOrderId, sellerProfile.id, status);
+        const updatedSubOrder = await sellerService.transitionSubOrder(subOrderId as string, sellerProfile.id, status);
 
         return res.status(200).json({
             success: true,

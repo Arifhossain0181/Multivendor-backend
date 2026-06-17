@@ -3,7 +3,7 @@ import { prisma } from '../../prisma/client';
 import * as orderService from './order.service';
 export const getMyOrders =async(req:Request, res:Response) => {
     try{
-        const userId = req.use.id ;
+        const userId = (req as any).use.id ;
         //zod validation thke validate data Pagination
         const page = (req as any).query.page as number;
         const limit = (req as any).query.limit as number;
@@ -19,7 +19,7 @@ export const getMyOrderDetails = async (req: Request, res: Response) => {
         const userId = (req as any).user.id;
         const masterOrderId = req.params.id;
 
-        const order = await orderService.getOrderDetails(userId, masterOrderId);
+        const order = await orderService.getOrderDetails(userId, masterOrderId as string);
 
         return res.status(200).json({
             success: true,

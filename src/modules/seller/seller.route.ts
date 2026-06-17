@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { applyAsSeller, getProfile, updateSubOrderStatus } from './seller.controller';
-import { authenticate } from '../../middlewares/authenticate';
-import { authorize } from '../../middlewares/authorize';
-import { validate } from '../../middlewares/validate';
+import { authenticate } from '../../middleware/authenticate.js';
+import { authorize } from '../../middleware/authorize.js';
+import { validate } from '../../middleware/validation.js';
 import { applySellerSchema, updateSubOrderStatusSchema } from './seller.schema';
 
 const router = Router();

@@ -13,7 +13,7 @@ import checkoutRouter from './modules/checkout/checkout.router';
 import webhookRouter from './modules/webhook/webhook.router';
 import orderRouter from './modules/order/order.router';
 import fulfillmentRouter from './modules/fulfillment/fulfillment.router';
-import reviewRouter from './modules/review/review.router';
+import reviewRouter from './modules/review/review.routes';
 import adminRouter from './modules/admin/admin.router';
 
 const app = express();

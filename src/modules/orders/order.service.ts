@@ -6,6 +6,9 @@ import { prisma } from '../../prisma/client';
 export const getCustomerOrders = async (userId: string, page: number, limit: number) => {
     const skip = (page - 1) * limit;
     const [total,orders] = await Promise.all([
+         prisma.masterOrder.count({
+        where: { userId }
+    }),
         prisma.masterOrder.findMany({
             where:{userId},
             skip,

@@ -1,44 +1,55 @@
+import { ApiError } from "../../utlits/ApiError.js";
+import { prisma } from "../../prisma/client.js";
 
-
-export const createProductBySeller = async(
-    sellerId:string,
+export const createProductBySeller = async (
+    sellerId: string,
     productData: {
         title: string;
         description: string;
         price: number;
-        category: string;
+        categoryId: string;
         variants?: Array<{
-            sku: string; attributes: any; availableQty: number
+            sku: string;
+            attributes: any;
+            availableQty: number;
         }>;
-
     }
-)=>{
-    
-        const categoryExists = await prisma.category.findUnique({
+) => {
+    // 1. Check category exists
+    const categoryExists = await prisma.category.findUnique({
         where: { id: productData.categoryId },
     });
+
     if (!categoryExists) {
-        throw new ApiError(404, 'Category not found');
+        throw new ApiError(404, "not found","Category not found");
     }
-    //data base transaction (with PRoduct + variants + inventory)
-    return await prisma.$transaction(async (tx) => {
+
+    // 2. Transaction: Product + Variants
+    return await prisma.$transaction(async (tx:any) => {
+        // Create Product
         const product = await tx.product.create({
-            data:{
-                ...productData,
+            data: {
+                title: productData.title,
+                description: productData.description,
+                price: productData.price,
+                categoryId: productData.categoryId,
                 sellerId,
-                status:"DRAFT"
-            }
-        })
-        //varient and inventory builk create
-        const variantData = variant.map((v) => ({
-            productId: product.id,
-            sku: v.sku,
-            attributes: v.attributes,
-            availableQty: v.availableQty,
-        }))
-        await tx.variant.createMany({
-            data: variantData
-        })
+                status: "DRAFT",
+            },
+        });
+
+        // Create Variants (if exists)
+        if (productData.variants?.length) {
+            await tx.variant.createMany({
+                data: productData.variants.map((v) => ({
+                    productId: product.id,
+                    sku: v.sku,
+                    attributes: v.attributes,
+                    availableQty: v.availableQty,
+                })),
+            });
+        }
+
         return product;
-    })
-    }
+    });
+};

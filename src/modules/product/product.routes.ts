@@ -1,8 +1,10 @@
 import { Router } from 'express';
 import { createProduct } from './product.controller';
-import { authenticate } from '../../middlewares/authenticate';
-import { authorize } from '../../middlewares/authorize';
-import { validate } from '../../middlewares/validate';
+import { authenticate } from '../../middleware/authenticate.js';
+import { authorize } from '../../middleware/authorize.js';
+import { validate } from '../../middleware/validation.js';
+
+
 import { createProductSchema } from './product.schema';
 
 const router = Router();
