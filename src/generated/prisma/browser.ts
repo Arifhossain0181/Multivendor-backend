@@ -17,4 +17,73 @@ import * as Prisma from './internal/prismaNamespaceBrowser'
 export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
-
+/**
+ * Model Cart
+ * 
+ */
+export type Cart = Prisma.CartModel
+/**
+ * Model CartItem
+ * 
+ */
+export type CartItem = Prisma.CartItemModel
+/**
+ * Model Category
+ * 
+ */
+export type Category = Prisma.CategoryModel
+/**
+ * Model ProductInventory
+ * 
+ */
+export type ProductInventory = Prisma.ProductInventoryModel
+/**
+ * Model MasterOrder
+ * 
+ */
+export type MasterOrder = Prisma.MasterOrderModel
+/**
+ * Model ProcessedStripeEvent
+ * 
+ */
+export type ProcessedStripeEvent = Prisma.ProcessedStripeEventModel
+/**
+ * Model Product
+ * 
+ */
+export type Product = Prisma.ProductModel
+/**
+ * Model ProductVariant
+ * 
+ */
+export type ProductVariant = Prisma.ProductVariantModel
+/**
+ * Model Review
+ * 
+ */
+export type Review = Prisma.ReviewModel
+/**
+ * Model SellerProfile
+ * 
+ */
+export type SellerProfile = Prisma.SellerProfileModel
+/**
+ * Model SubOrderItem
+ * 
+ */
+export type SubOrderItem = Prisma.SubOrderItemModel
+/**
+ * Model SubOrder
+ * 
+ */
+export type SubOrder = Prisma.SubOrderModel
+/**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel
+/**
+ * Model ProductView
+ * 
+ */
+export type ProductView = Prisma.ProductViewModel

@@ -2,7 +2,16 @@ import Stripe from 'stripe';
 import { prisma } from '../../prisma/client.js';
 import { ApiError } from '../../utlits/ApiError.js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? '');
+let _stripe: Stripe;
+function getStripe() {
+  if (!_stripe) {
+    const key = process.env.STRIPE_SECRET_KEY;
+    if (!key) throw new Error('STRIPE_SECRET_KEY is not set');
+    _stripe = new Stripe(key);
+  }
+  return _stripe;
+}
+
 
 export const processCheckout= async (userId:string,shippingAddress: string)=>{
    const cart = await prisma.cart.findUnique({
@@ -102,7 +111,7 @@ const lineItems = cart.items.map((item:any) => ({
         },
         quantity: item.quantity,
     }));
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: lineItems,
         mode: 'payment',

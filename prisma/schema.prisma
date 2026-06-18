@@ -7,12 +7,15 @@ generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
   engineType = "binary"
+  previewFeatures = ["prismaSchemaFolder"]
 }
 
 generator client_js {
   provider = "prisma-client-js"
   engineType = "binary"
+  previewFeatures = ["prismaSchemaFolder"]
 }
+
 
 datasource db {
   provider = "postgresql"

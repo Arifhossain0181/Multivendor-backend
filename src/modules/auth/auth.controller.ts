@@ -7,25 +7,40 @@ import {
     updateMe,
 } from './auth.service.js';
 
-//helPer function to handle async errors
-
-const getcookieValue =(cookieHeader :string | undefined,key:string):string | undefined =>{
+// Helper function to extract cookie from headers
+const getcookieValue = (cookieHeader: string | undefined, key: string): string | undefined => {
     if (!cookieHeader) return undefined;
     return cookieHeader
         .split(';')
         .map(cookie => cookie.trim())
         .find(cookie => cookie.startsWith(`${key}=`))
         ?.split('=')[1];
-}
+};
 
 const getErrorStatus = (error: unknown, fallback = 400) => {
-    return (error as any)?.statusCode ?? fallback;}
-    const getErrorMessage = (error: unknown) => {
+    return (error as any)?.statusCode ?? fallback;
+};
+
+const getErrorMessage = (error: unknown) => {
     return error instanceof Error ? error.message : 'Unexpected error';
 };
-const setAuthCookies = (res: Response, accessToken: string, refreshToken: string) => {
+
+/**
+ * Updated Helper to set all 3 Cookies
+ * 
+ */
+const setAuthCookies = (res: Response, token: string, accessToken: string, refreshToken: string) => {
     const isProd = process.env.NODE_ENV === 'production';
     
+    
+    res.cookie('token', token, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000, // 24 Hours
+    });
+
+   
     res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: isProd,
@@ -33,6 +48,7 @@ const setAuthCookies = (res: Response, accessToken: string, refreshToken: string
         maxAge: 15 * 60 * 1000, // 15 Minutes
     });
 
+    
     res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: isProd,
@@ -40,14 +56,14 @@ const setAuthCookies = (res: Response, accessToken: string, refreshToken: string
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
     });
 };
-// controller functions login and register
+
+
 export const register = async (req: Request, res: Response) => {
-    try{
+    try {
         const { name, email, password } = req.body;
         const result = await registerUser(name, email, password);
 
-        // cookies set using helPer function
-        setAuthCookies(res, result.accessToken, result.refreshToken);
+        setAuthCookies(res, result.token, result.accessToken, result.refreshToken);
 
         res.status(201).json({
             success: true,
@@ -56,8 +72,7 @@ export const register = async (req: Request, res: Response) => {
                 user: result.user,
             },
         });
-    }
-    catch (error) {
+    } catch (error) {
         const status = getErrorStatus(error);
         const message = getErrorMessage(error);
         res.status(status).json({
@@ -65,20 +80,22 @@ export const register = async (req: Request, res: Response) => {
             message,
         });
     }
-}
+};
+
 export const login = async (req: Request, res: Response) => {
     try {
         const { email, password } = req.body;
         const result = await loginUser(email, password);
 
-        // Cookies set using helper
-        setAuthCookies(res, result.accessToken, result.refreshToken);
+    
+        setAuthCookies(res, result.token, result.accessToken, result.refreshToken);
 
         res.status(200).json({ message: "User logged in successfully", ...result });
     } catch (error) {
         res.status(getErrorStatus(error, 400)).json({ error: getErrorMessage(error) });
     }
 };
+
 export const refresh = async (req: Request, res: Response) => {
     try {
         const fromCookie = getcookieValue(req.headers.cookie, 'refreshToken');
@@ -86,10 +103,19 @@ export const refresh = async (req: Request, res: Response) => {
 
         const result = await refreshAccessToken(refreshToken);
 
-        // Only update the access token cookie
+        const isProd = process.env.NODE_ENV === 'production';
+
+
+        res.cookie('token', result.token, {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: 'lax',
+            maxAge: 24 * 60 * 60 * 1000,
+        });
+
         res.cookie('accessToken', result.accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: isProd,
             sameSite: 'lax',
             maxAge: 15 * 60 * 1000,
         });

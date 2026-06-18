@@ -8,25 +8,25 @@ import {
 } from './auth.controller';
 import { authenticate } from '../../middleware/authenticate';
 
-const router = Router();
+const authRouter = Router();
 
 // 
 // PUBLIC ROUTES 
 
 // 
-router.post('/register', register);
+authRouter.post('/register', register);
 
 // 
-router.post('/login', login);
+authRouter.post('/login', login);
 
 // 
-router.post('/refresh-token', refresh);
+authRouter.post('/refresh-token', refresh);
 
 // PROTECTED ROUTES
 
 
-router.get('/me', authenticate, getMe);
+authRouter.get('/me', authenticate, getMe);
 
-router.patch('/update-profile', authenticate, updateProfile);
+authRouter.patch('/update-profile', authenticate, updateProfile);
 
-export default router;
+export default authRouter;

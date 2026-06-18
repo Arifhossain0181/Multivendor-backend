@@ -14,6 +14,7 @@ type TokenPayload = {
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // secret keys and dummy hash for timing attack protection
+const JWT_SECRET = process.env.JWT_SECRET || "default_secret";
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "default_access_secret";
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "default_refresh_secret";
 
@@ -51,8 +52,11 @@ export const buildAuthPayload = (user: any) => {
     role: user.role as Role,
   };
 
+  const accessToken = signToken(payload, JWT_ACCESS_SECRET, (process.env.JWT_ACCESS_EXPIRES_IN || '15m') as StringValue);
+
   return {
-    accessToken: signToken(payload, JWT_ACCESS_SECRET, (process.env.JWT_ACCESS_EXPIRES_IN || '15m') as StringValue),
+    token: signToken(payload, JWT_SECRET, '1d'),
+    accessToken,
     refreshToken: signToken(payload, JWT_REFRESH_SECRET, (process.env.JWT_REFRESH_EXPIRES_IN || '7d') as StringValue),
     user: getSanitizedUser(user)
   };
@@ -70,7 +74,7 @@ export const login = async (email: string, password: string) => {
   });
 
   // Timing Attack Protection: If user is not found, we still perform a bcrypt compare with a dummy hash to ensure consistent response time, preventing attackers from inferring valid emails based on timing differences.
-  const passwordToCompare = user ? user.password : DUMMY_HASH;
+  const passwordToCompare = user ? user.passwordHash : DUMMY_HASH;
   const isMatch = await bcrypt.compare(password, passwordToCompare);
 
   if (!user || !isMatch) {
@@ -102,7 +106,7 @@ export const register = async (name: string, email: string, password: string) =>
     data: {
       name: name.trim(),
       email: normalizedEmail,
-      password: hashedPassword,
+      passwordHash: hashedPassword,
       role: "USER"
     }
   });
@@ -122,8 +126,11 @@ export const refreshToken = async (token: string) => {
 
     const newPayload: TokenPayload = { userId: user.id, email: user.email, role: user.role as Role };
 
+    const newAccessToken = signToken(newPayload, JWT_ACCESS_SECRET, (process.env.JWT_ACCESS_EXPIRES_IN || '15m') as StringValue);
+
     return {
-      accessToken: signToken(newPayload, JWT_ACCESS_SECRET, (process.env.JWT_ACCESS_EXPIRES_IN || '15m') as StringValue),
+      token: signToken(newPayload, JWT_SECRET, '1d'),
+      accessToken: newAccessToken,
       user: getSanitizedUser(user)
     };
   } catch (error) {

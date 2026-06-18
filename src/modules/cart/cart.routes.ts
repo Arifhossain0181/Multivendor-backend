@@ -12,6 +12,9 @@ router.use(authenticate);
 // GET /api/cart - 
 router.get('/', getCart);
 
+// POST /api/cart - 
+router.post('/', validate(addCartItemSchema), addItemToCart);
+
 // POST /api/cart/items - 
 router.post('/items', validate(addCartItemSchema), addItemToCart);
 
