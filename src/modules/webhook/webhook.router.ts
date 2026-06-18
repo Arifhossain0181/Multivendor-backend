@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { handleStripeWebhook } from './webhook.controller';
-import { rawBody } from '../../middlewares/rawBody'; //
+import { rawBody } from '../../middleware/rawbody'; //
 
 const router = Router();
 

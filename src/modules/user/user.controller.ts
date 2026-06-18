@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { sendSuccess } from "../../utlits/resPonse";
 import * as userService from "./user.service";
-import { number, string } from "zod";
+// removed unused imports
 
 export const getMe = async (req: Request, res: Response) => {
   try {
@@ -9,9 +9,7 @@ export const getMe = async (req: Request, res: Response) => {
 
     const user = await userService.findById(userId);
 
-    return sendSuccess(res, 200, "User profile retrieved successfully", {
-      user,
-    });
+    return sendSuccess(res, { user }, 200, "User profile retrieved successfully");
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
       success: false,
@@ -30,9 +28,7 @@ export const updateMe = async (req: Request, res: Response) => {
       email,
     });
 
-    return sendSuccess(res, 200, "User profile updated successfully", {
-      user: updatedUser,
-    });
+    return sendSuccess(res, { user: updatedUser }, 200, "User profile updated successfully");
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
       success: false,

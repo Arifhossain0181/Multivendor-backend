@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
-import { stripe } from '../../config/stripe';
+
 import * as webhookService from './webhook.service';
+import { stripe } from '../../config/stripe';
 
 export const handleStripeWebhook = async (req: Request, res: Response) => {
     //

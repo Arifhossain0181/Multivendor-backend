@@ -3,14 +3,14 @@
 //   - rate-limit-redis  (rate limiting store)
 //   - any future caching layer
 
-import Redis from "ioredis";
-import { env } from "./env";
+// import Redis from "ioredis";
+// import { env } from "./env";
 
-export const redis = new Redis(env.REDIS_URL, {
-  maxRetriesPerRequest: 3,
-  enableReadyCheck: true,
-  lazyConnect: true,
-});
+// export const redis = new Redis(env.REDIS_URL, {
+//   maxRetriesPerRequest: 3,
+//   enableReadyCheck: true,
+//   lazyConnect: true,
+// });
 
-redis.on("connect", () => console.log("  Redis connected"));
-redis.on("error", (err) => console.error(" Redis error:", err.message));
+// redis.on("connect", () => console.log("  Redis connected"));
+// redis.on("error", (err :any) => console.error(" Redis error:", err.message));
