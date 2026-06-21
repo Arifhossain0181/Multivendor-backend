@@ -3,8 +3,8 @@ import * as adminService from './admin.service';
 
 export const updateSeller = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params; // Seller Profile ID
-        const { status } = req.body; // APPROVED or REJECTED
+        const { id } = req.params; // 
+        const { status } = req.body; // 
 
         if (typeof id !== 'string') {
             return res.status(400).json({ success: false, error: 'Invalid seller profile id' });
