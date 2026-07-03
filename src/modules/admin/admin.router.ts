@@ -1,13 +1,24 @@
 import { Router } from 'express';
-import { updateSeller } from './admin.controller';
-import { authenticate } from '../../middleware/authenticate';
-import { authorize } from '../../middleware/authorize';
+import {
+  getOrders,
+  getProducts,
+  getStats,
+  getUsers,
+  updateProduct,
+  updateSeller,
+} from './admin.controller';
+import { authenticate } from '../../middleware/authenticate.js';
+import { authorize } from '../../middleware/authorize.js';
 
 const router = Router();
 
 router.use(authenticate, authorize('ADMIN'));
 
-// PATCH /api/admin/sellers/:id/status
-router.patch('/sellers/:id/status', updateSeller);
+router.get('/stats', getStats);
+router.get('/users', getUsers);
+router.patch('/users/:id/seller-status', updateSeller);
+router.get('/products', getProducts);
+router.patch('/products/:id/status', updateProduct);
+router.get('/orders', getOrders);
 
 export default router;

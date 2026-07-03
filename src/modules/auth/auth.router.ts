@@ -4,7 +4,8 @@ import {
     register, 
     refresh, 
     getMe, 
-    updateProfile 
+    updateProfile,
+    logout
 } from './auth.controller';
 import { authenticate } from '../../middleware/authenticate';
 
@@ -21,6 +22,8 @@ authRouter.post('/login', login);
 
 // 
 authRouter.post('/refresh-token', refresh);
+
+authRouter.post('/logout', logout);
 
 // PROTECTED ROUTES
 

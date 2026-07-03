@@ -2,6 +2,11 @@ import { Request, Response } from "express";
 import * as productService from "./product.service";
 import { prisma } from "../../prisma/client";
 
+const parsePageParam = (value: unknown, fallback: number) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : fallback;
+};
+
 export const createProduct = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user.id;
@@ -46,6 +51,36 @@ export const createProduct = async (req: Request, res: Response) => {
             data: product,
         });
 
+    } catch (error: any) {
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            error: error.message || "Internal Server Error",
+        });
+    }
+};
+
+export const listProducts = async (req: Request, res: Response) => {
+    try {
+        const page = parsePageParam(req.query.page, 1);
+        const pageSize = parsePageParam(req.query.pageSize, 12);
+
+        const result = await productService.getPublicProducts(page, pageSize);
+
+        return res.status(200).json(result);
+    } catch (error: any) {
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            error: error.message || "Internal Server Error",
+        });
+    }
+};
+
+export const getProduct = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const product = await productService.getPublicProductById(id);
+
+        return res.status(200).json(product);
     } catch (error: any) {
         return res.status(error.statusCode || 500).json({
             success: false,

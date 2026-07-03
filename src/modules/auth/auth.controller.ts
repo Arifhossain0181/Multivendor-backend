@@ -57,6 +57,19 @@ const setAuthCookies = (res: Response, token: string, accessToken: string, refre
     });
 };
 
+const clearAuthCookies = (res: Response) => {
+    const isProd = process.env.NODE_ENV === 'production';
+    const cookieOptions = {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: 'lax' as const,
+    };
+
+    res.clearCookie('token', cookieOptions);
+    res.clearCookie('accessToken', cookieOptions);
+    res.clearCookie('refreshToken', cookieOptions);
+};
+
 
 export const register = async (req: Request, res: Response) => {
     try {
@@ -92,7 +105,10 @@ export const login = async (req: Request, res: Response) => {
 
         res.status(200).json({ message: "User logged in successfully", ...result });
     } catch (error) {
-        res.status(getErrorStatus(error, 400)).json({ error: getErrorMessage(error) });
+        res.status(getErrorStatus(error, 400)).json({
+            success: false,
+            message: getErrorMessage(error),
+        });
     }
 };
 
@@ -147,4 +163,13 @@ export const updateProfile = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(getErrorStatus(error, 400)).json({ error: getErrorMessage(error) });
     }
+};
+
+export const logout = async (_req: Request, res: Response) => {
+    clearAuthCookies(res);
+
+    res.status(200).json({
+        success: true,
+        message: 'Logged out successfully',
+    });
 };
