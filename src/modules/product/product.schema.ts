@@ -6,6 +6,7 @@ export const createProductSchema = z.object({
         description: z.string().min(10, 'Description must be at least 10 characters long').trim(),
         price: z.number().positive('Price must be a positive number'),
         categoryId: z.string().uuid('Invalid category ID'),
+        images: z.array(z.string().min(1, 'Image is required')).min(1, 'Product must have at least one image'),
       
         variants: z.array(
             z.object({

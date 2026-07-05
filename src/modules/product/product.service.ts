@@ -1,5 +1,6 @@
 import { ApiError } from "../../utlits/ApiError.js";
 import { prisma } from "../../prisma/client.js";
+import { uploadImages } from "../../config/cloudinary.js";
 
 const DEFAULT_PRODUCT_IMAGE_URL = "/globe.svg";
 
@@ -17,6 +18,7 @@ const toNumber = (value: unknown) => {
 
 const mapProduct = (product: any) => {
     const primaryVariant = product.variants?.[0];
+    const primaryImage = product.imageUrls?.[0];
     const stock = Array.isArray(product.inventory)
         ? product.inventory.reduce((sum: number, item: any) => sum + toNumber(item.availableQty), 0)
         : 0;
@@ -25,7 +27,7 @@ const mapProduct = (product: any) => {
         id: product.id,
         name: product.name,
         price: toNumber(primaryVariant?.price ?? 0),
-        imageUrl: product.imageUrl ?? DEFAULT_PRODUCT_IMAGE_URL,
+        imageUrl: primaryImage ?? DEFAULT_PRODUCT_IMAGE_URL,
         description: product.description,
         stock,
         variants: (product.variants ?? []).map((variant: any) => ({
@@ -44,6 +46,7 @@ export const createProductBySeller = async (
         description: string;
         price: number;
         categoryId: string;
+        images?: string[];
         variants?: Array<{
             sku: string;
             attributes: any;
@@ -60,14 +63,28 @@ export const createProductBySeller = async (
         throw new ApiError(404, "not found","Category not found");
     }
 
-    // 2. Transaction: Product + Variants
-    return await prisma.$transaction(async (tx:any) => {
+    // 2. Upload images to Cloudinary (convert base64 → CDN URLs)
+    let imageUrls: string[] = [];
+    if (productData.images?.length) {
+        try {
+            imageUrls = await uploadImages(productData.images, "products");
+        } catch (uploadErr: any) {
+            throw new ApiError(
+                500,
+                "IMAGE_UPLOAD_FAILED",
+                `Failed to upload images: ${uploadErr.message}`
+            );
+        }
+    }
+
+    // 3. Transaction: Product + Variants
+    return await prisma.$transaction(async (tx: any) => {
         // Create Product
         const product = await tx.product.create({
             data: {
-                title: productData.title,
+                name: productData.title,
                 description: productData.description,
-                price: productData.price,
+                imageUrls,
                 categoryId: productData.categoryId,
                 sellerId,
                 status: "DRAFT",
@@ -76,17 +93,35 @@ export const createProductBySeller = async (
 
         // Create Variants (if exists)
         if (productData.variants?.length) {
-            await tx.variant.createMany({
-                data: productData.variants.map((v) => ({
-                    productId: product.id,
-                    sku: v.sku,
-                    attributes: v.attributes,
-                    availableQty: v.availableQty,
-                })),
-            });
+            for (const variant of productData.variants) {
+                const createdVariant = await tx.productVariant.create({
+                    data: {
+                        productId: product.id,
+                        name: variant.attributes?.label ?? variant.sku,
+                        sku: variant.sku,
+                        price: Number(variant.attributes?.price ?? productData.price),
+                    },
+                });
+
+                await tx.productInventory.create({
+                    data: {
+                        productId: product.id,
+                        variantId: createdVariant.id,
+                        availableQty: variant.availableQty,
+                    },
+                });
+            }
         }
 
-        return product;
+        return tx.product.findUnique({
+            where: { id: product.id },
+            include: {
+                seller: true,
+                category: true,
+                variants: true,
+                inventory: true,
+            },
+        });
     });
 };
 
@@ -133,4 +168,119 @@ export const getPublicProductById = async (id: string) => {
     }
 
     return mapProduct(product);
+};
+
+export const updateProduct = async (
+    id: string,
+    productData: {
+        title?: string;
+        description?: string;
+        price?: number;
+        categoryId?: string;
+        images?: string[];
+        variants?: Array<{
+            sku: string;
+            attributes: any;
+            availableQty: number;
+        }>;
+    }
+) => {
+    const existingProduct = await prisma.product.findUnique({
+        where: { id },
+        include: { variants: true }
+    });
+
+    if (!existingProduct) {
+        throw new ApiError(404, "NOT_FOUND", "Product not found");
+    }
+
+    if (productData.categoryId) {
+        const categoryExists = await prisma.category.findUnique({
+            where: { id: productData.categoryId },
+        });
+        if (!categoryExists) {
+            throw new ApiError(404, "NOT_FOUND", "Category not found");
+        }
+    }
+
+    let imageUrls: string[] | undefined = undefined;
+    if (productData.images?.length) {
+        try {
+            const newImages = productData.images.filter((img: string) => img.startsWith("data:image/"));
+            const existingImages = productData.images.filter((img: string) => !img.startsWith("data:image/"));
+            
+            let uploadedUrls: string[] = [];
+            if (newImages.length) {
+                uploadedUrls = await uploadImages(newImages, "products");
+            }
+            imageUrls = [...existingImages, ...uploadedUrls];
+        } catch (uploadErr: any) {
+            throw new ApiError(
+                500,
+                "IMAGE_UPLOAD_FAILED",
+                `Failed to upload images: ${uploadErr.message}`
+            );
+        }
+    }
+
+    return await prisma.$transaction(async (tx: any) => {
+        const updatedProduct = await tx.product.update({
+            where: { id },
+            data: {
+                name: productData.title !== undefined ? productData.title : undefined,
+                description: productData.description !== undefined ? productData.description : undefined,
+                imageUrls: imageUrls !== undefined ? imageUrls : undefined,
+                categoryId: productData.categoryId !== undefined ? productData.categoryId : undefined,
+            },
+        });
+
+        if (productData.variants !== undefined) {
+            await tx.productVariant.deleteMany({
+                where: { productId: id }
+            });
+
+            if (productData.variants.length) {
+                for (const variant of productData.variants) {
+                    const createdVariant = await tx.productVariant.create({
+                        data: {
+                            productId: id,
+                            name: variant.attributes?.label ?? variant.sku,
+                            sku: variant.sku,
+                            price: Number(variant.attributes?.price ?? productData.price ?? existingProduct.price ?? 0),
+                        },
+                    });
+
+                    await tx.productInventory.create({
+                        data: {
+                            productId: id,
+                            variantId: createdVariant.id,
+                            availableQty: variant.availableQty,
+                        },
+                    });
+                }
+            }
+        }
+
+        return tx.product.findUnique({
+            where: { id },
+            include: {
+                seller: true,
+                category: true,
+                variants: true,
+                inventory: true,
+            },
+        });
+    });
+};
+
+export const deleteProduct = async (id: string) => {
+    const product = await prisma.product.findUnique({
+        where: { id },
+    });
+    if (!product) {
+        throw new ApiError(404, "NOT_FOUND", "Product not found");
+    }
+    return await prisma.product.delete({
+        where: { id },
+    });
 };

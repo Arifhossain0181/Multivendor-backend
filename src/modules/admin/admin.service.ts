@@ -53,7 +53,7 @@ const mapProduct = (product: any) => {
   return {
     id: product.id,
     name: product.name,
-    image: product.imageUrl ?? "/globe.svg",
+    image: product.imageUrls?.[0] ?? product.imageUrl ?? "/globe.svg",
     sellerName:
       product.seller?.shopName ??
       product.seller?.user?.name ??
@@ -217,6 +217,7 @@ export const listProducts = async (
       select: {
         id: true,
         name: true,
+        imageUrls: true,
         status: true,
         createdAt: true,
         seller: {
@@ -267,6 +268,7 @@ export const updateProductStatus = async (
     select: {
       id: true,
       name: true,
+      imageUrls: true,
       status: true,
       createdAt: true,
       seller: {

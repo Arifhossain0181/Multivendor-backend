@@ -68,14 +68,13 @@ export const processCheckout= async (userId:string,shippingAddress: string)=>{
         
         const master = await tx.masterOrder.create({
             data: {
-                userId,
                 customerId: userId,
                 totalAmount,
                 status: 'PENDING_PAYMENT',
             }
         });
         for (const [sellerId, sellerItems] of Object.entries(itemsBySeller)) {
-            let subTotal = sellerItems.reduce((sum :any, item :any) => sum + (item.product.price * item.quantity), 0);
+            let subTotal = sellerItems.reduce((sum :any, item :any) => sum + (Number(item.variant.price) * item.quantity), 0);
 
             await tx.subOrder.create({
                 data: {

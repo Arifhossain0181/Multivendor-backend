@@ -81,7 +81,7 @@ export const updateProduct = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid product id' });
     }
 
-    if (!['ACTIVE', 'BLOCKED'].includes(status)) {
+    if (!['ACTIVE', 'BLOCKED', 'DRAFT'].includes(status)) {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
