@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { createProduct, getProduct, listProducts } from './product.controller';
+import { createProduct, getProduct, listProducts, getMyProducts } from './product.controller';
 import { authenticate } from '../../middleware/authenticate.js';
 import { authorize } from '../../middleware/authorize.js';
 import { validate } from '../../middleware/validation.js';
@@ -8,6 +8,9 @@ import { validate } from '../../middleware/validation.js';
 import { createProductSchema } from './product.schema';
 
 const router = Router();
+
+// GET /api/products/my-products
+router.get('/my-products', authenticate, getMyProducts);
 
 // GET /api/products?page=1&pageSize=12
 router.get('/', listProducts);

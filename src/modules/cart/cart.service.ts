@@ -167,3 +167,40 @@ export const clearCart = async (userId: string) => {
   });
 };
 
+export const updateItemQuantity = async (
+  userId: string,
+  cartItemId: string,
+  quantity: number
+) => {
+  const cartItem = await prisma.cartItem.findUnique({
+    where: { id: cartItemId },
+    include: {
+      cart: true,
+      variant: {
+        include: {
+          inventory: true,
+        },
+      },
+    },
+  });
+
+  if (!cartItem || cartItem.cart.customerId !== userId) {
+    throw new Error("Cart item not found");
+  }
+
+  const availableQty = cartItem.variant.inventory?.availableQty ?? 0;
+
+  if (quantity > availableQty) {
+    throw new Error("Insufficient stock");
+  }
+
+  return prisma.cartItem.update({
+    where: {
+      id: cartItemId,
+    },
+    data: {
+      quantity,
+    },
+  });
+};
+

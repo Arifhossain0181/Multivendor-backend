@@ -200,12 +200,19 @@ export const updateSellerStatus = async (
 };
 
 export const listProducts = async (
+  userId: string,
   status?: string,
   page?: number,
   limit?: number,
 ) => {
   const { skip, limit: take, page: currentPage } = clampPage(page, limit);
-  const where = status && status !== "ALL" ? { status } : {};
+  
+  const sellerProfile = await prisma.sellerProfile.findUnique({
+    where: { userId },
+  });
+
+  const sellerId = sellerProfile?.id ?? "non-existent-id";
+  const where = status && status !== "ALL" ? { sellerId, status } : { sellerId };
 
   const [total, products] = await prisma.$transaction([
     prisma.product.count({ where }),

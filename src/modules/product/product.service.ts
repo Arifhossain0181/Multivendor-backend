@@ -284,3 +284,48 @@ export const deleteProduct = async (id: string) => {
         where: { id },
     });
 };
+
+export const getMyProducts = async (userId: string, page = 1, pageSize = 12) => {
+    const sellerProfile = await prisma.sellerProfile.findUnique({
+        where: { userId },
+    });
+
+    if (!sellerProfile) {
+        return {
+            data: [],
+            meta: {
+                page: 1,
+                pageSize,
+                total: 0,
+                totalPages: 0,
+            },
+        };
+    }
+
+    const take = Math.max(1, Math.min(pageSize, 50));
+    const skip = (Math.max(1, page) - 1) * take;
+
+    const [total, products] = await prisma.$transaction([
+        prisma.product.count({ where: { sellerId: sellerProfile.id } }),
+        prisma.product.findMany({
+            where: { sellerId: sellerProfile.id },
+            skip,
+            take,
+            orderBy: { createdAt: "desc" },
+            include: {
+                variants: true,
+                inventory: true,
+            },
+        }),
+    ]);
+
+    return {
+        data: products.map(mapProduct),
+        meta: {
+            page: Math.max(1, page),
+            pageSize: take,
+            total,
+            totalPages: Math.max(1, Math.ceil(total / take)),
+        },
+    };
+};

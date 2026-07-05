@@ -37,3 +37,26 @@ export const initiateCheckout = async (req: Request, res: Response) => {
         });
     }
 };
+export const verifyCheckoutSuccess = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const sessionId = req.query.session_id as string;
+
+    const result = await checkoutService.verifyCheckoutSuccess(sessionId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment verified successfully",
+      data: result.order,
+      paymentStatus: result.paymentStatus,
+      orderId: result.orderId,
+    });
+  } catch (error: any) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};

@@ -14,19 +14,12 @@ export const createProduct = async (req: Request, res: Response) => {
 
         const { title, description, price, categoryId, images, variants } = req.body;
 
-        // 1. Find the seller profile for sellers, or create one for admins
+        // 1. Find the seller profile for sellers/admins, or create one automatically for first-time users
         let sellerProfile = await prisma.sellerProfile.findUnique({
             where: { userId },
         });
 
         if (!sellerProfile) {
-            if (user.role !== "ADMIN") {
-                return res.status(404).json({
-                    success: false,
-                    error: "Seller profile not found",
-                });
-            }
-
             const owner = await prisma.user.findUnique({
                 where: { id: userId },
                 select: { name: true, email: true },
@@ -35,19 +28,19 @@ export const createProduct = async (req: Request, res: Response) => {
             sellerProfile = await prisma.sellerProfile.create({
                 data: {
                     userId,
-                    shopName: owner?.name ? `${owner.name} Store` : "Admin Store",
+                    shopName: owner?.name ? `${owner.name} Store` : (user.role === "ADMIN" ? "Admin Store" : "Seller Store"),
                     description: owner?.email
-                        ? `Managed by admin (${owner.email})`
-                        : "Managed by admin",
-                    status: "APPROVED",
+                        ? `Managed by ${user.role === "ADMIN" ? "admin" : "seller"} (${owner.email})`
+                        : "Auto-created profile",
+                    status: user.role === "ADMIN" ? "APPROVED" : "PENDING",
                 },
             });
         }
 
-        if (sellerProfile.status !== "APPROVED" && user.role !== "ADMIN") {
+        if (sellerProfile.status === "REJECTED" && user.role !== "ADMIN") {
             return res.status(403).json({
                 success: false,
-                error: "Only approved sellers can create products",
+                error: "Your seller account is rejected and cannot create products.",
             });
         }
 
@@ -108,6 +101,23 @@ export const getProduct = async (req: Request, res: Response) => {
         const product = await productService.getPublicProductById(id as string);
 
         return res.status(200).json(product);
+    } catch (error: any) {
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            error: error.message || "Internal Server Error",
+        });
+    }
+};
+
+export const getMyProducts = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user.id;
+        const page = parsePageParam(req.query.page, 1);
+        const pageSize = parsePageParam(req.query.pageSize, 12);
+
+        const result = await productService.getMyProducts(userId, page, pageSize);
+
+        return res.status(200).json(result);
     } catch (error: any) {
         return res.status(error.statusCode || 500).json({
             success: false,

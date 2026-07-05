@@ -70,3 +70,28 @@ export const emptyCart = async (req: Request, res: Response) => {
         return res.status(statusCode).json({ success: false, error: error.message || 'Internal Server Error' });
     }
 };
+
+export const updateCartItem = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    const cartItemId = req.params.id;
+    const { quantity } = req.body;
+
+    const item = await cartService.updateItemQuantity(
+      userId,
+      cartItemId as string,
+      quantity
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Cart updated successfully",
+      data: item,
+    });
+  } catch (error: any) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};

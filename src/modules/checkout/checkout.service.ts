@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { prisma } from '../../prisma/client.js';
 import { ApiError } from '../../utlits/ApiError.js';
+import { clearCart } from '../cart/cart.service.js';
 
 let _stripe: Stripe;
 function getStripe() {
@@ -124,4 +125,62 @@ const lineItems = cart.items.map((item:any) => ({
     });
 
     return { stripeUrl: session.url, masterOrderId: masterOrder.id };
+};
+export const verifyCheckoutSuccess = async (sessionId: string) => {
+  if (!sessionId) {
+    throw new ApiError(
+      400,
+      "INVALID_SESSION",
+      "Session ID is required"
+    );
+  }
+
+  // Retrieve Stripe Checkout Session
+  const session = await getStripe().checkout.sessions.retrieve(sessionId);
+
+  if (!session) {
+    throw ApiError.notFound("Stripe session not found");
+  }
+
+  if (session.payment_status !== "paid") {
+    throw new ApiError(
+      400,
+      "PAYMENT_NOT_COMPLETED",
+      "Payment has not been completed."
+    );
+  }
+
+  const masterOrderId = session.metadata?.masterOrderId;
+
+  if (!masterOrderId) {
+    throw ApiError.notFound("Master Order ID not found");
+  }
+
+  const order = await prisma.masterOrder.findUnique({
+    where: {
+      id: masterOrderId,
+    },
+    include: {
+      subOrders: {
+        include: {
+          items: true,
+        },
+      },
+    },
+  });
+
+  if (!order) {
+    throw ApiError.notFound("Order not found");
+  }
+
+  const userId = session.metadata?.userId;
+  if (userId) {
+    await clearCart(userId);
+  }
+
+  return {
+    order,
+    paymentStatus: "paid",
+    orderId: order.id,
+  };
 };

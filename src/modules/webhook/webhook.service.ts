@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../../prisma/client.js";
 import { ApiError } from "../../utlits/ApiError.js";
 import * as inventoryService from "../inventory/inventory.service.js";
+import { clearCart } from "../cart/cart.service.js";
 export const handleSuccessfulPayment = async (
   masterOrderId: string,
   stripeEventId: string,
@@ -41,6 +42,7 @@ export const handleSuccessfulPayment = async (
         where: { id: masterOrderId },
         data: { status: "PAID" },
       });
+      await clearCart(masterOrder.customerId);
       await tx.processedStripeEvent.create({
         data: { eventId: stripeEventId },
       });
