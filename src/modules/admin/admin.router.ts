@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  deleteProduct,
   getOrders,
   getProducts,
   getStats,
@@ -19,6 +20,7 @@ router.get('/users', getUsers);
 router.patch('/users/:id/seller-status', updateSeller);
 router.get('/products', getProducts);
 router.patch('/products/:id/status', updateProduct);
+router.delete('/products/:id', deleteProduct);
 router.get('/orders', getOrders);
 
 export default router;

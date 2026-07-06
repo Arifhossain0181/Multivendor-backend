@@ -21,6 +21,19 @@ const toNumber = (value: unknown) => {
 const toIso = (value: Date | string | null | undefined) =>
   value ? new Date(value).toISOString() : new Date().toISOString();
 
+const getInventoryQuantity = (inventory: any) => {
+  if (!inventory) return 0;
+
+  if (Array.isArray(inventory)) {
+    return inventory.reduce(
+      (sum: number, item: any) => sum + toNumber(item?.availableQty),
+      0,
+    );
+  }
+
+  return toNumber(inventory.availableQty);
+};
+
 const clampPage = (page?: number, limit?: number) => {
   const safePage =
     Number.isFinite(page as number) && (page as number) > 0
@@ -45,6 +58,16 @@ const mapUser = (user: any) => ({
   role: user.role,
   sellerStatus: user.sellerProfile?.status ?? null,
   shopName: user.sellerProfile?.shopName ?? null,
+  paidOrderCount: (user.masterOrders ?? []).filter((order: any) =>
+    ["PAID", "COMPLETED"].includes(order.status),
+  ).length,
+  lastPaidOrderAt:
+    (user.masterOrders ?? [])
+      .filter((order: any) => ["PAID", "COMPLETED"].includes(order.status))
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      )[0]?.createdAt ?? null,
   createdAt: toIso(user.createdAt),
 });
 
@@ -59,6 +82,7 @@ const mapProduct = (product: any) => {
       product.seller?.user?.name ??
       "Unknown seller",
     price: toNumber(firstVariant?.price ?? 0),
+    quantity: getInventoryQuantity(product.inventory),
     status: product.status,
     createdAt: toIso(product.createdAt),
   };
@@ -135,6 +159,12 @@ export const listUsers = async (
           select: {
             status: true,
             shopName: true,
+          },
+        },
+        masterOrders: {
+          select: {
+            status: true,
+            createdAt: true,
           },
         },
       },
@@ -227,6 +257,11 @@ export const listProducts = async (
         imageUrls: true,
         status: true,
         createdAt: true,
+        inventory: {
+          select: {
+            availableQty: true,
+          },
+        },
         seller: {
           select: {
             shopName: true,
@@ -278,6 +313,11 @@ export const updateProductStatus = async (
       imageUrls: true,
       status: true,
       createdAt: true,
+      inventory: {
+        select: {
+          availableQty: true,
+        },
+      },
       seller: {
         select: {
           shopName: true,
@@ -297,6 +337,50 @@ export const updateProductStatus = async (
   });
 
   return mapProduct(updated);
+};
+
+export const deleteProduct = async (productId: string) => {
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+    select: {
+      id: true,
+      variants: {
+        select: {
+          id: true,
+          subOrderItems: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!product) {
+    throw ApiError.notFound("Product not found");
+  }
+
+  const hasOrderHistory = product.variants.some((variant) => variant.subOrderItems.length > 0);
+  if (hasOrderHistory) {
+    throw ApiError.conflict(
+      "PRODUCT_HAS_ORDER_HISTORY",
+      "This product cannot be deleted because it already has order history. Block it instead.",
+    );
+    
+  }
+
+  await prisma.$transaction(async (tx: any) => {
+    await tx.cartItem.deleteMany({
+      where: { productId },
+    });
+
+    await tx.product.delete({
+      where: { id: productId },
+    });
+  });
+
+  return { success: true, message: "Product deleted successfully" };
 };
 
 export const listOrders = async (page?: number, limit?: number) => {

@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { prisma } from '../../prisma/client.js';
 import { ApiError } from '../../utlits/ApiError.js';
 import { clearCart } from '../cart/cart.service.js';
+import * as inventoryService from '../inventory/inventory.service.js';
 
 let _stripe: Stripe;
 function getStripe() {
@@ -174,13 +175,43 @@ export const verifyCheckoutSuccess = async (sessionId: string) => {
   }
 
   const userId = session.metadata?.userId;
+  let resolvedOrder = order;
+
+  if (order.status !== "PAID") {
+    await prisma.$transaction(async (tx: any) => {
+      for (const subOrder of order.subOrders) {
+        for (const item of subOrder.items) {
+          await inventoryService.atomicDeduct(tx, item.variantId, item.quantity);
+        }
+      }
+
+      await tx.masterOrder.update({
+        where: { id: masterOrderId },
+        data: { status: "PAID" },
+      });
+    });
+
+    resolvedOrder = (await prisma.masterOrder.findUnique({
+      where: {
+        id: masterOrderId,
+      },
+      include: {
+        subOrders: {
+          include: {
+            items: true,
+          },
+        },
+      },
+    })) ?? order;
+  }
+
   if (userId) {
     await clearCart(userId);
   }
 
   return {
-    order,
+    order: resolvedOrder,
     paymentStatus: "paid",
-    orderId: order.id,
+    orderId: resolvedOrder.id,
   };
 };

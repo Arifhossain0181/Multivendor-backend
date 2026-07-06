@@ -95,6 +95,23 @@ export const updateProduct = async (req: Request, res: Response) => {
   }
 };
 
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (typeof id !== "string" || !id) {
+      return res.status(400).json({ error: "Invalid product id" });
+    }
+
+    const result = await adminService.deleteProduct(id);
+    return res.status(200).json(result);
+  } catch (error: any) {
+    return res.status(error.statusCode || 500).json({
+      error: error.message || "Internal Server Error",
+    });
+  }
+};
+
 export const getOrders = async (req: Request, res: Response) => {
   try {
     const page = parsePage(req.query.page, 1);

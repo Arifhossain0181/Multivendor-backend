@@ -16,12 +16,23 @@ const toNumber = (value: unknown) => {
     return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const getInventoryQuantity = (inventory: any) => {
+    if (!inventory) return 0;
+
+    if (Array.isArray(inventory)) {
+        return inventory.reduce(
+            (sum: number, item: any) => sum + toNumber(item?.availableQty),
+            0
+        );
+    }
+
+    return toNumber(inventory.availableQty);
+};
+
 const mapProduct = (product: any) => {
     const primaryVariant = product.variants?.[0];
     const primaryImage = product.imageUrls?.[0];
-    const stock = Array.isArray(product.inventory)
-        ? product.inventory.reduce((sum: number, item: any) => sum + toNumber(item.availableQty), 0)
-        : 0;
+    const stock = getInventoryQuantity(product.inventory);
 
     return {
         id: product.id,
