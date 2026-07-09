@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { createProduct, getProduct, listProducts, getMyProducts } from './product.controller';
+import { createProduct, getProduct, listProducts, getMyProducts, updateProduct } from './product.controller';
 import { authenticate } from '../../middleware/authenticate.js';
 import { authorize } from '../../middleware/authorize.js';
 import { validate } from '../../middleware/validation.js';
 
 
-import { createProductSchema } from './product.schema';
+import { createProductSchema, updateProductSchema } from './product.schema';
 
 const router = Router();
 
@@ -25,6 +25,15 @@ router.post(
     authorize('SELLER', 'ADMIN'),
     validate(createProductSchema),
     createProduct
+);
+
+// PUT /api/products/:id
+router.put(
+    '/:id',
+    authenticate,
+    authorize('SELLER', 'ADMIN'),
+    validate(updateProductSchema),
+    updateProduct
 );
 
 export default router;

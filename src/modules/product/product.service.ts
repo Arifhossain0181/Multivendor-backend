@@ -34,19 +34,35 @@ const mapProduct = (product: any) => {
     const primaryImage = product.imageUrls?.[0];
     const stock = getInventoryQuantity(product.inventory);
 
+    const viewCount = product._count?.views ?? 0;
+    const reviewCount = product._count?.reviews ?? product.reviews?.length ?? 0;
+    const averageRating = product.reviews?.length 
+        ? product.reviews.reduce((acc: number, r: any) => acc + r.rating, 0) / product.reviews.length
+        : 0;
+
+    const sizes = Array.from(new Set(product.variants?.map((v: any) => v.name) || [])).filter(Boolean);
+    const colors = ["Standard"];
+
     return {
         id: product.id,
         name: product.name,
         price: toNumber(primaryVariant?.price ?? 0),
         imageUrl: primaryImage ?? DEFAULT_PRODUCT_IMAGE_URL,
+        imageUrls: product.imageUrls ?? [],
         description: product.description,
         stock,
+        categoryId: product.categoryId,
         variants: (product.variants ?? []).map((variant: any) => ({
             id: variant.id,
             name: variant.name,
             sku: variant.sku,
             price: toNumber(variant.price),
         })),
+        viewCount,
+        reviewCount,
+        averageRating,
+        sizes: sizes.length ? sizes : ["Default"],
+        colors,
     };
 };
 
@@ -150,6 +166,12 @@ export const getPublicProducts = async (page = 1, pageSize = 12) => {
             include: {
                 variants: true,
                 inventory: true,
+                reviews: {
+                    select: { rating: true }
+                },
+                _count: {
+                    select: { views: true, reviews: true }
+                }
             },
         }),
     ]);
@@ -166,11 +188,18 @@ export const getPublicProducts = async (page = 1, pageSize = 12) => {
 };
 
 export const getPublicProductById = async (id: string) => {
+    // Try ACTIVE first; fall back to any status so admins can load DRAFT products for editing
     const product = await prisma.product.findFirst({
-        where: { id, status: "ACTIVE" },
+        where: { id },
         include: {
             variants: true,
             inventory: true,
+            reviews: {
+                select: { rating: true }
+            },
+            _count: {
+                select: { views: true, reviews: true }
+            }
         },
     });
 
@@ -235,7 +264,8 @@ export const updateProduct = async (
     }
 
     return await prisma.$transaction(async (tx: any) => {
-        const updatedProduct = await tx.product.update({
+        // 1. Update product core fields
+        await tx.product.update({
             where: { id },
             data: {
                 name: productData.title !== undefined ? productData.title : undefined,
@@ -245,26 +275,59 @@ export const updateProduct = async (
             },
         });
 
-        if (productData.variants !== undefined) {
-            await tx.productVariant.deleteMany({
-                where: { productId: id }
-            });
+        // 2. Handle variants safely via UPSERT (never delete variants that may be in orders/cart)
+        if (productData.variants !== undefined && productData.variants.length > 0) {
+            for (const variant of productData.variants) {
+                const price = Number(
+                    variant.attributes?.price ??
+                    productData.price ??
+                    existingProduct.variants?.[0]?.price ??
+                    0
+                );
+                const variantName = variant.attributes?.label ?? variant.sku;
 
-            if (productData.variants.length) {
-                for (const variant of productData.variants) {
-                    const createdVariant = await tx.productVariant.create({
+                // Upsert by SKU — update if exists, create if not
+                const existingVariant = await tx.productVariant.findFirst({
+                    where: { productId: id, sku: variant.sku },
+                });
+
+                let variantId: string;
+
+                if (existingVariant) {
+                    // Update existing variant in-place (preserves FK refs from orders/cart)
+                    await tx.productVariant.update({
+                        where: { id: existingVariant.id },
+                        data: { name: variantName, price },
+                    });
+                    variantId = existingVariant.id;
+                } else {
+                    // Create brand-new variant
+                    const created = await tx.productVariant.create({
                         data: {
                             productId: id,
-                            name: variant.attributes?.label ?? variant.sku,
+                            name: variantName,
                             sku: variant.sku,
-                            price: Number(variant.attributes?.price ?? productData.price ?? existingProduct.price ?? 0),
+                            price,
                         },
                     });
+                    variantId = created.id;
+                }
 
+                // Upsert inventory for this variant
+                const existingInventory = await tx.productInventory.findUnique({
+                    where: { variantId },
+                });
+
+                if (existingInventory) {
+                    await tx.productInventory.update({
+                        where: { variantId },
+                        data: { availableQty: variant.availableQty },
+                    });
+                } else {
                     await tx.productInventory.create({
                         data: {
                             productId: id,
-                            variantId: createdVariant.id,
+                            variantId,
                             availableQty: variant.availableQty,
                         },
                     });

@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { errorHandler } from './middleware/errorHandler';
-
+import productViewRoutes from "./modules/Productview/Product.router";
 
 import authRouter from './modules/auth/auth.router';
 import userRouter from './modules/user/user.routes';
@@ -52,7 +52,7 @@ app.use('/api/orders', orderRouter);
 app.use('/api/fulfillments', fulfillmentRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/api/admin', adminRouter);
-
+app.use("/api", productViewRoutes);
 
 app.use(errorHandler);
 

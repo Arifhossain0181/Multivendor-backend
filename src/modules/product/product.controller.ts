@@ -79,6 +79,50 @@ export const createProduct = async (req: Request, res: Response) => {
     }
 };
 
+export const updateProduct = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { title, description, price, categoryId, images, variants } = req.body;
+
+        if (typeof id !== "string" || !id) {
+            return res.status(400).json({
+                success: false,
+                error: "Invalid product id",
+            });
+        }
+
+        const product = await productService.updateProduct(id, {
+            title,
+            description,
+            price,
+            categoryId,
+            images,
+            variants,
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Product updated successfully",
+            data: product,
+        });
+    } catch (error: any) {
+        // Always log the real error to the terminal
+        console.error("[UPDATE_PRODUCT_ERROR]", error?.stack || error?.message || error);
+
+        try {
+            require("fs").appendFileSync(
+                require("path").join(process.cwd(), "dev.err.log"),
+                new Date().toISOString() + " UPDATE_PRODUCT_ERROR: " + (error.stack || error.message || String(error)) + "\n"
+            );
+        } catch (e) { }
+
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            error: error.message || "Internal Server Error",
+        });
+    }
+};
+
 export const listProducts = async (req: Request, res: Response) => {
     try {
         const page = parsePageParam(req.query.page, 1);

@@ -1,16 +1,28 @@
 
 import { prisma } from '../../prisma/client';
 import { ApiError } from '../../utlits/ApiError.js';
-export const createCategory = async(name: string, slug: string) => {
+import { uploadImage } from '../../config/cloudinary.js';
+
+export const createCategory = async(name: string, slug: string , imageUrl?: string) => {
     const existingCategory = await prisma.category.findUnique({
         where: { slug },
     })
     if (existingCategory) {
         throw new Error('Category with this slug already exists');
     }
+
+    let uploadedImageUrl: string | undefined;
+    if (imageUrl && imageUrl.startsWith('data:image/')) {
+        uploadedImageUrl = await uploadImage(imageUrl, 'categories');
+    } else {
+        uploadedImageUrl = imageUrl;
+    }
+
     return await prisma.category.create({
         data: {
-            name,slug
+            name,
+            slug,
+            imageUrl: uploadedImageUrl,
         }
     })
 }
@@ -21,7 +33,8 @@ export const getAllCategories = async() => {
         select :{
             id:true,
             name:true,
-            slug:true
+            slug:true ,
+            imageUrl:true
 
         },
         orderBy:{
@@ -30,7 +43,7 @@ export const getAllCategories = async() => {
     })
 }
 
-export const updateCategoryById = async (id: string, data: { name?: string; slug?: string }) => {
+export const updateCategoryById = async (id: string, data: { name?: string; slug?: string; imageUrl?: string }) => {
     const category = await prisma.category.findUnique({ where: { id } });
     if (!category) {
        throw new ApiError(
@@ -51,9 +64,17 @@ export const updateCategoryById = async (id: string, data: { name?: string; slug
         }
     }
 
+    let uploadedImageUrl = data.imageUrl;
+    if (data.imageUrl && data.imageUrl.startsWith('data:image/')) {
+        uploadedImageUrl = await uploadImage(data.imageUrl, 'categories');
+    }
+
     return await prisma.category.update({
         where: { id },
-        data,
+        data: {
+            ...data,
+            imageUrl: uploadedImageUrl,
+        },
     });
 }
 

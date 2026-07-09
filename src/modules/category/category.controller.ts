@@ -4,8 +4,8 @@ import * as categoryService from './category.service';
 // ১. Create Category (Admin Only)
 export const create = async (req: Request, res: Response) => {
     try {
-        const { name, slug } = req.body;
-        const category = await categoryService.createCategory(name, slug);
+        const { name, slug, imageUrl } = req.body;
+        const category = await categoryService.createCategory(name, slug, imageUrl);
 
         return res.status(201).json({
             success: true,
@@ -38,9 +38,9 @@ export const list = async (req: Request, res: Response) => {
 export const update = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const { name, slug } = req.body;
+        const { name, slug , imageUrl} = req.body;
 
-        const updatedCategory = await categoryService.updateCategoryById(id as string, { name, slug });
+        const updatedCategory = await categoryService.updateCategoryById(id as string, { name, slug, imageUrl });
 
         return res.status(200).json({
             success: true,

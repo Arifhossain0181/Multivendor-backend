@@ -451,10 +451,6 @@ export type EnumMasterOrderStatusFieldUpdateOperationsInput = {
   set?: $Enums.MasterOrderStatus
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
-}
-
 export type MasterOrderCreateNestedOneWithoutSubOrdersInput = {
   create?: Prisma.XOR<Prisma.MasterOrderCreateWithoutSubOrdersInput, Prisma.MasterOrderUncheckedCreateWithoutSubOrdersInput>
   connectOrCreate?: Prisma.MasterOrderCreateOrConnectWithoutSubOrdersInput
