@@ -5,9 +5,8 @@ import * as orderService from './order.service';
 
 export const getMyOrders = async (req: Request, res: Response) => {
     try {
-        const userId = (req as any).user.id; // FIXED: was req.use.id
+        const userId = (req as any).user.id;
 
-        // parse to number with fallback defaults
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
 
@@ -34,6 +33,27 @@ export const getMyOrderDetails = async (req: Request, res: Response) => {
             success: true,
             message: 'Order details retrieved successfully',
             data: order
+        });
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        return res.status(statusCode).json({
+            success: false,
+            error: error.message || 'Internal Server Error'
+        });
+    }
+};
+
+export const receiveOrder = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user.id;
+        const masterOrderId = req.params.id;
+
+        const result = await orderService.markOrderAsReceived(userId, masterOrderId as string);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Order marked as received. All seller packages updated.',
+            data: result
         });
     } catch (error: any) {
         const statusCode = error.statusCode || 500;

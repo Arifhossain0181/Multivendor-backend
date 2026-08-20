@@ -431,3 +431,68 @@ export const listOrders = async (page?: number, limit?: number) => {
     limit: take,
   };
 };
+
+export const listFulfillments = async (page?: number, limit?: number) => {
+  const { skip, limit: take, page: currentPage } = clampPage(page, limit);
+
+  const [total, subOrders] = await prisma.$transaction([
+    prisma.subOrder.count(),
+    prisma.subOrder.findMany({
+      skip,
+      take,
+      orderBy: { createdAt: "desc" },
+      include: {
+        items: true,
+        seller: {
+          select: {
+            shopName: true,
+            user: {
+              select: {
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+        masterOrder: {
+          select: {
+            id: true,
+            status: true,
+            customer: {
+              select: {
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    }),
+  ]);
+
+  return {
+    items: subOrders.map((subOrder) => ({
+      id: subOrder.id,
+      masterOrderId: subOrder.masterOrderId,
+      status: subOrder.status,
+      subtotal: toNumber(subOrder.subtotal),
+      itemCount: subOrder.items.length,
+      sellerName: subOrder.seller?.shopName ?? "Unknown seller",
+      sellerEmail: subOrder.seller?.user?.email ?? "",
+      customerName: subOrder.masterOrder?.customer?.name ?? "Unknown customer",
+      customerEmail: subOrder.masterOrder?.customer?.email ?? "",
+      masterOrderStatus: subOrder.masterOrder?.status ?? "UNKNOWN",
+      createdAt: toIso(subOrder.createdAt),
+      items: subOrder.items.map((item) => ({
+        id: item.id,
+        productName: item.productName,
+        variantName: item.variantName,
+        quantity: item.quantity,
+        unitPrice: toNumber(item.unitPrice),
+      })),
+    })),
+    total,
+    page: currentPage,
+    limit: take,
+  };
+};

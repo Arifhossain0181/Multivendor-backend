@@ -1,4 +1,5 @@
 import { prisma } from "../../prisma/client";
+import { ApiError } from "../../utlits/ApiError.js";
 
 export const getCustomerOrders = async (
   userId: string,
@@ -51,6 +52,7 @@ export const getCustomerOrders = async (
     },
   };
 };
+
 // *Get Master Order Details by ID (With full line items snapshot)
 export const getOrderDetails = async (
   userId: string,
@@ -78,4 +80,63 @@ export const getOrderDetails = async (
   }
 
   return order;
+};
+
+// *Mark Order as Received — auto-deliver all sub-orders
+export const markOrderAsReceived = async (
+  userId: string,
+  masterOrderId: string,
+) => {
+  const order = await prisma.masterOrder.findFirst({
+    where: {
+      id: masterOrderId,
+      customerId: userId,
+    },
+    include: {
+      subOrders: true,
+    },
+  });
+
+  if (!order) {
+    throw ApiError.notFound("Order not found");
+  }
+
+  if (order.status === "CANCELLED") {
+    throw ApiError.badRequest("Cannot mark a cancelled order as received");
+  }
+
+  if (order.status === "COMPLETED") {
+    throw ApiError.badRequest("Order is already completed");
+  }
+
+  // Update all non-cancelled sub-orders to DELIVERED
+  const updatedSubOrders = await prisma.subOrder.updateMany({
+    where: {
+      masterOrderId,
+      status: {
+        not: "CANCELLED",
+      },
+    },
+    data: {
+      status: "DELIVERED",
+    },
+  });
+
+  // Update master order to COMPLETED
+  const updatedOrder = await prisma.masterOrder.update({
+    where: { id: masterOrderId },
+    data: { status: "COMPLETED" },
+    include: {
+      subOrders: {
+        include: {
+          items: true,
+        },
+      },
+    },
+  });
+
+  return {
+    order: updatedOrder,
+    updatedSubOrdersCount: updatedSubOrders.count,
+  };
 };

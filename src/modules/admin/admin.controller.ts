@@ -113,14 +113,29 @@ export const deleteProduct = async (req: Request, res: Response) => {
 };
 
 export const getOrders = async (req: Request, res: Response) => {
-  try {
-    const page = parsePage(req.query.page, 1);
-    const limit = parseLimit(req.query.limit, 10);
-    const orders = await adminService.listOrders(page, limit);
-    return res.status(200).json(orders);
-  } catch (error: any) {
-    return res.status(error.statusCode || 500).json({
-      error: error.message || 'Internal Server Error',
-    });
-  }
+    try {
+        const page = parsePage(req.query.page, 1);
+        const limit = parseLimit(req.query.limit, 10);
+        const orders = await adminService.listOrders(page, limit);
+        return res.status(200).json(orders);
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        return res.status(statusCode).json({
+            error: error.message || 'Internal Server Error',
+        });
+    }
+};
+
+export const getFulfillments = async (req: Request, res: Response) => {
+    try {
+        const page = parsePage(req.query.page, 1);
+        const limit = parseLimit(req.query.limit, 10);
+        const result = await adminService.listFulfillments(page, limit);
+        return res.status(200).json(result);
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        return res.status(statusCode).json({
+            error: error.message || 'Internal Server Error',
+        });
+    }
 };

@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { getMyOrders, getMyOrderDetails } from './order.controller';
+import { getMyOrders, getMyOrderDetails, receiveOrder } from './order.controller';
 import { authenticate } from '../../middleware/authenticate.js';
-import { getOrderQuerySchema, getOrderParamsSchema } from './order.schema';
 import { validate } from '../../middleware/validation.js';
+import { getOrderQuerySchema, getOrderParamsSchema, receiveOrderParamsSchema } from './order.schema';
+
 const router = Router();
 
 router.use(authenticate);
@@ -12,5 +13,8 @@ router.get('/', validate(getOrderQuerySchema), getMyOrders);
 
 // GET /api/orders/:id -
 router.get('/:id', validate(getOrderParamsSchema), getMyOrderDetails);
+
+// PATCH /api/orders/:id/receive - User marks order as received
+router.patch('/:id/receive', validate(receiveOrderParamsSchema), receiveOrder);
 
 export default router;

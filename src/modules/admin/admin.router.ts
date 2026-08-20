@@ -7,6 +7,7 @@ import {
   getUsers,
   updateProduct,
   updateSeller,
+  getFulfillments,
 } from './admin.controller';
 import { authenticate } from '../../middleware/authenticate.js';
 import { authorize } from '../../middleware/authorize.js';
@@ -22,5 +23,6 @@ router.get('/products', getProducts);
 router.patch('/products/:id/status', updateProduct);
 router.delete('/products/:id', deleteProduct);
 router.get('/orders', getOrders);
+router.get('/fulfillments', getFulfillments);
 
 export default router;

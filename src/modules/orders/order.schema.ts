@@ -12,3 +12,9 @@ export const getOrderParamsSchema = z.object({
         id: z.string().uuid('Invalid order ID'),
     }),
 });
+
+export const receiveOrderParamsSchema = z.object({
+    params: z.object({
+        id: z.string().uuid('Invalid order ID'),
+    }),
+});

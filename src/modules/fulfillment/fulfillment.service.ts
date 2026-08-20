@@ -14,8 +14,18 @@ export const getSellerSubOrders = async (sellerId: string, page: number, limit: 
             skip,
             take: limit,
             include: {
-                items: {
-                    include: { product: { select: { title: true } } }
+                items: true,
+                masterOrder: {
+                    select: {
+                        id: true,
+                        status: true,
+                        customer: {
+                            select: {
+                                name: true,
+                                email: true,
+                            }
+                        }
+                    }
                 }
             },
             orderBy: { createdAt: 'desc' }
