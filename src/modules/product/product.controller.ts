@@ -37,12 +37,14 @@ export const createProduct = async (req: Request, res: Response) => {
             });
         }
 
-        if (sellerProfile.status === "REJECTED" && user.role !== "ADMIN") {
+        if ((sellerProfile.status === "REJECTED" || sellerProfile.status === "PENDING") && user.role !== "ADMIN") {
             return res.status(403).json({
                 success: false,
-                error: "Your seller account is rejected and cannot create products.",
+                error: "Your seller account is not approved and cannot create products.",
             });
         }
+
+        const productStatus = sellerProfile.status === "APPROVED" || user.role === "ADMIN" ? "ACTIVE" : "DRAFT";
 
         // 2. Call service (ONLY 2 args via object)
         const product = await productService.createProductBySeller(
@@ -54,6 +56,7 @@ export const createProduct = async (req: Request, res: Response) => {
                 categoryId,
                 images,
                 variants,
+                status: productStatus,
             }
         );
 
@@ -127,8 +130,9 @@ export const listProducts = async (req: Request, res: Response) => {
     try {
         const page = parsePageParam(req.query.page, 1);
         const pageSize = parsePageParam(req.query.pageSize, 12);
+        const categoryId = typeof req.query.categoryId === "string" ? req.query.categoryId : undefined;
 
-        const result = await productService.getPublicProducts(page, pageSize);
+        const result = await productService.getPublicProducts(page, pageSize, categoryId);
 
         return res.status(200).json(result);
     } catch (error: any) {

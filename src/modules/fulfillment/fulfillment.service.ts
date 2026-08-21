@@ -79,8 +79,14 @@ export const transitionSubOrderStatus = async (subOrderId: string, sellerId: str
                 }
             });
 
-            // 
-            if (totalSubOrdersCount === deliveredSubOrdersCount) {
+            const cancelledSubOrdersCount = await tx.subOrder.count({
+                where: {
+                    masterOrderId: subOrder.masterOrderId,
+                    status: 'CANCELLED'
+                }
+            });
+
+            if (totalSubOrdersCount === deliveredSubOrdersCount && cancelledSubOrdersCount === 0) {
                 await tx.masterOrder.update({
                     where: { id: subOrder.masterOrderId },
                     data: { status: 'COMPLETED' }

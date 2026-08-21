@@ -14,20 +14,12 @@ export const initiateCheckout = async (req: Request, res: Response) => {
             data: result // 
         });
     } catch (error: any) {
-        // 
-        if (error.statusCode === 409) {
-            try {
-                const parsedError = JSON.parse(error.message);
-                if (parsedError.message === 'INSUFFICIENT_STOCK') {
-                    return res.status(409).json({
-                        success: false,
-                        error: 'INSUFFICIENT_STOCK',
-                        shortages: parsedError.shortages
-                    });
-                }
-            } catch (e) {
-                // JSON
-            }
+        if (error.statusCode === 409 && error.code === 'INSUFFICIENT_STOCK') {
+            return res.status(409).json({
+                success: false,
+                error: 'INSUFFICIENT_STOCK',
+                shortages: error.data
+            });
         }
 
         const statusCode = error.statusCode || 500;

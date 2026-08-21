@@ -79,6 +79,7 @@ export const createProductBySeller = async (
             attributes: any;
             availableQty: number;
         }>;
+        status?: "DRAFT" | "ACTIVE" | "BLOCKED";
     }
 ) => {
     // 1. Check category exists
@@ -114,7 +115,7 @@ export const createProductBySeller = async (
                 imageUrls,
                 categoryId: productData.categoryId,
                 sellerId,
-                status: "DRAFT",
+                status: productData.status ?? "DRAFT",
             },
         });
 
@@ -152,14 +153,19 @@ export const createProductBySeller = async (
     });
 };
 
-export const getPublicProducts = async (page = 1, pageSize = 12) => {
+export const getPublicProducts = async (page = 1, pageSize = 12, categoryId?: string) => {
     const take = Math.max(1, Math.min(pageSize, 50));
     const skip = (Math.max(1, page) - 1) * take;
 
+    const where: any = { status: "ACTIVE" };
+    if (categoryId) {
+        where.categoryId = categoryId;
+    }
+
     const [total, products] = await prisma.$transaction([
-        prisma.product.count({ where: { status: "ACTIVE" } }),
+        prisma.product.count({ where }),
         prisma.product.findMany({
-            where: { status: "ACTIVE" },
+            where,
             skip,
             take,
             orderBy: { createdAt: "desc" },
@@ -188,9 +194,8 @@ export const getPublicProducts = async (page = 1, pageSize = 12) => {
 };
 
 export const getPublicProductById = async (id: string) => {
-    // Try ACTIVE first; fall back to any status so admins can load DRAFT products for editing
     const product = await prisma.product.findFirst({
-        where: { id },
+        where: { id, status: "ACTIVE" },
         include: {
             variants: true,
             inventory: true,

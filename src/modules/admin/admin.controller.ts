@@ -27,7 +27,8 @@ export const getUsers = async (req: Request, res: Response) => {
     const role = typeof req.query.role === 'string' ? req.query.role : undefined;
     const page = parsePage(req.query.page, 1);
     const limit = parseLimit(req.query.limit, 10);
-    const users = await adminService.listUsers(role, page, limit);
+    const hasPaidOrders = req.query.hasPaidOrders === 'true';
+    const users = await adminService.listUsers(role, page, limit, { hasPaidOrders });
     return res.status(200).json(users);
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
@@ -50,6 +51,28 @@ export const updateSeller = async (req: Request, res: Response) => {
     }
 
     const updated = await adminService.updateSellerStatus(id, status);
+    return res.status(200).json(updated);
+  } catch (error: any) {
+    return res.status(error.statusCode || 500).json({
+      error: error.message || 'Internal Server Error',
+    });
+  }
+};
+
+export const toggleUserActive = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { isActive } = req.body;
+
+    if (typeof id !== 'string' || !id) {
+      return res.status(400).json({ error: 'Invalid user id' });
+    }
+
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({ error: 'isActive must be a boolean' });
+    }
+
+    const updated = await adminService.toggleUserActive(id, isActive);
     return res.status(200).json(updated);
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
@@ -131,6 +154,19 @@ export const getFulfillments = async (req: Request, res: Response) => {
         const page = parsePage(req.query.page, 1);
         const limit = parseLimit(req.query.limit, 10);
         const result = await adminService.listFulfillments(page, limit);
+        return res.status(200).json(result);
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        return res.status(statusCode).json({
+            error: error.message || 'Internal Server Error',
+        });
+    }
+};
+
+export const cancelOrder = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const result = await adminService.cancelOrder(id as string);
         return res.status(200).json(result);
     } catch (error: any) {
         const statusCode = error.statusCode || 500;

@@ -8,6 +8,7 @@ import {
     logout
 } from './auth.controller';
 import { authenticate } from '../../middleware/authenticate';
+import { rateLimit } from '../../middleware/rateLimit';
 
 const authRouter = Router();
 
@@ -15,15 +16,15 @@ const authRouter = Router();
 // PUBLIC ROUTES 
 
 // 
-authRouter.post('/register', register);
+authRouter.post('/register', rateLimit(60000, 10), register);
 
 // 
-authRouter.post('/login', login);
+authRouter.post('/login', rateLimit(60000, 10), login);
 
 // 
 authRouter.post('/refresh-token', refresh);
 
-authRouter.post('/logout', logout);
+authRouter.post('/logout', authenticate, logout);
 
 // PROTECTED ROUTES
 

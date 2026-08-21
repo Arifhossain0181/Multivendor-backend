@@ -1,17 +1,17 @@
 import { prisma } from "../../prisma/client.js";
 
 export const batchFetchStock = async (variantIds: string[]) => {
-    return await prisma.productVariant.findMany({
+    return await prisma.productInventory.findMany({
         where:{
-            id:{
+            variantId:{
                 in:variantIds
             }
         },
         select:{
             id:true,
-            sku:true,
+            variantId:true,
             availableQty:true,
-                product:true
+            productId:true,
         }
     })
 }
@@ -35,11 +35,11 @@ if(updated.count === 0){
 }
 
 export const restoreStock = async (tx: any, variantId: string, quantity: number) => {
-    await tx.productVariant.update({
-        where: { id: variantId },
+    await tx.productInventory.updateMany({
+        where: { variantId },
         data: {
             availableQty: {
-                increment: quantity //
+                increment: quantity
             }
         }
     });

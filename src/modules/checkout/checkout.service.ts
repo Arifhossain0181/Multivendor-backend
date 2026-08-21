@@ -16,44 +16,52 @@ function getStripe() {
 
 
 export const processCheckout= async (userId:string,shippingAddress: string)=>{
-   const cart = await prisma.cart.findUnique({
-        where: { customerId: userId },
-        include: {
-            items: {
-                include: {
-                    product: { select: { name: true, sellerId: true } },
-                    variant: {
-                        select: {
-                            id: true,
-                            name: true,
-                            price: true,
-                            inventory: { select: { availableQty: true } }
-                        }
-                    }
-                }
-            }
-        }
-    });
+    const cart = await prisma.cart.findUnique({
+         where: { customerId: userId },
+         include: {
+             items: {
+                 include: {
+                     product: { select: { name: true, sellerId: true } },
+                     variant: {
+                         select: {
+                             id: true,
+                             name: true,
+                             price: true,
+                         }
+                     }
+                 }
+             }
+         }
+     });
 
-    if (!cart || cart.items.length === 0) {
-        throw new ApiError(400, 'BAD_REQUEST', 'Cart is empty');
-    }
-    const shortages: Array<{ variantId: string; title: string; availableQty: number; requestedQty: number }> = [];
+     if (!cart || cart.items.length === 0) {
+         throw new ApiError(400, 'BAD_REQUEST', 'Cart is empty');
+     }
 
-    for (const item of cart.items) {
-        const availableQty = item.variant.inventory?.availableQty ?? 0;
-        if (availableQty < item.quantity) {
-            shortages.push({
-                variantId: item.variantId,
-                title: `${item.product.name} (${item.variant.name})`,
-                availableQty,
-                requestedQty: item.quantity
-            });
-        }
-    }
-    if (shortages.length > 0) {
-        throw new ApiError(409, 'INSUFFICIENT_STOCK', 'Insufficient stock', shortages);
-    }
+     const variantIds = cart.items.map((item: any) => item.variantId);
+     const stockMap = await inventoryService.batchFetchStock(variantIds);
+     const stockByVariantId = new Map<string, { variantId: string; availableQty: number }>();
+     for (const s of stockMap) {
+         stockByVariantId.set(s.variantId, { variantId: s.variantId, availableQty: s.availableQty });
+     }
+
+     const shortages: Array<{ variantId: string; title: string; availableQty: number; requestedQty: number }> = [];
+
+     for (const item of cart.items) {
+         const stock = stockByVariantId.get(item.variantId);
+         const availableQty = stock?.availableQty ?? 0;
+         if (availableQty < item.quantity) {
+             shortages.push({
+                 variantId: item.variantId,
+                 title: `${item.product.name} (${item.variant.name})`,
+                 availableQty,
+                 requestedQty: item.quantity
+             });
+         }
+     }
+     if (shortages.length > 0) {
+         throw new ApiError(409, 'INSUFFICIENT_STOCK', 'Insufficient stock', shortages);
+     }
     let totalAmount = 0;
     const itemsBySeller: Record<string, typeof cart.items> = {};
 
@@ -66,6 +74,8 @@ export const processCheckout= async (userId:string,shippingAddress: string)=>{
         itemsBySeller[item.sellerId].push(item);
     }
 
+    let masterOrderId: string | null = null;
+
     const { masterOrder } = await prisma.$transaction(async (tx :any ) => {
         
         const master = await tx.masterOrder.create({
@@ -75,6 +85,7 @@ export const processCheckout= async (userId:string,shippingAddress: string)=>{
                 status: 'PENDING_PAYMENT',
             }
         });
+        masterOrderId = master.id;
         for (const [sellerId, sellerItems] of Object.entries(itemsBySeller)) {
             let subTotal = sellerItems.reduce((sum :any, item :any) => sum + (Number(item.variant.price) * item.quantity), 0);
 
@@ -101,7 +112,7 @@ export const processCheckout= async (userId:string,shippingAddress: string)=>{
         return { masterOrder: master };
     });
 
-const lineItems = cart.items.map((item:any) => ({
+    const lineItems = cart.items.map((item:any) => ({
         price_data: {
             currency: 'usd',
             product_data: {
@@ -112,18 +123,27 @@ const lineItems = cart.items.map((item:any) => ({
         },
         quantity: item.quantity,
     }));
-    const session = await getStripe().checkout.sessions.create({
-        payment_method_types: ['card'],
-        line_items: lineItems,
-        mode: 'payment',
-        success_url: `${process.env.FRONTEND_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.FRONTEND_URL}/checkout/cancel`,
-        // 
-        metadata: {
-            masterOrderId: masterOrder.id,
-            userId
-        }
-    });
+    
+    let session;
+    try {
+        session = await getStripe().checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: lineItems,
+            mode: 'payment',
+            success_url: `${process.env.FRONTEND_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/checkout/cancel`,
+            // 
+            metadata: {
+                masterOrderId: masterOrder.id,
+                userId
+            }
+        });
+    } catch (stripeError: any) {
+        await prisma.masterOrder.delete({
+            where: { id: masterOrder.id },
+        });
+        throw new ApiError(500, 'STRIPE_SESSION_FAILED', 'Failed to create Stripe checkout session');
+    }
 
     return { stripeUrl: session.url, masterOrderId: masterOrder.id };
 };
@@ -136,7 +156,6 @@ export const verifyCheckoutSuccess = async (sessionId: string) => {
     );
   }
 
-  // Retrieve Stripe Checkout Session
   const session = await getStripe().checkout.sessions.retrieve(sessionId);
 
   if (!session) {
@@ -174,44 +193,9 @@ export const verifyCheckoutSuccess = async (sessionId: string) => {
     throw ApiError.notFound("Order not found");
   }
 
-  const userId = session.metadata?.userId;
-  let resolvedOrder = order;
-
-  if (order.status !== "PAID") {
-    await prisma.$transaction(async (tx: any) => {
-      for (const subOrder of order.subOrders) {
-        for (const item of subOrder.items) {
-          await inventoryService.atomicDeduct(tx, item.variantId, item.quantity);
-        }
-      }
-
-      await tx.masterOrder.update({
-        where: { id: masterOrderId },
-        data: { status: "PAID" },
-      });
-    });
-
-    resolvedOrder = (await prisma.masterOrder.findUnique({
-      where: {
-        id: masterOrderId,
-      },
-      include: {
-        subOrders: {
-          include: {
-            items: true,
-          },
-        },
-      },
-    })) ?? order;
-  }
-
-  if (userId) {
-    await clearCart(userId);
-  }
-
   return {
-    order: resolvedOrder,
-    paymentStatus: "paid",
-    orderId: resolvedOrder.id,
+    order,
+    paymentStatus: session.payment_status,
+    orderId: order.id,
   };
 };

@@ -122,10 +122,15 @@ export const markOrderAsReceived = async (
     },
   });
 
-  // Update master order to COMPLETED
-  const updatedOrder = await prisma.masterOrder.update({
+  const hasCancelledSubOrders = await prisma.subOrder.count({
+    where: {
+      masterOrderId,
+      status: "CANCELLED",
+    },
+  });
+
+  let updatedOrder = await prisma.masterOrder.findUnique({
     where: { id: masterOrderId },
-    data: { status: "COMPLETED" },
     include: {
       subOrders: {
         include: {
@@ -134,6 +139,20 @@ export const markOrderAsReceived = async (
       },
     },
   });
+
+  if (hasCancelledSubOrders === 0) {
+    updatedOrder = await prisma.masterOrder.update({
+      where: { id: masterOrderId },
+      data: { status: "COMPLETED" },
+      include: {
+        subOrders: {
+          include: {
+            items: true,
+          },
+        },
+      },
+    });
+  }
 
   return {
     order: updatedOrder,

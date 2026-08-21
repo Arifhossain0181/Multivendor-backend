@@ -1,5 +1,6 @@
 import { prisma } from "../../prisma/client";
 import { ApiError } from "../../utlits/ApiError.js";
+import * as inventoryService from "../inventory/inventory.service.js";
 
 type SellerModerationStatus = "APPROVED" | "REJECTED" | "PENDING" | "SUSPENDED";
 type ProductModerationStatus = "ACTIVE" | "BLOCKED";
@@ -51,25 +52,35 @@ const clampPage = (page?: number, limit?: number) => {
   };
 };
 
-const mapUser = (user: any) => ({
-  id: user.id,
-  name: user.name,
-  email: user.email,
-  role: user.role,
-  sellerStatus: user.sellerProfile?.status ?? null,
-  shopName: user.sellerProfile?.shopName ?? null,
-  paidOrderCount: (user.masterOrders ?? []).filter((order: any) =>
+const mapUser = (user: any) => {
+  const successfulOrders = (user.masterOrders ?? []).filter((order: any) =>
     ["PAID", "COMPLETED"].includes(order.status),
-  ).length,
-  lastPaidOrderAt:
-    (user.masterOrders ?? [])
-      .filter((order: any) => ["PAID", "COMPLETED"].includes(order.status))
-      .sort(
-        (a: any, b: any) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      )[0]?.createdAt ?? null,
-  createdAt: toIso(user.createdAt),
-});
+  );
+
+  const totalPaidAmount = successfulOrders.reduce(
+    (sum: number, order: any) => sum + toNumber(order.totalAmount),
+    0,
+  );
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    isActive: user.isActive ?? true,
+    sellerStatus: user.sellerProfile?.status ?? null,
+    shopName: user.sellerProfile?.shopName ?? null,
+    paidOrderCount: successfulOrders.length,
+    totalPaidAmount,
+    lastPaidOrderAt:
+      successfulOrders
+        .sort(
+          (a: any, b: any) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        )[0]?.createdAt ?? null,
+    createdAt: toIso(user.createdAt),
+  };
+};
 
 const mapProduct = (product: any) => {
   const firstVariant = product.variants?.[0];
@@ -138,9 +149,20 @@ export const listUsers = async (
   role?: string,
   page?: number,
   limit?: number,
+  filters?: { hasPaidOrders?: boolean },
 ) => {
   const { skip, limit: take, page: currentPage } = clampPage(page, limit);
-  const where = role && role !== "ALL" ? { role } : {};
+  const where: any = role && role !== "ALL" ? { role } : {};
+
+  if (filters?.hasPaidOrders) {
+    where.masterOrders = {
+      some: {
+        status: {
+          in: ["PAID", "COMPLETED"],
+        },
+      },
+    };
+  }
 
   const [total, users] = await prisma.$transaction([
     prisma.user.count({ where }),
@@ -154,6 +176,7 @@ export const listUsers = async (
         name: true,
         email: true,
         role: true,
+        isActive: true,
         createdAt: true,
         sellerProfile: {
           select: {
@@ -165,6 +188,7 @@ export const listUsers = async (
           select: {
             status: true,
             createdAt: true,
+            totalAmount: true,
           },
         },
       },
@@ -227,6 +251,44 @@ export const updateSellerStatus = async (
       updatedAt: toIso(updatedSeller.updatedAt),
     };
   });
+};
+
+export const toggleUserActive = async (userId: string, isActive: boolean) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, isActive: true },
+  });
+
+  if (!user) {
+    throw ApiError.notFound("User not found");
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: { isActive },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isActive: true,
+      createdAt: true,
+      sellerProfile: {
+        select: {
+          status: true,
+          shopName: true,
+        },
+      },
+      masterOrders: {
+        select: {
+          status: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+
+  return mapUser(updatedUser);
 };
 
 export const listProducts = async (
@@ -361,7 +423,7 @@ export const deleteProduct = async (productId: string) => {
     throw ApiError.notFound("Product not found");
   }
 
-  const hasOrderHistory = product.variants.some((variant) => variant.subOrderItems.length > 0);
+  const hasOrderHistory = product.variants.some((variant: any) => variant.subOrderItems.length > 0);
   if (hasOrderHistory) {
     throw ApiError.conflict(
       "PRODUCT_HAS_ORDER_HISTORY",
@@ -471,7 +533,7 @@ export const listFulfillments = async (page?: number, limit?: number) => {
   ]);
 
   return {
-    items: subOrders.map((subOrder) => ({
+    items: subOrders.map((subOrder: any) => ({
       id: subOrder.id,
       masterOrderId: subOrder.masterOrderId,
       status: subOrder.status,
@@ -483,7 +545,7 @@ export const listFulfillments = async (page?: number, limit?: number) => {
       customerEmail: subOrder.masterOrder?.customer?.email ?? "",
       masterOrderStatus: subOrder.masterOrder?.status ?? "UNKNOWN",
       createdAt: toIso(subOrder.createdAt),
-      items: subOrder.items.map((item) => ({
+      items: subOrder.items.map((item: any) => ({
         id: item.id,
         productName: item.productName,
         variantName: item.variantName,
@@ -495,4 +557,50 @@ export const listFulfillments = async (page?: number, limit?: number) => {
     page: currentPage,
     limit: take,
   };
+};
+
+export const cancelOrder = async (masterOrderId: string) => {
+  const masterOrder = await prisma.masterOrder.findUnique({
+    where: { id: masterOrderId },
+    include: {
+      subOrders: {
+        include: {
+          items: true,
+        },
+      },
+    },
+  });
+
+  if (!masterOrder) {
+    throw ApiError.notFound("Master order not found");
+  }
+
+  if (masterOrder.status === "CANCELLED") {
+    throw ApiError.badRequest("Order is already cancelled");
+  }
+
+  if (masterOrder.status === "COMPLETED") {
+    throw ApiError.badRequest("Completed orders cannot be cancelled");
+  }
+
+  await prisma.$transaction(async (tx: any) => {
+    for (const subOrder of masterOrder.subOrders) {
+      if (subOrder.status !== "CANCELLED") {
+        for (const item of subOrder.items) {
+          await inventoryService.restoreStock(tx, item.variantId, item.quantity);
+        }
+      }
+      await tx.subOrder.update({
+        where: { id: subOrder.id },
+        data: { status: "CANCELLED" },
+      });
+    }
+
+    await tx.masterOrder.update({
+      where: { id: masterOrderId },
+      data: { status: "CANCELLED" },
+    });
+  });
+
+  return { success: true, message: "Order cancelled and stock restored" };
 };

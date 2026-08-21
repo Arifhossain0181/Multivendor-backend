@@ -4,6 +4,7 @@ model User {
     passwordHash String
     name String
     role String  @default("CUSTOMER")
+    isActive Boolean @default(true)
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 

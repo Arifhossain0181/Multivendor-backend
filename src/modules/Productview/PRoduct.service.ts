@@ -33,46 +33,29 @@ export const productViewService = {
         return { counted: false };
       }
 
-      // Window pass hoye geche — record update kori, count barai
-      await prisma.$transaction([
-        prisma.productView.update({
-          where: { id: existing.id },
-          data: { viewedAt: now },
-        }),
-        prisma.product.update({
-          where: { id: productId },
-          data: { viewCount: { increment: 1 } },
-        }),
-      ]);
+      // Window pass hoye geche — record update kori
+      await prisma.productView.update({
+        where: { id: existing.id },
+        data: { viewedAt: now },
+      });
 
       return { counted: true };
     }
 
-    // Notun viewer — notun record banao, count barao
-    await prisma.$transaction([
-      prisma.productView.create({
-        data: { productId, viewerKey, viewedAt: now },
-      }),
-      prisma.product.update({
-        where: { id: productId },
-        data: { viewCount: { increment: 1 } },
-      }),
-    ]);
+    // Notun viewer — notun record banao
+    await prisma.productView.create({
+      data: { productId, viewerKey, viewedAt: now },
+    });
 
     return { counted: true };
   },
 
   // Admin/seller dashboard e total view count dekhanor jonno
   getViewCount: async (productId: string) => {
-    const product = await prisma.product.findUnique({
-      where: { id: productId },
-      select: { viewCount: true },
+    const count = await prisma.productView.count({
+      where: { productId },
     });
 
-    if (!product) {
-      throw new Error("Product not found");
-    }
-
-    return product.viewCount;
+    return count;
   },
 };

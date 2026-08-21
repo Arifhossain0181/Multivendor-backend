@@ -7,6 +7,7 @@ export const addProductReview = async (userId: string, productId: string, rating
         where:{
             masterOrder:{
                 userId,
+                status: "PAID",
             },
             items:{
                 some:{
@@ -17,13 +18,13 @@ export const addProductReview = async (userId: string, productId: string, rating
         }
     })
     if (!cligibleOrder) {
-        throw new ApiError(403,"ami ", 'Forbidden: You can only review products that have been successfully delivered to you.');
+        throw new ApiError(403,"REVIEW_NOT_ELIGIBLE", 'Forbidden: You can only review products from delivered and paid orders.');
     }
     const existingReview = await prisma.review.findFirst({
         where: { userId, productId }
     });
     if (existingReview) {
-        throw new ApiError(400, "bad",'Bad Request: You have already reviewed this product.');
+        throw new ApiError(400, "ALREADY_REVIEWED",'Bad Request: You have already reviewed this product.');
     }
     return await prisma.review.create({
         data: { userId, productId, rating, comment }
