@@ -1,0 +1,9 @@
+model PageContent {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("page_contents")
+}

@@ -14,9 +14,9 @@ export const productViewService = {
   trackView: async ({ productId , viewerKey }: TrackViewInput) => {
     const existing = await prisma.productView.findUnique({
       where: {
-        productId_viewerKey: {
-          productId : productId as string,
-          viewerKey,
+        productId_dedupeKey: {
+          productId: productId as string,
+          dedupeKey: viewerKey,
         },
       },
     });
@@ -44,7 +44,7 @@ export const productViewService = {
 
     // Notun viewer — notun record banao
     await prisma.productView.create({
-      data: { productId, viewerKey, viewedAt: now },
+      data: { productId, dedupeKey: viewerKey, viewedAt: now },
     });
 
     return { counted: true };

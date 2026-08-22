@@ -15,6 +15,8 @@ import orderRouter from './modules/orders/order.router';
 import fulfillmentRouter from './modules/fulfillment/fulfillment.router';
 import reviewRouter from './modules/review/review.routes';
 import adminRouter from './modules/admin/admin.router';
+import pageContentRouter from './modules/pageContent/pageContent.routes';
+import adminPageContentRouter from './modules/pageContent/admin.routes';
 
 const app = express();
 
@@ -52,6 +54,8 @@ app.use('/api/orders', orderRouter);
 app.use('/api/fulfillments', fulfillmentRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/page-content', pageContentRouter);
+app.use('/api/admin/page-content', adminPageContentRouter);
 app.use("/api", productViewRoutes);
 
 app.use(errorHandler);
