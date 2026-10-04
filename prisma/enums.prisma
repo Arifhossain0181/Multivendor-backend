@@ -2,6 +2,7 @@ enum Role {
   CUSTOMER
   VENDOR
   ADMIN
+  DELIVERY
 }
 
 enum SellerStatus {

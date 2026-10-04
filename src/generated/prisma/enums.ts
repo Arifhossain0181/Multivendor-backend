@@ -9,10 +9,20 @@
 * 🟢 You can import this file directly.
 */
 
+export const DeliveryStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type DeliveryStatus = (typeof DeliveryStatus)[keyof typeof DeliveryStatus]
+
+
 export const Role = {
   CUSTOMER: 'CUSTOMER',
   VENDOR: 'VENDOR',
-  ADMIN: 'ADMIN'
+  ADMIN: 'ADMIN',
+  DELIVERY: 'DELIVERY'
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]

@@ -9,6 +9,7 @@ model User {
     updatedAt DateTime @updatedAt
 
     sellerProfile SellerProfile?
+    deliveryManProfile DeliveryMan?
     cart Cart?
     masterOrders MasterOrder[]
     reviews Review[]

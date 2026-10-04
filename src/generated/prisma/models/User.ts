@@ -207,6 +207,7 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   sellerProfile?: Prisma.XOR<Prisma.SellerProfileNullableScalarRelationFilter, Prisma.SellerProfileWhereInput> | null
+  deliveryManProfile?: Prisma.XOR<Prisma.DeliveryManNullableScalarRelationFilter, Prisma.DeliveryManWhereInput> | null
   cart?: Prisma.XOR<Prisma.CartNullableScalarRelationFilter, Prisma.CartWhereInput> | null
   masterOrders?: Prisma.MasterOrderListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
@@ -223,6 +224,7 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   sellerProfile?: Prisma.SellerProfileOrderByWithRelationInput
+  deliveryManProfile?: Prisma.DeliveryManOrderByWithRelationInput
   cart?: Prisma.CartOrderByWithRelationInput
   masterOrders?: Prisma.MasterOrderOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
@@ -242,6 +244,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   sellerProfile?: Prisma.XOR<Prisma.SellerProfileNullableScalarRelationFilter, Prisma.SellerProfileWhereInput> | null
+  deliveryManProfile?: Prisma.XOR<Prisma.DeliveryManNullableScalarRelationFilter, Prisma.DeliveryManWhereInput> | null
   cart?: Prisma.XOR<Prisma.CartNullableScalarRelationFilter, Prisma.CartWhereInput> | null
   masterOrders?: Prisma.MasterOrderListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
@@ -286,6 +289,7 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sellerProfile?: Prisma.SellerProfileCreateNestedOneWithoutUserInput
+  deliveryManProfile?: Prisma.DeliveryManCreateNestedOneWithoutUserInput
   cart?: Prisma.CartCreateNestedOneWithoutCustomerInput
   masterOrders?: Prisma.MasterOrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
@@ -302,6 +306,7 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sellerProfile?: Prisma.SellerProfileUncheckedCreateNestedOneWithoutUserInput
+  deliveryManProfile?: Prisma.DeliveryManUncheckedCreateNestedOneWithoutUserInput
   cart?: Prisma.CartUncheckedCreateNestedOneWithoutCustomerInput
   masterOrders?: Prisma.MasterOrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -318,6 +323,7 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sellerProfile?: Prisma.SellerProfileUpdateOneWithoutUserNestedInput
+  deliveryManProfile?: Prisma.DeliveryManUpdateOneWithoutUserNestedInput
   cart?: Prisma.CartUpdateOneWithoutCustomerNestedInput
   masterOrders?: Prisma.MasterOrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
@@ -334,6 +340,7 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sellerProfile?: Prisma.SellerProfileUncheckedUpdateOneWithoutUserNestedInput
+  deliveryManProfile?: Prisma.DeliveryManUncheckedUpdateOneWithoutUserNestedInput
   cart?: Prisma.CartUncheckedUpdateOneWithoutCustomerNestedInput
   masterOrders?: Prisma.MasterOrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -430,6 +437,20 @@ export type UserUpdateOneRequiredWithoutCartNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCartInput, Prisma.UserUpdateWithoutCartInput>, Prisma.UserUncheckedUpdateWithoutCartInput>
 }
 
+export type UserCreateNestedOneWithoutDeliveryManProfileInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeliveryManProfileInput, Prisma.UserUncheckedCreateWithoutDeliveryManProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeliveryManProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutDeliveryManProfileNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutDeliveryManProfileInput, Prisma.UserUncheckedCreateWithoutDeliveryManProfileInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutDeliveryManProfileInput
+  upsert?: Prisma.UserUpsertWithoutDeliveryManProfileInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeliveryManProfileInput, Prisma.UserUpdateWithoutDeliveryManProfileInput>, Prisma.UserUncheckedUpdateWithoutDeliveryManProfileInput>
+}
+
 export type UserCreateNestedOneWithoutMasterOrdersInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutMasterOrdersInput, Prisma.UserUncheckedCreateWithoutMasterOrdersInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutMasterOrdersInput
@@ -502,6 +523,7 @@ export type UserCreateWithoutCartInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sellerProfile?: Prisma.SellerProfileCreateNestedOneWithoutUserInput
+  deliveryManProfile?: Prisma.DeliveryManCreateNestedOneWithoutUserInput
   masterOrders?: Prisma.MasterOrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   productViews?: Prisma.ProductViewCreateNestedManyWithoutUserInput
@@ -517,6 +539,7 @@ export type UserUncheckedCreateWithoutCartInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sellerProfile?: Prisma.SellerProfileUncheckedCreateNestedOneWithoutUserInput
+  deliveryManProfile?: Prisma.DeliveryManUncheckedCreateNestedOneWithoutUserInput
   masterOrders?: Prisma.MasterOrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   productViews?: Prisma.ProductViewUncheckedCreateNestedManyWithoutUserInput
@@ -548,6 +571,7 @@ export type UserUpdateWithoutCartInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sellerProfile?: Prisma.SellerProfileUpdateOneWithoutUserNestedInput
+  deliveryManProfile?: Prisma.DeliveryManUpdateOneWithoutUserNestedInput
   masterOrders?: Prisma.MasterOrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   productViews?: Prisma.ProductViewUpdateManyWithoutUserNestedInput
@@ -563,6 +587,87 @@ export type UserUncheckedUpdateWithoutCartInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sellerProfile?: Prisma.SellerProfileUncheckedUpdateOneWithoutUserNestedInput
+  deliveryManProfile?: Prisma.DeliveryManUncheckedUpdateOneWithoutUserNestedInput
+  masterOrders?: Prisma.MasterOrderUncheckedUpdateManyWithoutCustomerNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productViews?: Prisma.ProductViewUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutDeliveryManProfileInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name: string
+  role?: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sellerProfile?: Prisma.SellerProfileCreateNestedOneWithoutUserInput
+  cart?: Prisma.CartCreateNestedOneWithoutCustomerInput
+  masterOrders?: Prisma.MasterOrderCreateNestedManyWithoutCustomerInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productViews?: Prisma.ProductViewCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutDeliveryManProfileInput = {
+  id?: string
+  email: string
+  passwordHash: string
+  name: string
+  role?: string
+  isActive?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sellerProfile?: Prisma.SellerProfileUncheckedCreateNestedOneWithoutUserInput
+  cart?: Prisma.CartUncheckedCreateNestedOneWithoutCustomerInput
+  masterOrders?: Prisma.MasterOrderUncheckedCreateNestedManyWithoutCustomerInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productViews?: Prisma.ProductViewUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutDeliveryManProfileInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeliveryManProfileInput, Prisma.UserUncheckedCreateWithoutDeliveryManProfileInput>
+}
+
+export type UserUpsertWithoutDeliveryManProfileInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutDeliveryManProfileInput, Prisma.UserUncheckedUpdateWithoutDeliveryManProfileInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutDeliveryManProfileInput, Prisma.UserUncheckedCreateWithoutDeliveryManProfileInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutDeliveryManProfileInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutDeliveryManProfileInput, Prisma.UserUncheckedUpdateWithoutDeliveryManProfileInput>
+}
+
+export type UserUpdateWithoutDeliveryManProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sellerProfile?: Prisma.SellerProfileUpdateOneWithoutUserNestedInput
+  cart?: Prisma.CartUpdateOneWithoutCustomerNestedInput
+  masterOrders?: Prisma.MasterOrderUpdateManyWithoutCustomerNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productViews?: Prisma.ProductViewUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutDeliveryManProfileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sellerProfile?: Prisma.SellerProfileUncheckedUpdateOneWithoutUserNestedInput
+  cart?: Prisma.CartUncheckedUpdateOneWithoutCustomerNestedInput
   masterOrders?: Prisma.MasterOrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   productViews?: Prisma.ProductViewUncheckedUpdateManyWithoutUserNestedInput
@@ -578,6 +683,7 @@ export type UserCreateWithoutMasterOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sellerProfile?: Prisma.SellerProfileCreateNestedOneWithoutUserInput
+  deliveryManProfile?: Prisma.DeliveryManCreateNestedOneWithoutUserInput
   cart?: Prisma.CartCreateNestedOneWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   productViews?: Prisma.ProductViewCreateNestedManyWithoutUserInput
@@ -593,6 +699,7 @@ export type UserUncheckedCreateWithoutMasterOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sellerProfile?: Prisma.SellerProfileUncheckedCreateNestedOneWithoutUserInput
+  deliveryManProfile?: Prisma.DeliveryManUncheckedCreateNestedOneWithoutUserInput
   cart?: Prisma.CartUncheckedCreateNestedOneWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   productViews?: Prisma.ProductViewUncheckedCreateNestedManyWithoutUserInput
@@ -624,6 +731,7 @@ export type UserUpdateWithoutMasterOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sellerProfile?: Prisma.SellerProfileUpdateOneWithoutUserNestedInput
+  deliveryManProfile?: Prisma.DeliveryManUpdateOneWithoutUserNestedInput
   cart?: Prisma.CartUpdateOneWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   productViews?: Prisma.ProductViewUpdateManyWithoutUserNestedInput
@@ -639,6 +747,7 @@ export type UserUncheckedUpdateWithoutMasterOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sellerProfile?: Prisma.SellerProfileUncheckedUpdateOneWithoutUserNestedInput
+  deliveryManProfile?: Prisma.DeliveryManUncheckedUpdateOneWithoutUserNestedInput
   cart?: Prisma.CartUncheckedUpdateOneWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   productViews?: Prisma.ProductViewUncheckedUpdateManyWithoutUserNestedInput
@@ -654,6 +763,7 @@ export type UserCreateWithoutReviewsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sellerProfile?: Prisma.SellerProfileCreateNestedOneWithoutUserInput
+  deliveryManProfile?: Prisma.DeliveryManCreateNestedOneWithoutUserInput
   cart?: Prisma.CartCreateNestedOneWithoutCustomerInput
   masterOrders?: Prisma.MasterOrderCreateNestedManyWithoutCustomerInput
   productViews?: Prisma.ProductViewCreateNestedManyWithoutUserInput
@@ -669,6 +779,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sellerProfile?: Prisma.SellerProfileUncheckedCreateNestedOneWithoutUserInput
+  deliveryManProfile?: Prisma.DeliveryManUncheckedCreateNestedOneWithoutUserInput
   cart?: Prisma.CartUncheckedCreateNestedOneWithoutCustomerInput
   masterOrders?: Prisma.MasterOrderUncheckedCreateNestedManyWithoutCustomerInput
   productViews?: Prisma.ProductViewUncheckedCreateNestedManyWithoutUserInput
@@ -700,6 +811,7 @@ export type UserUpdateWithoutReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sellerProfile?: Prisma.SellerProfileUpdateOneWithoutUserNestedInput
+  deliveryManProfile?: Prisma.DeliveryManUpdateOneWithoutUserNestedInput
   cart?: Prisma.CartUpdateOneWithoutCustomerNestedInput
   masterOrders?: Prisma.MasterOrderUpdateManyWithoutCustomerNestedInput
   productViews?: Prisma.ProductViewUpdateManyWithoutUserNestedInput
@@ -715,6 +827,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sellerProfile?: Prisma.SellerProfileUncheckedUpdateOneWithoutUserNestedInput
+  deliveryManProfile?: Prisma.DeliveryManUncheckedUpdateOneWithoutUserNestedInput
   cart?: Prisma.CartUncheckedUpdateOneWithoutCustomerNestedInput
   masterOrders?: Prisma.MasterOrderUncheckedUpdateManyWithoutCustomerNestedInput
   productViews?: Prisma.ProductViewUncheckedUpdateManyWithoutUserNestedInput
@@ -729,6 +842,7 @@ export type UserCreateWithoutSellerProfileInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deliveryManProfile?: Prisma.DeliveryManCreateNestedOneWithoutUserInput
   cart?: Prisma.CartCreateNestedOneWithoutCustomerInput
   masterOrders?: Prisma.MasterOrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
@@ -744,6 +858,7 @@ export type UserUncheckedCreateWithoutSellerProfileInput = {
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  deliveryManProfile?: Prisma.DeliveryManUncheckedCreateNestedOneWithoutUserInput
   cart?: Prisma.CartUncheckedCreateNestedOneWithoutCustomerInput
   masterOrders?: Prisma.MasterOrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -775,6 +890,7 @@ export type UserUpdateWithoutSellerProfileInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deliveryManProfile?: Prisma.DeliveryManUpdateOneWithoutUserNestedInput
   cart?: Prisma.CartUpdateOneWithoutCustomerNestedInput
   masterOrders?: Prisma.MasterOrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
@@ -790,6 +906,7 @@ export type UserUncheckedUpdateWithoutSellerProfileInput = {
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deliveryManProfile?: Prisma.DeliveryManUncheckedUpdateOneWithoutUserNestedInput
   cart?: Prisma.CartUncheckedUpdateOneWithoutCustomerNestedInput
   masterOrders?: Prisma.MasterOrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -806,6 +923,7 @@ export type UserCreateWithoutProductViewsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sellerProfile?: Prisma.SellerProfileCreateNestedOneWithoutUserInput
+  deliveryManProfile?: Prisma.DeliveryManCreateNestedOneWithoutUserInput
   cart?: Prisma.CartCreateNestedOneWithoutCustomerInput
   masterOrders?: Prisma.MasterOrderCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
@@ -821,6 +939,7 @@ export type UserUncheckedCreateWithoutProductViewsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sellerProfile?: Prisma.SellerProfileUncheckedCreateNestedOneWithoutUserInput
+  deliveryManProfile?: Prisma.DeliveryManUncheckedCreateNestedOneWithoutUserInput
   cart?: Prisma.CartUncheckedCreateNestedOneWithoutCustomerInput
   masterOrders?: Prisma.MasterOrderUncheckedCreateNestedManyWithoutCustomerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
@@ -852,6 +971,7 @@ export type UserUpdateWithoutProductViewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sellerProfile?: Prisma.SellerProfileUpdateOneWithoutUserNestedInput
+  deliveryManProfile?: Prisma.DeliveryManUpdateOneWithoutUserNestedInput
   cart?: Prisma.CartUpdateOneWithoutCustomerNestedInput
   masterOrders?: Prisma.MasterOrderUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
@@ -867,6 +987,7 @@ export type UserUncheckedUpdateWithoutProductViewsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sellerProfile?: Prisma.SellerProfileUncheckedUpdateOneWithoutUserNestedInput
+  deliveryManProfile?: Prisma.DeliveryManUncheckedUpdateOneWithoutUserNestedInput
   cart?: Prisma.CartUncheckedUpdateOneWithoutCustomerNestedInput
   masterOrders?: Prisma.MasterOrderUncheckedUpdateManyWithoutCustomerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
@@ -931,6 +1052,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   sellerProfile?: boolean | Prisma.User$sellerProfileArgs<ExtArgs>
+  deliveryManProfile?: boolean | Prisma.User$deliveryManProfileArgs<ExtArgs>
   cart?: boolean | Prisma.User$cartArgs<ExtArgs>
   masterOrders?: boolean | Prisma.User$masterOrdersArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
@@ -974,6 +1096,7 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "role" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sellerProfile?: boolean | Prisma.User$sellerProfileArgs<ExtArgs>
+  deliveryManProfile?: boolean | Prisma.User$deliveryManProfileArgs<ExtArgs>
   cart?: boolean | Prisma.User$cartArgs<ExtArgs>
   masterOrders?: boolean | Prisma.User$masterOrdersArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
@@ -987,6 +1110,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     sellerProfile: Prisma.$SellerProfilePayload<ExtArgs> | null
+    deliveryManProfile: Prisma.$DeliveryManPayload<ExtArgs> | null
     cart: Prisma.$CartPayload<ExtArgs> | null
     masterOrders: Prisma.$MasterOrderPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
@@ -1396,6 +1520,7 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   sellerProfile<T extends Prisma.User$sellerProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sellerProfileArgs<ExtArgs>>): Prisma.Prisma__SellerProfileClient<runtime.Types.Result.GetResult<Prisma.$SellerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  deliveryManProfile<T extends Prisma.User$deliveryManProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deliveryManProfileArgs<ExtArgs>>): Prisma.Prisma__DeliveryManClient<runtime.Types.Result.GetResult<Prisma.$DeliveryManPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   cart<T extends Prisma.User$cartArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$cartArgs<ExtArgs>>): Prisma.Prisma__CartClient<runtime.Types.Result.GetResult<Prisma.$CartPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   masterOrders<T extends Prisma.User$masterOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$masterOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MasterOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.User$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1846,6 +1971,25 @@ export type User$sellerProfileArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   include?: Prisma.SellerProfileInclude<ExtArgs> | null
   where?: Prisma.SellerProfileWhereInput
+}
+
+/**
+ * User.deliveryManProfile
+ */
+export type User$deliveryManProfileArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeliveryMan
+   */
+  select?: Prisma.DeliveryManSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeliveryMan
+   */
+  omit?: Prisma.DeliveryManOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeliveryManInclude<ExtArgs> | null
+  where?: Prisma.DeliveryManWhereInput
 }
 
 /**

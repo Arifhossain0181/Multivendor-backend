@@ -1,0 +1,63 @@
+model DeliveryMan {
+    id String  @id @default(uuid())
+    userId String  @unique
+    
+    firstName String
+    lastName String
+    mobileNumber String
+    gender String
+    dateOfBirth DateTime?
+    city String
+    serviceType String
+    identityType String
+    identityNumber String?
+    referralCode String?
+    profilePhoto String?
+    
+    vehicleBrand String?
+    vehicleModel String?
+    registrationNumber String?
+    registrationRegion String?
+    registrationCategory String?
+    registrationDigits String?
+    vehicleYear String?
+    taxTokenNumber String?
+    fitnessNumber String?
+    
+    district String
+    zela String
+    thana String
+    area String
+    
+    profileImage String?
+    vehicleType String?
+    vehicleImage String?
+    vehicleRegistrationImage String?
+    drivingLicenseNumber String?
+    drivingLicenseImage String?
+    nidNumber String?
+    nidFrontImage String?
+    nidBackImage String?
+    serviceZones String?
+    
+    emergencyContactName String?
+    emergencyContactPhone String?
+    emergencyContactRelation String?
+    
+    termsAccepted Boolean @default(false)
+    privacyPolicyAccepted Boolean @default(false)
+    
+    status DeliveryManStatus @default(PENDING)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("delivery_men")
+}
+
+enum DeliveryManStatus {
+    PENDING
+    APPROVED
+    REJECTED
+}

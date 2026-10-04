@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-type Role = "USER" | "ADMIN" | "SELLER";
+type Role = "USER" | "ADMIN" | "SELLER" | "DELIVERY";
 
 export const authorize = (...roles: Role[]) => {
     return (req: Request, res: Response, next: NextFunction) => {

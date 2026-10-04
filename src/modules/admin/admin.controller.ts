@@ -87,7 +87,7 @@ export const getProducts = async (req: Request, res: Response) => {
     const status = typeof req.query.status === 'string' ? req.query.status : undefined;
     const page = parsePage(req.query.page, 1);
     const limit = parseLimit(req.query.limit, 10);
-    const products = await adminService.listProducts(userId, status, page, limit);
+    const products = await adminService.listProducts(userId, status, page, limit, true);
     return res.status(200).json(products);
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({

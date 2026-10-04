@@ -57,6 +57,11 @@ export type CartItem = Prisma.CartItemModel
  */
 export type Category = Prisma.CategoryModel
 /**
+ * Model DeliveryMan
+ * 
+ */
+export type DeliveryMan = Prisma.DeliveryManModel
+/**
  * Model ProductInventory
  * 
  */
@@ -66,6 +71,11 @@ export type ProductInventory = Prisma.ProductInventoryModel
  * 
  */
 export type MasterOrder = Prisma.MasterOrderModel
+/**
+ * Model PageContent
+ * 
+ */
+export type PageContent = Prisma.PageContentModel
 /**
  * Model ProcessedStripeEvent
  * 

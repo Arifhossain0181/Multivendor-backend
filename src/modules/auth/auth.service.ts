@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import type { StringValue } from "ms";
 import bcrypt from 'bcryptjs';
 
-type Role = "USER" | "ADMIN" | "SELLER";
+type Role = "USER" | "ADMIN" | "SELLER" | "DELIVERY";
 
 type TokenPayload = {
   userId: string;

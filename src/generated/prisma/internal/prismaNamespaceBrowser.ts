@@ -54,8 +54,10 @@ export const ModelName = {
   Cart: 'Cart',
   CartItem: 'CartItem',
   Category: 'Category',
+  DeliveryMan: 'DeliveryMan',
   ProductInventory: 'ProductInventory',
   MasterOrder: 'MasterOrder',
+  PageContent: 'PageContent',
   ProcessedStripeEvent: 'ProcessedStripeEvent',
   Product: 'Product',
   ProductVariant: 'ProductVariant',
@@ -119,6 +121,21 @@ export const CategoryScalarFieldEnum = {
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
 
 
+export const DeliveryManScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  district: 'district',
+  zela: 'zela',
+  thana: 'thana',
+  area: 'area',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DeliveryManScalarFieldEnum = (typeof DeliveryManScalarFieldEnum)[keyof typeof DeliveryManScalarFieldEnum]
+
+
 export const ProductInventoryScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
@@ -142,6 +159,17 @@ export const MasterOrderScalarFieldEnum = {
 } as const
 
 export type MasterOrderScalarFieldEnum = (typeof MasterOrderScalarFieldEnum)[keyof typeof MasterOrderScalarFieldEnum]
+
+
+export const PageContentScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  content: 'content',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PageContentScalarFieldEnum = (typeof PageContentScalarFieldEnum)[keyof typeof PageContentScalarFieldEnum]
 
 
 export const ProcessedStripeEventScalarFieldEnum = {

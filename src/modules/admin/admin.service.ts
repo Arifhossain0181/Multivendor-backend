@@ -296,14 +296,18 @@ export const listProducts = async (
   status?: string,
   page?: number,
   limit?: number,
+  includeAll = false,
 ) => {
   const { skip, limit: take, page: currentPage } = clampPage(page, limit);
-  
-  const sellerProfile = await prisma.sellerProfile.findUnique({
-    where: { userId },
-  });
 
-  const sellerId = sellerProfile?.id ?? "non-existent-id";
+  let sellerId: string | undefined;
+  if (!includeAll) {
+    const sellerProfile = await prisma.sellerProfile.findUnique({
+      where: { userId },
+    });
+    sellerId = sellerProfile?.id;
+  }
+
   const where = status && status !== "ALL" ? { sellerId, status } : { sellerId };
 
   const [total, products] = await prisma.$transaction([
