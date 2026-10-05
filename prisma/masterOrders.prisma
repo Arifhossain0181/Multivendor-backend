@@ -3,7 +3,9 @@ model MasterOrder {
     customerId String
     totalAmount Decimal @db.Decimal(10, 2)
     status MasterOrderStatus @default(PENDING_PAYMENT)
-    
+    shippingAddress String?
+    customerPhone String?
+
 
     //striPe Reference  
     stripeSessionId  String? @unique

@@ -81,6 +81,17 @@ export const login = async (email: string, password: string) => {
     throw createHttpError(401, "Invalid email or password");
   }
 
+  if (user.role === "DELIVERY") {
+    const deliveryProfile = await prisma.deliveryMan.findUnique({
+      where: { userId: user.id },
+      select: { status: true },
+    });
+
+    if (deliveryProfile && deliveryProfile.status === "PENDING") {
+      throw createHttpError(403, "Your application is under review");
+    }
+  }
+
   return buildAuthPayload(user);
 };
 

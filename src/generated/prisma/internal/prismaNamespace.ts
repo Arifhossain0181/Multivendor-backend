@@ -384,6 +384,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
+  AuditLog: 'AuditLog',
   Cart: 'Cart',
   CartItem: 'CartItem',
   Category: 'Category',
@@ -394,6 +395,8 @@ export const ModelName = {
   ProcessedStripeEvent: 'ProcessedStripeEvent',
   Product: 'Product',
   ProductVariant: 'ProductVariant',
+  ReturnRequest: 'ReturnRequest',
+  Dispute: 'Dispute',
   Review: 'Review',
   SellerProfile: 'SellerProfile',
   SubOrderItem: 'SubOrderItem',
@@ -415,10 +418,84 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "cart" | "cartItem" | "category" | "deliveryMan" | "productInventory" | "masterOrder" | "pageContent" | "processedStripeEvent" | "product" | "productVariant" | "review" | "sellerProfile" | "subOrderItem" | "subOrder" | "user" | "productView"
+    modelProps: "auditLog" | "cart" | "cartItem" | "category" | "deliveryMan" | "productInventory" | "masterOrder" | "pageContent" | "processedStripeEvent" | "product" | "productVariant" | "returnRequest" | "dispute" | "review" | "sellerProfile" | "subOrderItem" | "subOrder" | "user" | "productView"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
+    AuditLog: {
+      payload: Prisma.$AuditLogPayload<ExtArgs>
+      fields: Prisma.AuditLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AuditLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AuditLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        findFirst: {
+          args: Prisma.AuditLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AuditLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        findMany: {
+          args: Prisma.AuditLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+        }
+        create: {
+          args: Prisma.AuditLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        createMany: {
+          args: Prisma.AuditLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AuditLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+        }
+        delete: {
+          args: Prisma.AuditLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        update: {
+          args: Prisma.AuditLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.AuditLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AuditLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AuditLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.AuditLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AuditLogPayload>
+        }
+        aggregate: {
+          args: Prisma.AuditLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAuditLog>
+        }
+        groupBy: {
+          args: Prisma.AuditLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AuditLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AuditLogCountAggregateOutputType> | number
+        }
+      }
+    }
     Cart: {
       payload: Prisma.$CartPayload<ExtArgs>
       fields: Prisma.CartFieldRefs
@@ -1159,6 +1236,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ReturnRequest: {
+      payload: Prisma.$ReturnRequestPayload<ExtArgs>
+      fields: Prisma.ReturnRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReturnRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReturnRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.ReturnRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReturnRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload>
+        }
+        findMany: {
+          args: Prisma.ReturnRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload>[]
+        }
+        create: {
+          args: Prisma.ReturnRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload>
+        }
+        createMany: {
+          args: Prisma.ReturnRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReturnRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.ReturnRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload>
+        }
+        update: {
+          args: Prisma.ReturnRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReturnRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReturnRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReturnRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReturnRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReturnRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.ReturnRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReturnRequest>
+        }
+        groupBy: {
+          args: Prisma.ReturnRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReturnRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReturnRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReturnRequestCountAggregateOutputType> | number
+        }
+      }
+    }
+    Dispute: {
+      payload: Prisma.$DisputePayload<ExtArgs>
+      fields: Prisma.DisputeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DisputeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DisputeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload>
+        }
+        findFirst: {
+          args: Prisma.DisputeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DisputeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload>
+        }
+        findMany: {
+          args: Prisma.DisputeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload>[]
+        }
+        create: {
+          args: Prisma.DisputeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload>
+        }
+        createMany: {
+          args: Prisma.DisputeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DisputeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload>[]
+        }
+        delete: {
+          args: Prisma.DisputeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload>
+        }
+        update: {
+          args: Prisma.DisputeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload>
+        }
+        deleteMany: {
+          args: Prisma.DisputeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DisputeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DisputeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload>[]
+        }
+        upsert: {
+          args: Prisma.DisputeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DisputePayload>
+        }
+        aggregate: {
+          args: Prisma.DisputeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDispute>
+        }
+        groupBy: {
+          args: Prisma.DisputeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DisputeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DisputeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DisputeCountAggregateOutputType> | number
+        }
+      }
+    }
     Review: {
       payload: Prisma.$ReviewPayload<ExtArgs>
       fields: Prisma.ReviewFieldRefs
@@ -1642,6 +1867,22 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  adminId: 'adminId',
+  action: 'action',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  oldValue: 'oldValue',
+  newValue: 'newValue',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
+
+
 export const CartScalarFieldEnum = {
   id: 'id',
   customerId: 'customerId',
@@ -1670,6 +1911,7 @@ export const CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
+  description: 'description',
   imageUrl: 'imageUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -1681,11 +1923,51 @@ export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typ
 export const DeliveryManScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  mobileNumber: 'mobileNumber',
+  gender: 'gender',
+  dateOfBirth: 'dateOfBirth',
+  city: 'city',
+  serviceType: 'serviceType',
+  identityType: 'identityType',
+  identityNumber: 'identityNumber',
+  referralCode: 'referralCode',
+  profilePhoto: 'profilePhoto',
+  vehicleBrand: 'vehicleBrand',
+  vehicleModel: 'vehicleModel',
+  registrationNumber: 'registrationNumber',
+  registrationRegion: 'registrationRegion',
+  registrationCategory: 'registrationCategory',
+  registrationDigits: 'registrationDigits',
+  vehicleYear: 'vehicleYear',
+  taxTokenNumber: 'taxTokenNumber',
+  fitnessNumber: 'fitnessNumber',
   district: 'district',
   zela: 'zela',
   thana: 'thana',
   area: 'area',
+  profileImage: 'profileImage',
+  vehicleType: 'vehicleType',
+  vehicleImage: 'vehicleImage',
+  vehicleRegistrationImage: 'vehicleRegistrationImage',
+  drivingLicenseNumber: 'drivingLicenseNumber',
+  drivingLicenseImage: 'drivingLicenseImage',
+  registrationCertificateImage: 'registrationCertificateImage',
+  taxTokenImage: 'taxTokenImage',
+  fitnessCertificateImage: 'fitnessCertificateImage',
+  routePermitImage: 'routePermitImage',
+  nidNumber: 'nidNumber',
+  nidFrontImage: 'nidFrontImage',
+  nidBackImage: 'nidBackImage',
+  serviceZones: 'serviceZones',
+  emergencyContactName: 'emergencyContactName',
+  emergencyContactPhone: 'emergencyContactPhone',
+  emergencyContactRelation: 'emergencyContactRelation',
+  termsAccepted: 'termsAccepted',
+  privacyPolicyAccepted: 'privacyPolicyAccepted',
   status: 'status',
+  rejectionReason: 'rejectionReason',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1709,6 +1991,8 @@ export const MasterOrderScalarFieldEnum = {
   customerId: 'customerId',
   totalAmount: 'totalAmount',
   status: 'status',
+  shippingAddress: 'shippingAddress',
+  customerPhone: 'customerPhone',
   stripeSessionId: 'stripeSessionId',
   stripePaymentIntent: 'stripePaymentIntent',
   createdAt: 'createdAt',
@@ -1766,14 +2050,52 @@ export const ProductVariantScalarFieldEnum = {
 export type ProductVariantScalarFieldEnum = (typeof ProductVariantScalarFieldEnum)[keyof typeof ProductVariantScalarFieldEnum]
 
 
+export const ReturnRequestScalarFieldEnum = {
+  id: 'id',
+  subOrderId: 'subOrderId',
+  userId: 'userId',
+  sellerId: 'sellerId',
+  reason: 'reason',
+  status: 'status',
+  requestedQty: 'requestedQty',
+  refundAmount: 'refundAmount',
+  disputeNote: 'disputeNote',
+  resolvedBy: 'resolvedBy',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReturnRequestScalarFieldEnum = (typeof ReturnRequestScalarFieldEnum)[keyof typeof ReturnRequestScalarFieldEnum]
+
+
+export const DisputeScalarFieldEnum = {
+  id: 'id',
+  returnRequestId: 'returnRequestId',
+  adminId: 'adminId',
+  status: 'status',
+  resolution: 'resolution',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DisputeScalarFieldEnum = (typeof DisputeScalarFieldEnum)[keyof typeof DisputeScalarFieldEnum]
+
+
 export const ReviewScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   productId: 'productId',
   rating: 'rating',
   comment: 'comment',
+  verified: 'verified',
+  sellerRating: 'sellerRating',
+  sellerReply: 'sellerReply',
+  sellerReplyAt: 'sellerReplyAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  sellerId: 'sellerId'
 } as const
 
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
@@ -1813,6 +2135,7 @@ export const SubOrderScalarFieldEnum = {
   sellerId: 'sellerId',
   status: 'status',
   subtotal: 'subtotal',
+  deliveryManId: 'deliveryManId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1918,16 +2241,23 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'DeliveryStatus'
+ * Reference to a field of type 'Boolean'
  */
-export type EnumDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryStatus'>
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
 /**
- * Reference to a field of type 'DeliveryStatus[]'
+ * Reference to a field of type 'DeliveryManStatus'
  */
-export type ListEnumDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryStatus[]'>
+export type EnumDeliveryManStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryManStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'DeliveryManStatus[]'
+ */
+export type ListEnumDeliveryManStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DeliveryManStatus[]'>
     
 
 
@@ -1974,6 +2304,34 @@ export type ListEnumProductStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'ReturnStatus'
+ */
+export type EnumReturnStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReturnStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ReturnStatus[]'
+ */
+export type ListEnumReturnStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReturnStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DisputeStatus'
+ */
+export type EnumDisputeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisputeStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'DisputeStatus[]'
+ */
+export type ListEnumDisputeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DisputeStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'SellerStatus'
  */
 export type EnumSellerStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SellerStatus'>
@@ -1998,13 +2356,6 @@ export type EnumSubOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'SubOrderStatus[]'
  */
 export type ListEnumSubOrderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubOrderStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -2131,6 +2482,7 @@ export type PrismaClientOptions = ({
   queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
+  auditLog?: Prisma.AuditLogOmit
   cart?: Prisma.CartOmit
   cartItem?: Prisma.CartItemOmit
   category?: Prisma.CategoryOmit
@@ -2141,6 +2493,8 @@ export type GlobalOmitConfig = {
   processedStripeEvent?: Prisma.ProcessedStripeEventOmit
   product?: Prisma.ProductOmit
   productVariant?: Prisma.ProductVariantOmit
+  returnRequest?: Prisma.ReturnRequestOmit
+  dispute?: Prisma.DisputeOmit
   review?: Prisma.ReviewOmit
   sellerProfile?: Prisma.SellerProfileOmit
   subOrderItem?: Prisma.SubOrderItemOmit

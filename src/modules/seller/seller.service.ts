@@ -1,5 +1,6 @@
 import { prisma } from "../../prisma/client.js";
 import { ApiError } from "../../utlits/ApiError.js";
+import { assignDeliveryManToSubOrder } from "../delivery/deliveryAssign.service.js";
 
 export const createSellerProfile = async (
   userId: string,
@@ -128,6 +129,52 @@ export const transitionSubOrder = async (
       500,
       "an ",
       "An error occurred while updating the sub-order status",
+    );
+  }
+};
+
+export const assignDeliveryMan = async (
+  subOrderId: string,
+  sellerId: string,
+  deliveryManId: string,
+) => {
+  try {
+    const subOrder = await prisma.subOrder.findUnique({
+      where: { id: subOrderId },
+    });
+
+    if (!subOrder) {
+      throw new ApiError(404, "", "Sub-order not found");
+    }
+
+    if (subOrder.sellerId !== sellerId) {
+      throw new ApiError(
+        403,
+        "unauthorized",
+        "You are not authorized to assign a delivery man to this sub-order",
+      );
+    }
+
+    if (subOrder.masterOrder.status !== "PAID" && subOrder.masterOrder.status !== "COMPLETED") {
+      throw new ApiError(
+        400,
+        "",
+        "Master order is not paid yet. Cannot assign delivery man.",
+      );
+    }
+
+    const updatedSubOrder = await assignDeliveryManToSubOrder(subOrderId, deliveryManId);
+
+    return updatedSubOrder;
+  } catch (error) {
+    console.error("Error assigning delivery man:", error);
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    throw new ApiError(
+      500,
+      "error",
+      "An error occurred while assigning the delivery man",
     );
   }
 };

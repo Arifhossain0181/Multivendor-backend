@@ -15,7 +15,7 @@ function getStripe() {
 }
 
 
-export const processCheckout= async (userId:string,shippingAddress: string)=>{
+export const processCheckout= async (userId:string,shippingAddress: string, customerPhone?: string)=>{
     const cart = await prisma.cart.findUnique({
          where: { customerId: userId },
          include: {
@@ -83,6 +83,8 @@ export const processCheckout= async (userId:string,shippingAddress: string)=>{
                 customerId: userId,
                 totalAmount,
                 status: 'PENDING_PAYMENT',
+                shippingAddress,
+                customerPhone: customerPhone || null,
             }
         });
         masterOrderId = master.id;
@@ -193,8 +195,65 @@ export const verifyCheckoutSuccess = async (sessionId: string) => {
     throw ApiError.notFound("Order not found");
   }
 
+  const isAlreadyPaid = order.status === "PAID";
+
+  if (order.status === "PENDING_PAYMENT" && session.payment_status === "paid") {
+    const allItems = order.subOrders.flatMap((sub: any) => sub.items);
+
+    const grouped = new Map<string, { productId: string; variantId: string; requestedQty: number }>();
+    for (const item of allItems) {
+      const key = `${item.productId}:${item.variantId}`;
+      const existing = grouped.get(key);
+      if (existing) {
+        existing.requestedQty += item.quantity;
+      } else {
+        grouped.set(key, { productId: item.productId, variantId: item.variantId, requestedQty: item.quantity });
+      }
+    }
+
+    const variantIds = Array.from(grouped.values()).map(g => g.variantId);
+    const stockMap = await inventoryService.batchFetchStock(variantIds);
+    const stockByVariantId = new Map<string, { variantId: string; availableQty: number }>();
+    for (const s of stockMap) {
+      stockByVariantId.set(s.variantId, { variantId: s.variantId, availableQty: s.availableQty });
+    }
+
+    for (const group of grouped.values()) {
+      const stock = stockByVariantId.get(group.variantId);
+      const availableQty = stock?.availableQty ?? 0;
+      if (availableQty < group.requestedQty) {
+        await prisma.masterOrder.update({
+          where: { id: masterOrderId },
+          data: { status: "PAYMENT_FAILED_STOCK" },
+        });
+        throw new ApiError(
+          409,
+          "INSUFFICIENT_STOCK",
+          "Insufficient stock during payment verification",
+          [{
+            productId: group.productId,
+            variantId: group.variantId,
+            availableQty,
+            requestedQty: group.requestedQty,
+          }]
+        );
+      }
+    }
+
+    await prisma.$transaction(async (tx: any) => {
+      for (const item of allItems) {
+        await inventoryService.atomicDeduct(tx, item.variantId, item.quantity);
+      }
+      await tx.masterOrder.update({
+        where: { id: masterOrderId },
+        data: { status: "PAID" },
+      });
+      await clearCart(order.customerId);
+    });
+  }
+
   return {
-    order,
+    order: { ...order, status: isAlreadyPaid ? "PAID" : "PAID" },
     paymentStatus: session.payment_status,
     orderId: order.id,
   };

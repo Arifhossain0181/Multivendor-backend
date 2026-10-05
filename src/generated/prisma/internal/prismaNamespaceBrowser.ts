@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  AuditLog: 'AuditLog',
   Cart: 'Cart',
   CartItem: 'CartItem',
   Category: 'Category',
@@ -61,6 +62,8 @@ export const ModelName = {
   ProcessedStripeEvent: 'ProcessedStripeEvent',
   Product: 'Product',
   ProductVariant: 'ProductVariant',
+  ReturnRequest: 'ReturnRequest',
+  Dispute: 'Dispute',
   Review: 'Review',
   SellerProfile: 'SellerProfile',
   SubOrderItem: 'SubOrderItem',
@@ -83,6 +86,22 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const AuditLogScalarFieldEnum = {
+  id: 'id',
+  adminId: 'adminId',
+  action: 'action',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  oldValue: 'oldValue',
+  newValue: 'newValue',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
 
 
 export const CartScalarFieldEnum = {
@@ -113,6 +132,7 @@ export const CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
+  description: 'description',
   imageUrl: 'imageUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -124,11 +144,51 @@ export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typ
 export const DeliveryManScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  mobileNumber: 'mobileNumber',
+  gender: 'gender',
+  dateOfBirth: 'dateOfBirth',
+  city: 'city',
+  serviceType: 'serviceType',
+  identityType: 'identityType',
+  identityNumber: 'identityNumber',
+  referralCode: 'referralCode',
+  profilePhoto: 'profilePhoto',
+  vehicleBrand: 'vehicleBrand',
+  vehicleModel: 'vehicleModel',
+  registrationNumber: 'registrationNumber',
+  registrationRegion: 'registrationRegion',
+  registrationCategory: 'registrationCategory',
+  registrationDigits: 'registrationDigits',
+  vehicleYear: 'vehicleYear',
+  taxTokenNumber: 'taxTokenNumber',
+  fitnessNumber: 'fitnessNumber',
   district: 'district',
   zela: 'zela',
   thana: 'thana',
   area: 'area',
+  profileImage: 'profileImage',
+  vehicleType: 'vehicleType',
+  vehicleImage: 'vehicleImage',
+  vehicleRegistrationImage: 'vehicleRegistrationImage',
+  drivingLicenseNumber: 'drivingLicenseNumber',
+  drivingLicenseImage: 'drivingLicenseImage',
+  registrationCertificateImage: 'registrationCertificateImage',
+  taxTokenImage: 'taxTokenImage',
+  fitnessCertificateImage: 'fitnessCertificateImage',
+  routePermitImage: 'routePermitImage',
+  nidNumber: 'nidNumber',
+  nidFrontImage: 'nidFrontImage',
+  nidBackImage: 'nidBackImage',
+  serviceZones: 'serviceZones',
+  emergencyContactName: 'emergencyContactName',
+  emergencyContactPhone: 'emergencyContactPhone',
+  emergencyContactRelation: 'emergencyContactRelation',
+  termsAccepted: 'termsAccepted',
+  privacyPolicyAccepted: 'privacyPolicyAccepted',
   status: 'status',
+  rejectionReason: 'rejectionReason',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -152,6 +212,8 @@ export const MasterOrderScalarFieldEnum = {
   customerId: 'customerId',
   totalAmount: 'totalAmount',
   status: 'status',
+  shippingAddress: 'shippingAddress',
+  customerPhone: 'customerPhone',
   stripeSessionId: 'stripeSessionId',
   stripePaymentIntent: 'stripePaymentIntent',
   createdAt: 'createdAt',
@@ -209,14 +271,52 @@ export const ProductVariantScalarFieldEnum = {
 export type ProductVariantScalarFieldEnum = (typeof ProductVariantScalarFieldEnum)[keyof typeof ProductVariantScalarFieldEnum]
 
 
+export const ReturnRequestScalarFieldEnum = {
+  id: 'id',
+  subOrderId: 'subOrderId',
+  userId: 'userId',
+  sellerId: 'sellerId',
+  reason: 'reason',
+  status: 'status',
+  requestedQty: 'requestedQty',
+  refundAmount: 'refundAmount',
+  disputeNote: 'disputeNote',
+  resolvedBy: 'resolvedBy',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReturnRequestScalarFieldEnum = (typeof ReturnRequestScalarFieldEnum)[keyof typeof ReturnRequestScalarFieldEnum]
+
+
+export const DisputeScalarFieldEnum = {
+  id: 'id',
+  returnRequestId: 'returnRequestId',
+  adminId: 'adminId',
+  status: 'status',
+  resolution: 'resolution',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DisputeScalarFieldEnum = (typeof DisputeScalarFieldEnum)[keyof typeof DisputeScalarFieldEnum]
+
+
 export const ReviewScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   productId: 'productId',
   rating: 'rating',
   comment: 'comment',
+  verified: 'verified',
+  sellerRating: 'sellerRating',
+  sellerReply: 'sellerReply',
+  sellerReplyAt: 'sellerReplyAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  sellerId: 'sellerId'
 } as const
 
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
@@ -256,6 +356,7 @@ export const SubOrderScalarFieldEnum = {
   sellerId: 'sellerId',
   status: 'status',
   subtotal: 'subtotal',
+  deliveryManId: 'deliveryManId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

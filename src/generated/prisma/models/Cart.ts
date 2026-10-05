@@ -302,14 +302,6 @@ export type CartNullableScalarRelationFilter = {
   isNot?: Prisma.CartWhereInput | null
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
-}
-
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
-}
-
 export type CartCreateNestedOneWithoutItemsInput = {
   create?: Prisma.XOR<Prisma.CartCreateWithoutItemsInput, Prisma.CartUncheckedCreateWithoutItemsInput>
   connectOrCreate?: Prisma.CartCreateOrConnectWithoutItemsInput

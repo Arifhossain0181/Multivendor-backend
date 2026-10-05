@@ -16,6 +16,10 @@ export const deliveryManSchema = z.object({
     vehicleRegistrationNumber: z.string().optional(),
     drivingLicenseNumber: z.string().optional(),
     drivingLicenseImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
+    registrationCertificateImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
+    taxTokenImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
+    fitnessCertificateImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
+    routePermitImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
     nidNumber: z.string().optional(),
     nidFrontImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
     nidBackImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
@@ -49,3 +53,12 @@ export const deliveryManSchema = z.object({
 });
 
 export type DeliveryManRegisterDto = z.infer<typeof deliveryManSchema>["body"];
+
+export const assignDeliveryManSchema = z.object({
+  params: z.object({
+    id: z.string().min(1, 'Invalid sub-order ID'),
+  }),
+  body: z.object({
+    deliveryManId: z.string().min(1, 'Invalid delivery man ID'),
+  }),
+});

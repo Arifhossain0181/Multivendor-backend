@@ -13,6 +13,7 @@ export const createCategorySchema = z.object({
     body: z.object({
         name: z.string().min(2, 'Category name must be at least 2 characters long').trim(),
         slug: z.string().min(2, 'Slug must be at least 2 characters long').toLowerCase().trim(),
+        description: z.string().optional(),
         imageUrl: imageUrlSchema.optional(),
     }),
 });
@@ -24,9 +25,10 @@ export const updateCategorySchema = z.object({
     body: z.object({
         name: z.string().min(2, 'Category name must be at least 2 characters long').trim().optional(),
         slug: z.string().min(2, 'Slug must be at least 2 characters long').toLowerCase().trim().optional(),
+        description: z.string().optional(),
         imageUrl: imageUrlSchema.optional(),
-    }).refine((data) => data.name || data.slug || data.imageUrl, {
-        message: "At least one field (name, slug, or imageUrl) must be provided for update",
+    }).refine((data) => data.name || data.slug || data.description || data.imageUrl, {
+        message: "At least one field (name, slug, description, or imageUrl) must be provided for update",
         path: ["name"],
     }),
 });

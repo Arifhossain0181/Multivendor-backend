@@ -17,6 +17,10 @@ export const createDeliveryMan = async (data: {
   vehicleRegistrationNumber?: string;
   drivingLicenseNumber?: string;
   drivingLicenseImage?: string;
+  registrationCertificateImage?: string;
+  taxTokenImage?: string;
+  fitnessCertificateImage?: string;
+  routePermitImage?: string;
   nidNumber?: string;
   nidFrontImage?: string;
   nidBackImage?: string;
@@ -48,7 +52,7 @@ export const createDeliveryMan = async (data: {
   fitnessNumber?: string;
 }) => {
   try {
-    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedEmail = data.email.trim().toLowerCase();
     const existingUser = await prisma.user.findUnique({
       where: { email: normalizedEmail },
     });
@@ -56,21 +60,21 @@ export const createDeliveryMan = async (data: {
       throw new ApiError(409, "email", "Email already in use");
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(data.password, 10);
 
     const user = await prisma.user.create({
       data: {
-        name: name.trim(),
+        name: data.name.trim(),
         email: normalizedEmail,
         passwordHash: hashedPassword,
         role: "DELIVERY",
         deliveryManProfile: {
           create: {
-            district,
-            zela,
-            thana,
-            area,
-            city,
+            district: data.district,
+            zela: data.zela,
+            thana: data.thana,
+            area: data.area,
+            city: data.city,
             firstName: data.firstName,
             lastName: data.lastName,
             mobileNumber: data.mobileNumber,
@@ -90,22 +94,26 @@ export const createDeliveryMan = async (data: {
             vehicleYear: data.vehicleYear,
             taxTokenNumber: data.taxTokenNumber,
             fitnessNumber: data.fitnessNumber,
-            profileImage,
-            vehicleType,
-            vehicleImage,
-            vehicleRegistrationNumber,
-            drivingLicenseNumber,
-            drivingLicenseImage,
-            nidNumber,
-            nidFrontImage,
-            nidBackImage,
-            vehicleRegistrationImage,
-            serviceZones,
-            emergencyContactName,
-            emergencyContactPhone,
-            emergencyContactRelation,
-            termsAccepted: termsAccepted ?? false,
-            privacyPolicyAccepted: privacyPolicyAccepted ?? false,
+            profileImage: data.profileImage,
+            vehicleType: data.vehicleType,
+            vehicleImage: data.vehicleImage,
+            vehicleRegistrationNumber: data.vehicleRegistrationNumber,
+            drivingLicenseNumber: data.drivingLicenseNumber,
+            drivingLicenseImage: data.drivingLicenseImage,
+            registrationCertificateImage: data.registrationCertificateImage,
+            taxTokenImage: data.taxTokenImage,
+            fitnessCertificateImage: data.fitnessCertificateImage,
+            routePermitImage: data.routePermitImage,
+            nidNumber: data.nidNumber,
+            nidFrontImage: data.nidFrontImage,
+            nidBackImage: data.nidBackImage,
+            vehicleRegistrationImage: data.vehicleRegistrationImage,
+            serviceZones: data.serviceZones,
+            emergencyContactName: data.emergencyContactName,
+            emergencyContactPhone: data.emergencyContactPhone,
+            emergencyContactRelation: data.emergencyContactRelation,
+            termsAccepted: data.termsAccepted ?? false,
+            privacyPolicyAccepted: data.privacyPolicyAccepted ?? false,
             status: "PENDING",
           },
         },
@@ -125,7 +133,8 @@ export const createDeliveryMan = async (data: {
     if (error instanceof ApiError) {
       throw error;
     }
-    throw new ApiError(500, "error", "Failed to register delivery man");
+    const message = error instanceof Error ? error.message : "Failed to register delivery man";
+    throw new ApiError(500, "error", message);
   }
 };
 
@@ -185,10 +194,15 @@ export const listDeliveryMen = async (page = 1, limit = 10, status?: string) => 
   };
 };
 
-export const updateDeliveryManStatus = async (deliveryManId: string, status: "PENDING" | "APPROVED" | "REJECTED") => {
+export const updateDeliveryManStatus = async (deliveryManId: string, status: "PENDING" | "APPROVED" | "REJECTED", rejectionReason?: string) => {
+  const data: any = { status };
+  if (status === "REJECTED" && rejectionReason) {
+    data.rejectionReason = rejectionReason;
+  }
+  
   const updated = await prisma.deliveryMan.update({
     where: { id: deliveryManId },
-    data: { status },
+    data,
     include: {
       user: {
         select: {
@@ -202,6 +216,80 @@ export const updateDeliveryManStatus = async (deliveryManId: string, status: "PE
   });
 
   return updated;
+};
+
+export const deleteDeliveryMan = async (deliveryManId: string) => {
+  const deleted = await prisma.deliveryMan.delete({
+    where: { id: deliveryManId },
+    include: {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          role: true,
+        },
+      },
+    },
+  });
+
+  return deleted;
+};
+
+export const getMyAssignments = async (userId: string) => {
+  const deliveryMan = await prisma.deliveryMan.findUnique({
+    where: { userId },
+    select: { id: true },
+  });
+
+  if (!deliveryMan) {
+    throw new ApiError(404, "not_found", "Delivery profile not found");
+  }
+
+  const subOrders = await prisma.subOrder.findMany({
+    where: { deliveryManId: deliveryMan.id },
+    orderBy: { createdAt: "desc" },
+    include: {
+      masterOrder: {
+        select: {
+          id: true,
+          status: true,
+          totalAmount: true,
+          createdAt: true,
+          shippingAddress: true,
+          customerPhone: true,
+          customer: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+      seller: {
+        select: {
+          shopName: true,
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
+      },
+      items: {
+        select: {
+          id: true,
+          productName: true,
+          variantName: true,
+          quantity: true,
+          unitPrice: true,
+        },
+      },
+    },
+  });
+
+  return subOrders;
 };
 
 const clampPage = (page: number, limit: number) => {

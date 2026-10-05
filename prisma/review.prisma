@@ -1,18 +1,25 @@
 
 model Review {
-  id        String   @id @default(cuid())
-  userId    String
-  productId String
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  userId        String
+  productId     String
+  rating        Int
+  comment       String?
+  verified      Boolean  @default(false)
+  sellerRating  Int?
+  sellerReply   String?
+  sellerReplyAt DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  seller    SellerProfile? @relation(fields: [sellerId], references: [id], onDelete: SetNull)
+  sellerId  String?
 
   @@unique([userId, productId])
   @@index([userId, productId])
   @@index([productId])
+  @@index([sellerId])
   @@map("reviews")
 }

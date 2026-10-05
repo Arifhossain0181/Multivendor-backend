@@ -1,6 +1,17 @@
 import { prisma } from "../../prisma/client";
 import { ApiError } from "../../utlits/ApiError.js";
 
+const toNumber = (value: unknown) => {
+  if (typeof value === "number") return value;
+  if (typeof value === "bigint") return Number(value);
+  if (value && typeof value === "object" && "toString" in value) {
+    const parsed = Number(value.toString());
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
 export const getCustomerOrders = async (
   userId: string,
   page: number,
@@ -26,6 +37,20 @@ export const getCustomerOrders = async (
             sellerId: true,
             subtotal: true,
             status: true,
+            deliveryManId: true,
+            deliveryMan: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                mobileNumber: true,
+                user: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
             items: {
               select: {
                 id: true,
@@ -43,7 +68,18 @@ export const getCustomerOrders = async (
   ]);
 
   return {
-    orders,
+    orders: orders.map((order) => ({
+      ...order,
+      totalAmount: toNumber(order.totalAmount),
+      subOrders: order.subOrders.map((subOrder) => ({
+        ...subOrder,
+        subtotal: toNumber(subOrder.subtotal),
+        items: subOrder.items.map((item) => ({
+          ...item,
+          unitPrice: toNumber(item.unitPrice),
+        })),
+      })),
+    })),
     meta: {
       total,
       page,
@@ -79,7 +115,18 @@ export const getOrderDetails = async (
     throw new Error("Unauthorized access to order details");
   }
 
-  return order;
+  return {
+    ...order,
+    totalAmount: toNumber(order.totalAmount),
+    subOrders: order.subOrders.map((subOrder) => ({
+      ...subOrder,
+      subtotal: toNumber(subOrder.subtotal),
+      items: subOrder.items.map((item) => ({
+        ...item,
+        unitPrice: toNumber(item.unitPrice),
+      })),
+    })),
+  };
 };
 
 // *Mark Order as Received — auto-deliver all sub-orders
@@ -144,13 +191,26 @@ export const markOrderAsReceived = async (
     updatedOrder = await prisma.masterOrder.update({
       where: { id: masterOrderId },
       data: { status: "COMPLETED" },
-      include: {
-        subOrders: {
-          include: {
-            items: true,
+    include: {
+      subOrders: {
+        include: {
+          items: true,
+          deliveryMan: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              mobileNumber: true,
+              user: {
+                select: {
+                  name: true,
+                },
+              },
+            },
           },
         },
       },
+    },
     });
   }
 

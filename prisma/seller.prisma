@@ -11,6 +11,8 @@ model SellerProfile {
     user User @relation(fields: [userId], references: [id],onDelete: Cascade)
       products  Product[]
         subOrders SubOrder[]
+        reviews Review[]
+        returnRequests ReturnRequest[]
 
         @@map("seller_profiles")
 

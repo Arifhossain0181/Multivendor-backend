@@ -29,6 +29,10 @@ export const registerDeliveryMan = async (req: Request, res: Response) => {
       vehicleRegistrationNumber: body.vehicleRegistrationNumber,
       drivingLicenseNumber: body.drivingLicenseNumber,
       drivingLicenseImage: body.drivingLicenseImage,
+      registrationCertificateImage: body.registrationCertificateImage,
+      taxTokenImage: body.taxTokenImage,
+      fitnessCertificateImage: body.fitnessCertificateImage,
+      routePermitImage: body.routePermitImage,
       nidNumber: body.nidNumber,
       nidFrontImage: body.nidFrontImage,
       nidBackImage: body.nidBackImage,
@@ -62,14 +66,16 @@ export const registerDeliveryMan = async (req: Request, res: Response) => {
 
     return res.status(201).json({
       success: true,
-      message: "Delivery man registered successfully",
+      message: "Delivery man registered successfully. Please wait for admin approval.",
       data: { user },
     });
   } catch (error: any) {
+    console.error("Registration error details:", error);
     const statusCode = error.statusCode || 500;
     return res.status(statusCode).json({
       success: false,
       message: error.message || "Internal Server Error",
+      ...(error.field && { field: error.field }),
     });
   }
 };
@@ -115,10 +121,31 @@ export const listDeliveryMen = async (req: Request, res: Response) => {
   }
 };
 
+export const listApprovedDeliveryMen = async (req: Request, res: Response) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 50;
+
+    const result = await deliveryService.listDeliveryMen(page, limit, "APPROVED");
+
+    return res.status(200).json({
+      success: true,
+      message: "Approved delivery men fetched successfully",
+      data: result,
+    });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
+
 export const updateDeliveryManStatus = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, rejectionReason } = req.body;
 
     if (!id || !status || !["PENDING", "APPROVED", "REJECTED"].includes(status)) {
       return res.status(400).json({
@@ -127,12 +154,65 @@ export const updateDeliveryManStatus = async (req: Request, res: Response) => {
       });
     }
 
-    const updated = await deliveryService.updateDeliveryManStatus(id, status);
+    if (status === "REJECTED" && !rejectionReason?.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Rejection reason is required when rejecting",
+      });
+    }
+
+    const updated = await deliveryService.updateDeliveryManStatus(id as string, status, rejectionReason);
 
     return res.status(200).json({
       success: true,
       message: `Delivery man status updated to ${status}`,
       data: updated,
+    });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
+
+export const deleteDeliveryMan = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Delivery man id is required",
+      });
+    }
+
+    const deleted = await deliveryService.deleteDeliveryMan(id as string);
+
+    return res.status(200).json({
+      success: true,
+      message: "Delivery man deleted successfully",
+      data: deleted,
+    });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
+  }
+};
+
+export const getMyAssignments = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    const assignments = await deliveryService.getMyAssignments(userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Assignments fetched successfully",
+      data: assignments,
     });
   } catch (error: any) {
     const statusCode = error.statusCode || 500;

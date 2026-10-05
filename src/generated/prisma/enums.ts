@@ -9,13 +9,13 @@
 * 🟢 You can import this file directly.
 */
 
-export const DeliveryStatus = {
+export const DeliveryManStatus = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED'
 } as const
 
-export type DeliveryStatus = (typeof DeliveryStatus)[keyof typeof DeliveryStatus]
+export type DeliveryManStatus = (typeof DeliveryManStatus)[keyof typeof DeliveryManStatus]
 
 
 export const Role = {
@@ -66,3 +66,23 @@ export const SubOrderStatus = {
 } as const
 
 export type SubOrderStatus = (typeof SubOrderStatus)[keyof typeof SubOrderStatus]
+
+
+export const ReturnStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  REFUNDED: 'REFUNDED',
+  DISPUTED: 'DISPUTED'
+} as const
+
+export type ReturnStatus = (typeof ReturnStatus)[keyof typeof ReturnStatus]
+
+
+export const DisputeStatus = {
+  OPEN: 'OPEN',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+} as const
+
+export type DisputeStatus = (typeof DisputeStatus)[keyof typeof DisputeStatus]

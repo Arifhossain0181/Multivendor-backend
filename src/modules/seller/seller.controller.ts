@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import * as sellerService from './seller.service';
+import { assignDeliveryManSchema } from './seller.schema';
+import { validate } from '../../middleware/validation.js';
 
 // ১. Apply as a Seller
 export const applyAsSeller = async (req: Request, res: Response) => {
@@ -52,6 +54,27 @@ export const updateSubOrderStatus = async (req: Request, res: Response) => {
         return res.status(200).json({
             success: true,
             message: `Sub-order status updated to ${status} successfully`,
+            data: updatedSubOrder,
+        });
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        return res.status(statusCode).json({ success: false, error: error.message || 'Internal Server Error' });
+    }
+};
+
+export const assignDeliveryMan = async (req: Request, res: Response) => {
+    try {
+        const userId = (req as any).user.id;
+        const subOrderId = req.params.id;
+        const { deliveryManId } = req.body;
+
+        const sellerProfile = await sellerService.findById(userId);
+
+        const updatedSubOrder = await sellerService.assignDeliveryMan(subOrderId as string, sellerProfile.id, deliveryManId);
+
+        return res.status(200).json({
+            success: true,
+            message: "Delivery man assigned successfully",
             data: updatedSubOrder,
         });
     } catch (error: any) {

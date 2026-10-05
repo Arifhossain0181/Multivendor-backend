@@ -40,6 +40,7 @@ export type SubOrderMinAggregateOutputType = {
   sellerId: string | null
   status: $Enums.SubOrderStatus | null
   subtotal: runtime.Decimal | null
+  deliveryManId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +51,7 @@ export type SubOrderMaxAggregateOutputType = {
   sellerId: string | null
   status: $Enums.SubOrderStatus | null
   subtotal: runtime.Decimal | null
+  deliveryManId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -60,6 +62,7 @@ export type SubOrderCountAggregateOutputType = {
   sellerId: number
   status: number
   subtotal: number
+  deliveryManId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -80,6 +83,7 @@ export type SubOrderMinAggregateInputType = {
   sellerId?: true
   status?: true
   subtotal?: true
+  deliveryManId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -90,6 +94,7 @@ export type SubOrderMaxAggregateInputType = {
   sellerId?: true
   status?: true
   subtotal?: true
+  deliveryManId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,6 +105,7 @@ export type SubOrderCountAggregateInputType = {
   sellerId?: true
   status?: true
   subtotal?: true
+  deliveryManId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -197,6 +203,7 @@ export type SubOrderGroupByOutputType = {
   sellerId: string
   status: $Enums.SubOrderStatus
   subtotal: runtime.Decimal
+  deliveryManId: string | null
   createdAt: Date
   updatedAt: Date
   _count: SubOrderCountAggregateOutputType | null
@@ -230,11 +237,14 @@ export type SubOrderWhereInput = {
   sellerId?: Prisma.StringFilter<"SubOrder"> | string
   status?: Prisma.EnumSubOrderStatusFilter<"SubOrder"> | $Enums.SubOrderStatus
   subtotal?: Prisma.DecimalFilter<"SubOrder"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.StringNullableFilter<"SubOrder"> | string | null
   createdAt?: Prisma.DateTimeFilter<"SubOrder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SubOrder"> | Date | string
   masterOrder?: Prisma.XOR<Prisma.MasterOrderScalarRelationFilter, Prisma.MasterOrderWhereInput>
   seller?: Prisma.XOR<Prisma.SellerProfileScalarRelationFilter, Prisma.SellerProfileWhereInput>
+  deliveryMan?: Prisma.XOR<Prisma.DeliveryManNullableScalarRelationFilter, Prisma.DeliveryManWhereInput> | null
   items?: Prisma.SubOrderItemListRelationFilter
+  returnRequests?: Prisma.ReturnRequestListRelationFilter
 }
 
 export type SubOrderOrderByWithRelationInput = {
@@ -243,11 +253,14 @@ export type SubOrderOrderByWithRelationInput = {
   sellerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
+  deliveryManId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   masterOrder?: Prisma.MasterOrderOrderByWithRelationInput
   seller?: Prisma.SellerProfileOrderByWithRelationInput
+  deliveryMan?: Prisma.DeliveryManOrderByWithRelationInput
   items?: Prisma.SubOrderItemOrderByRelationAggregateInput
+  returnRequests?: Prisma.ReturnRequestOrderByRelationAggregateInput
 }
 
 export type SubOrderWhereUniqueInput = Prisma.AtLeast<{
@@ -259,11 +272,14 @@ export type SubOrderWhereUniqueInput = Prisma.AtLeast<{
   sellerId?: Prisma.StringFilter<"SubOrder"> | string
   status?: Prisma.EnumSubOrderStatusFilter<"SubOrder"> | $Enums.SubOrderStatus
   subtotal?: Prisma.DecimalFilter<"SubOrder"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.StringNullableFilter<"SubOrder"> | string | null
   createdAt?: Prisma.DateTimeFilter<"SubOrder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SubOrder"> | Date | string
   masterOrder?: Prisma.XOR<Prisma.MasterOrderScalarRelationFilter, Prisma.MasterOrderWhereInput>
   seller?: Prisma.XOR<Prisma.SellerProfileScalarRelationFilter, Prisma.SellerProfileWhereInput>
+  deliveryMan?: Prisma.XOR<Prisma.DeliveryManNullableScalarRelationFilter, Prisma.DeliveryManWhereInput> | null
   items?: Prisma.SubOrderItemListRelationFilter
+  returnRequests?: Prisma.ReturnRequestListRelationFilter
 }, "id">
 
 export type SubOrderOrderByWithAggregationInput = {
@@ -272,6 +288,7 @@ export type SubOrderOrderByWithAggregationInput = {
   sellerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
+  deliveryManId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.SubOrderCountOrderByAggregateInput
@@ -290,6 +307,7 @@ export type SubOrderScalarWhereWithAggregatesInput = {
   sellerId?: Prisma.StringWithAggregatesFilter<"SubOrder"> | string
   status?: Prisma.EnumSubOrderStatusWithAggregatesFilter<"SubOrder"> | $Enums.SubOrderStatus
   subtotal?: Prisma.DecimalWithAggregatesFilter<"SubOrder"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.StringNullableWithAggregatesFilter<"SubOrder"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"SubOrder"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"SubOrder"> | Date | string
 }
@@ -302,7 +320,9 @@ export type SubOrderCreateInput = {
   updatedAt?: Date | string
   masterOrder: Prisma.MasterOrderCreateNestedOneWithoutSubOrdersInput
   seller: Prisma.SellerProfileCreateNestedOneWithoutSubOrdersInput
+  deliveryMan?: Prisma.DeliveryManCreateNestedOneWithoutSubOrdersInput
   items?: Prisma.SubOrderItemCreateNestedManyWithoutSubOrderInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutSubOrderInput
 }
 
 export type SubOrderUncheckedCreateInput = {
@@ -311,9 +331,11 @@ export type SubOrderUncheckedCreateInput = {
   sellerId: string
   status?: $Enums.SubOrderStatus
   subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.SubOrderItemUncheckedCreateNestedManyWithoutSubOrderInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutSubOrderInput
 }
 
 export type SubOrderUpdateInput = {
@@ -324,7 +346,9 @@ export type SubOrderUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   masterOrder?: Prisma.MasterOrderUpdateOneRequiredWithoutSubOrdersNestedInput
   seller?: Prisma.SellerProfileUpdateOneRequiredWithoutSubOrdersNestedInput
+  deliveryMan?: Prisma.DeliveryManUpdateOneWithoutSubOrdersNestedInput
   items?: Prisma.SubOrderItemUpdateManyWithoutSubOrderNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutSubOrderNestedInput
 }
 
 export type SubOrderUncheckedUpdateInput = {
@@ -333,9 +357,11 @@ export type SubOrderUncheckedUpdateInput = {
   sellerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.SubOrderItemUncheckedUpdateManyWithoutSubOrderNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutSubOrderNestedInput
 }
 
 export type SubOrderCreateManyInput = {
@@ -344,6 +370,7 @@ export type SubOrderCreateManyInput = {
   sellerId: string
   status?: $Enums.SubOrderStatus
   subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -362,6 +389,7 @@ export type SubOrderUncheckedUpdateManyInput = {
   sellerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -387,6 +415,7 @@ export type SubOrderCountOrderByAggregateInput = {
   sellerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
+  deliveryManId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -401,6 +430,7 @@ export type SubOrderMaxOrderByAggregateInput = {
   sellerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
+  deliveryManId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -411,12 +441,55 @@ export type SubOrderMinOrderByAggregateInput = {
   sellerId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   subtotal?: Prisma.SortOrder
+  deliveryManId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type SubOrderSumOrderByAggregateInput = {
   subtotal?: Prisma.SortOrder
+}
+
+export type SubOrderCreateNestedManyWithoutDeliveryManInput = {
+  create?: Prisma.XOR<Prisma.SubOrderCreateWithoutDeliveryManInput, Prisma.SubOrderUncheckedCreateWithoutDeliveryManInput> | Prisma.SubOrderCreateWithoutDeliveryManInput[] | Prisma.SubOrderUncheckedCreateWithoutDeliveryManInput[]
+  connectOrCreate?: Prisma.SubOrderCreateOrConnectWithoutDeliveryManInput | Prisma.SubOrderCreateOrConnectWithoutDeliveryManInput[]
+  createMany?: Prisma.SubOrderCreateManyDeliveryManInputEnvelope
+  connect?: Prisma.SubOrderWhereUniqueInput | Prisma.SubOrderWhereUniqueInput[]
+}
+
+export type SubOrderUncheckedCreateNestedManyWithoutDeliveryManInput = {
+  create?: Prisma.XOR<Prisma.SubOrderCreateWithoutDeliveryManInput, Prisma.SubOrderUncheckedCreateWithoutDeliveryManInput> | Prisma.SubOrderCreateWithoutDeliveryManInput[] | Prisma.SubOrderUncheckedCreateWithoutDeliveryManInput[]
+  connectOrCreate?: Prisma.SubOrderCreateOrConnectWithoutDeliveryManInput | Prisma.SubOrderCreateOrConnectWithoutDeliveryManInput[]
+  createMany?: Prisma.SubOrderCreateManyDeliveryManInputEnvelope
+  connect?: Prisma.SubOrderWhereUniqueInput | Prisma.SubOrderWhereUniqueInput[]
+}
+
+export type SubOrderUpdateManyWithoutDeliveryManNestedInput = {
+  create?: Prisma.XOR<Prisma.SubOrderCreateWithoutDeliveryManInput, Prisma.SubOrderUncheckedCreateWithoutDeliveryManInput> | Prisma.SubOrderCreateWithoutDeliveryManInput[] | Prisma.SubOrderUncheckedCreateWithoutDeliveryManInput[]
+  connectOrCreate?: Prisma.SubOrderCreateOrConnectWithoutDeliveryManInput | Prisma.SubOrderCreateOrConnectWithoutDeliveryManInput[]
+  upsert?: Prisma.SubOrderUpsertWithWhereUniqueWithoutDeliveryManInput | Prisma.SubOrderUpsertWithWhereUniqueWithoutDeliveryManInput[]
+  createMany?: Prisma.SubOrderCreateManyDeliveryManInputEnvelope
+  set?: Prisma.SubOrderWhereUniqueInput | Prisma.SubOrderWhereUniqueInput[]
+  disconnect?: Prisma.SubOrderWhereUniqueInput | Prisma.SubOrderWhereUniqueInput[]
+  delete?: Prisma.SubOrderWhereUniqueInput | Prisma.SubOrderWhereUniqueInput[]
+  connect?: Prisma.SubOrderWhereUniqueInput | Prisma.SubOrderWhereUniqueInput[]
+  update?: Prisma.SubOrderUpdateWithWhereUniqueWithoutDeliveryManInput | Prisma.SubOrderUpdateWithWhereUniqueWithoutDeliveryManInput[]
+  updateMany?: Prisma.SubOrderUpdateManyWithWhereWithoutDeliveryManInput | Prisma.SubOrderUpdateManyWithWhereWithoutDeliveryManInput[]
+  deleteMany?: Prisma.SubOrderScalarWhereInput | Prisma.SubOrderScalarWhereInput[]
+}
+
+export type SubOrderUncheckedUpdateManyWithoutDeliveryManNestedInput = {
+  create?: Prisma.XOR<Prisma.SubOrderCreateWithoutDeliveryManInput, Prisma.SubOrderUncheckedCreateWithoutDeliveryManInput> | Prisma.SubOrderCreateWithoutDeliveryManInput[] | Prisma.SubOrderUncheckedCreateWithoutDeliveryManInput[]
+  connectOrCreate?: Prisma.SubOrderCreateOrConnectWithoutDeliveryManInput | Prisma.SubOrderCreateOrConnectWithoutDeliveryManInput[]
+  upsert?: Prisma.SubOrderUpsertWithWhereUniqueWithoutDeliveryManInput | Prisma.SubOrderUpsertWithWhereUniqueWithoutDeliveryManInput[]
+  createMany?: Prisma.SubOrderCreateManyDeliveryManInputEnvelope
+  set?: Prisma.SubOrderWhereUniqueInput | Prisma.SubOrderWhereUniqueInput[]
+  disconnect?: Prisma.SubOrderWhereUniqueInput | Prisma.SubOrderWhereUniqueInput[]
+  delete?: Prisma.SubOrderWhereUniqueInput | Prisma.SubOrderWhereUniqueInput[]
+  connect?: Prisma.SubOrderWhereUniqueInput | Prisma.SubOrderWhereUniqueInput[]
+  update?: Prisma.SubOrderUpdateWithWhereUniqueWithoutDeliveryManInput | Prisma.SubOrderUpdateWithWhereUniqueWithoutDeliveryManInput[]
+  updateMany?: Prisma.SubOrderUpdateManyWithWhereWithoutDeliveryManInput | Prisma.SubOrderUpdateManyWithWhereWithoutDeliveryManInput[]
+  deleteMany?: Prisma.SubOrderScalarWhereInput | Prisma.SubOrderScalarWhereInput[]
 }
 
 export type SubOrderCreateNestedManyWithoutMasterOrderInput = {
@@ -459,6 +532,20 @@ export type SubOrderUncheckedUpdateManyWithoutMasterOrderNestedInput = {
   update?: Prisma.SubOrderUpdateWithWhereUniqueWithoutMasterOrderInput | Prisma.SubOrderUpdateWithWhereUniqueWithoutMasterOrderInput[]
   updateMany?: Prisma.SubOrderUpdateManyWithWhereWithoutMasterOrderInput | Prisma.SubOrderUpdateManyWithWhereWithoutMasterOrderInput[]
   deleteMany?: Prisma.SubOrderScalarWhereInput | Prisma.SubOrderScalarWhereInput[]
+}
+
+export type SubOrderCreateNestedOneWithoutReturnRequestsInput = {
+  create?: Prisma.XOR<Prisma.SubOrderCreateWithoutReturnRequestsInput, Prisma.SubOrderUncheckedCreateWithoutReturnRequestsInput>
+  connectOrCreate?: Prisma.SubOrderCreateOrConnectWithoutReturnRequestsInput
+  connect?: Prisma.SubOrderWhereUniqueInput
+}
+
+export type SubOrderUpdateOneRequiredWithoutReturnRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.SubOrderCreateWithoutReturnRequestsInput, Prisma.SubOrderUncheckedCreateWithoutReturnRequestsInput>
+  connectOrCreate?: Prisma.SubOrderCreateOrConnectWithoutReturnRequestsInput
+  upsert?: Prisma.SubOrderUpsertWithoutReturnRequestsInput
+  connect?: Prisma.SubOrderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SubOrderUpdateToOneWithWhereWithoutReturnRequestsInput, Prisma.SubOrderUpdateWithoutReturnRequestsInput>, Prisma.SubOrderUncheckedUpdateWithoutReturnRequestsInput>
 }
 
 export type SubOrderCreateNestedManyWithoutSellerInput = {
@@ -521,6 +608,70 @@ export type EnumSubOrderStatusFieldUpdateOperationsInput = {
   set?: $Enums.SubOrderStatus
 }
 
+export type SubOrderCreateWithoutDeliveryManInput = {
+  id?: string
+  status?: $Enums.SubOrderStatus
+  subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  masterOrder: Prisma.MasterOrderCreateNestedOneWithoutSubOrdersInput
+  seller: Prisma.SellerProfileCreateNestedOneWithoutSubOrdersInput
+  items?: Prisma.SubOrderItemCreateNestedManyWithoutSubOrderInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutSubOrderInput
+}
+
+export type SubOrderUncheckedCreateWithoutDeliveryManInput = {
+  id?: string
+  masterOrderId: string
+  sellerId: string
+  status?: $Enums.SubOrderStatus
+  subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  items?: Prisma.SubOrderItemUncheckedCreateNestedManyWithoutSubOrderInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutSubOrderInput
+}
+
+export type SubOrderCreateOrConnectWithoutDeliveryManInput = {
+  where: Prisma.SubOrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.SubOrderCreateWithoutDeliveryManInput, Prisma.SubOrderUncheckedCreateWithoutDeliveryManInput>
+}
+
+export type SubOrderCreateManyDeliveryManInputEnvelope = {
+  data: Prisma.SubOrderCreateManyDeliveryManInput | Prisma.SubOrderCreateManyDeliveryManInput[]
+  skipDuplicates?: boolean
+}
+
+export type SubOrderUpsertWithWhereUniqueWithoutDeliveryManInput = {
+  where: Prisma.SubOrderWhereUniqueInput
+  update: Prisma.XOR<Prisma.SubOrderUpdateWithoutDeliveryManInput, Prisma.SubOrderUncheckedUpdateWithoutDeliveryManInput>
+  create: Prisma.XOR<Prisma.SubOrderCreateWithoutDeliveryManInput, Prisma.SubOrderUncheckedCreateWithoutDeliveryManInput>
+}
+
+export type SubOrderUpdateWithWhereUniqueWithoutDeliveryManInput = {
+  where: Prisma.SubOrderWhereUniqueInput
+  data: Prisma.XOR<Prisma.SubOrderUpdateWithoutDeliveryManInput, Prisma.SubOrderUncheckedUpdateWithoutDeliveryManInput>
+}
+
+export type SubOrderUpdateManyWithWhereWithoutDeliveryManInput = {
+  where: Prisma.SubOrderScalarWhereInput
+  data: Prisma.XOR<Prisma.SubOrderUpdateManyMutationInput, Prisma.SubOrderUncheckedUpdateManyWithoutDeliveryManInput>
+}
+
+export type SubOrderScalarWhereInput = {
+  AND?: Prisma.SubOrderScalarWhereInput | Prisma.SubOrderScalarWhereInput[]
+  OR?: Prisma.SubOrderScalarWhereInput[]
+  NOT?: Prisma.SubOrderScalarWhereInput | Prisma.SubOrderScalarWhereInput[]
+  id?: Prisma.StringFilter<"SubOrder"> | string
+  masterOrderId?: Prisma.StringFilter<"SubOrder"> | string
+  sellerId?: Prisma.StringFilter<"SubOrder"> | string
+  status?: Prisma.EnumSubOrderStatusFilter<"SubOrder"> | $Enums.SubOrderStatus
+  subtotal?: Prisma.DecimalFilter<"SubOrder"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.StringNullableFilter<"SubOrder"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"SubOrder"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"SubOrder"> | Date | string
+}
+
 export type SubOrderCreateWithoutMasterOrderInput = {
   id?: string
   status?: $Enums.SubOrderStatus
@@ -528,7 +679,9 @@ export type SubOrderCreateWithoutMasterOrderInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   seller: Prisma.SellerProfileCreateNestedOneWithoutSubOrdersInput
+  deliveryMan?: Prisma.DeliveryManCreateNestedOneWithoutSubOrdersInput
   items?: Prisma.SubOrderItemCreateNestedManyWithoutSubOrderInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutSubOrderInput
 }
 
 export type SubOrderUncheckedCreateWithoutMasterOrderInput = {
@@ -536,9 +689,11 @@ export type SubOrderUncheckedCreateWithoutMasterOrderInput = {
   sellerId: string
   status?: $Enums.SubOrderStatus
   subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.SubOrderItemUncheckedCreateNestedManyWithoutSubOrderInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutSubOrderInput
 }
 
 export type SubOrderCreateOrConnectWithoutMasterOrderInput = {
@@ -567,17 +722,68 @@ export type SubOrderUpdateManyWithWhereWithoutMasterOrderInput = {
   data: Prisma.XOR<Prisma.SubOrderUpdateManyMutationInput, Prisma.SubOrderUncheckedUpdateManyWithoutMasterOrderInput>
 }
 
-export type SubOrderScalarWhereInput = {
-  AND?: Prisma.SubOrderScalarWhereInput | Prisma.SubOrderScalarWhereInput[]
-  OR?: Prisma.SubOrderScalarWhereInput[]
-  NOT?: Prisma.SubOrderScalarWhereInput | Prisma.SubOrderScalarWhereInput[]
-  id?: Prisma.StringFilter<"SubOrder"> | string
-  masterOrderId?: Prisma.StringFilter<"SubOrder"> | string
-  sellerId?: Prisma.StringFilter<"SubOrder"> | string
-  status?: Prisma.EnumSubOrderStatusFilter<"SubOrder"> | $Enums.SubOrderStatus
-  subtotal?: Prisma.DecimalFilter<"SubOrder"> | runtime.Decimal | runtime.DecimalJsLike | number | string
-  createdAt?: Prisma.DateTimeFilter<"SubOrder"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"SubOrder"> | Date | string
+export type SubOrderCreateWithoutReturnRequestsInput = {
+  id?: string
+  status?: $Enums.SubOrderStatus
+  subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  masterOrder: Prisma.MasterOrderCreateNestedOneWithoutSubOrdersInput
+  seller: Prisma.SellerProfileCreateNestedOneWithoutSubOrdersInput
+  deliveryMan?: Prisma.DeliveryManCreateNestedOneWithoutSubOrdersInput
+  items?: Prisma.SubOrderItemCreateNestedManyWithoutSubOrderInput
+}
+
+export type SubOrderUncheckedCreateWithoutReturnRequestsInput = {
+  id?: string
+  masterOrderId: string
+  sellerId: string
+  status?: $Enums.SubOrderStatus
+  subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  items?: Prisma.SubOrderItemUncheckedCreateNestedManyWithoutSubOrderInput
+}
+
+export type SubOrderCreateOrConnectWithoutReturnRequestsInput = {
+  where: Prisma.SubOrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.SubOrderCreateWithoutReturnRequestsInput, Prisma.SubOrderUncheckedCreateWithoutReturnRequestsInput>
+}
+
+export type SubOrderUpsertWithoutReturnRequestsInput = {
+  update: Prisma.XOR<Prisma.SubOrderUpdateWithoutReturnRequestsInput, Prisma.SubOrderUncheckedUpdateWithoutReturnRequestsInput>
+  create: Prisma.XOR<Prisma.SubOrderCreateWithoutReturnRequestsInput, Prisma.SubOrderUncheckedCreateWithoutReturnRequestsInput>
+  where?: Prisma.SubOrderWhereInput
+}
+
+export type SubOrderUpdateToOneWithWhereWithoutReturnRequestsInput = {
+  where?: Prisma.SubOrderWhereInput
+  data: Prisma.XOR<Prisma.SubOrderUpdateWithoutReturnRequestsInput, Prisma.SubOrderUncheckedUpdateWithoutReturnRequestsInput>
+}
+
+export type SubOrderUpdateWithoutReturnRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  masterOrder?: Prisma.MasterOrderUpdateOneRequiredWithoutSubOrdersNestedInput
+  seller?: Prisma.SellerProfileUpdateOneRequiredWithoutSubOrdersNestedInput
+  deliveryMan?: Prisma.DeliveryManUpdateOneWithoutSubOrdersNestedInput
+  items?: Prisma.SubOrderItemUpdateManyWithoutSubOrderNestedInput
+}
+
+export type SubOrderUncheckedUpdateWithoutReturnRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  masterOrderId?: Prisma.StringFieldUpdateOperationsInput | string
+  sellerId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.SubOrderItemUncheckedUpdateManyWithoutSubOrderNestedInput
 }
 
 export type SubOrderCreateWithoutSellerInput = {
@@ -587,7 +793,9 @@ export type SubOrderCreateWithoutSellerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   masterOrder: Prisma.MasterOrderCreateNestedOneWithoutSubOrdersInput
+  deliveryMan?: Prisma.DeliveryManCreateNestedOneWithoutSubOrdersInput
   items?: Prisma.SubOrderItemCreateNestedManyWithoutSubOrderInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutSubOrderInput
 }
 
 export type SubOrderUncheckedCreateWithoutSellerInput = {
@@ -595,9 +803,11 @@ export type SubOrderUncheckedCreateWithoutSellerInput = {
   masterOrderId: string
   status?: $Enums.SubOrderStatus
   subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   items?: Prisma.SubOrderItemUncheckedCreateNestedManyWithoutSubOrderInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutSubOrderInput
 }
 
 export type SubOrderCreateOrConnectWithoutSellerInput = {
@@ -634,6 +844,8 @@ export type SubOrderCreateWithoutItemsInput = {
   updatedAt?: Date | string
   masterOrder: Prisma.MasterOrderCreateNestedOneWithoutSubOrdersInput
   seller: Prisma.SellerProfileCreateNestedOneWithoutSubOrdersInput
+  deliveryMan?: Prisma.DeliveryManCreateNestedOneWithoutSubOrdersInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutSubOrderInput
 }
 
 export type SubOrderUncheckedCreateWithoutItemsInput = {
@@ -642,8 +854,10 @@ export type SubOrderUncheckedCreateWithoutItemsInput = {
   sellerId: string
   status?: $Enums.SubOrderStatus
   subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutSubOrderInput
 }
 
 export type SubOrderCreateOrConnectWithoutItemsInput = {
@@ -670,9 +884,57 @@ export type SubOrderUpdateWithoutItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   masterOrder?: Prisma.MasterOrderUpdateOneRequiredWithoutSubOrdersNestedInput
   seller?: Prisma.SellerProfileUpdateOneRequiredWithoutSubOrdersNestedInput
+  deliveryMan?: Prisma.DeliveryManUpdateOneWithoutSubOrdersNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutSubOrderNestedInput
 }
 
 export type SubOrderUncheckedUpdateWithoutItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  masterOrderId?: Prisma.StringFieldUpdateOperationsInput | string
+  sellerId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutSubOrderNestedInput
+}
+
+export type SubOrderCreateManyDeliveryManInput = {
+  id?: string
+  masterOrderId: string
+  sellerId: string
+  status?: $Enums.SubOrderStatus
+  subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SubOrderUpdateWithoutDeliveryManInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  masterOrder?: Prisma.MasterOrderUpdateOneRequiredWithoutSubOrdersNestedInput
+  seller?: Prisma.SellerProfileUpdateOneRequiredWithoutSubOrdersNestedInput
+  items?: Prisma.SubOrderItemUpdateManyWithoutSubOrderNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutSubOrderNestedInput
+}
+
+export type SubOrderUncheckedUpdateWithoutDeliveryManInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  masterOrderId?: Prisma.StringFieldUpdateOperationsInput | string
+  sellerId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.SubOrderItemUncheckedUpdateManyWithoutSubOrderNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutSubOrderNestedInput
+}
+
+export type SubOrderUncheckedUpdateManyWithoutDeliveryManInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   masterOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   sellerId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -687,6 +949,7 @@ export type SubOrderCreateManyMasterOrderInput = {
   sellerId: string
   status?: $Enums.SubOrderStatus
   subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -698,7 +961,9 @@ export type SubOrderUpdateWithoutMasterOrderInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.SellerProfileUpdateOneRequiredWithoutSubOrdersNestedInput
+  deliveryMan?: Prisma.DeliveryManUpdateOneWithoutSubOrdersNestedInput
   items?: Prisma.SubOrderItemUpdateManyWithoutSubOrderNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutSubOrderNestedInput
 }
 
 export type SubOrderUncheckedUpdateWithoutMasterOrderInput = {
@@ -706,9 +971,11 @@ export type SubOrderUncheckedUpdateWithoutMasterOrderInput = {
   sellerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.SubOrderItemUncheckedUpdateManyWithoutSubOrderNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutSubOrderNestedInput
 }
 
 export type SubOrderUncheckedUpdateManyWithoutMasterOrderInput = {
@@ -716,6 +983,7 @@ export type SubOrderUncheckedUpdateManyWithoutMasterOrderInput = {
   sellerId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -725,6 +993,7 @@ export type SubOrderCreateManySellerInput = {
   masterOrderId: string
   status?: $Enums.SubOrderStatus
   subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -736,7 +1005,9 @@ export type SubOrderUpdateWithoutSellerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   masterOrder?: Prisma.MasterOrderUpdateOneRequiredWithoutSubOrdersNestedInput
+  deliveryMan?: Prisma.DeliveryManUpdateOneWithoutSubOrdersNestedInput
   items?: Prisma.SubOrderItemUpdateManyWithoutSubOrderNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutSubOrderNestedInput
 }
 
 export type SubOrderUncheckedUpdateWithoutSellerInput = {
@@ -744,9 +1015,11 @@ export type SubOrderUncheckedUpdateWithoutSellerInput = {
   masterOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   items?: Prisma.SubOrderItemUncheckedUpdateManyWithoutSubOrderNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutSubOrderNestedInput
 }
 
 export type SubOrderUncheckedUpdateManyWithoutSellerInput = {
@@ -754,6 +1027,7 @@ export type SubOrderUncheckedUpdateManyWithoutSellerInput = {
   masterOrderId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumSubOrderStatusFieldUpdateOperationsInput | $Enums.SubOrderStatus
   subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  deliveryManId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -765,10 +1039,12 @@ export type SubOrderUncheckedUpdateManyWithoutSellerInput = {
 
 export type SubOrderCountOutputType = {
   items: number
+  returnRequests: number
 }
 
 export type SubOrderCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   items?: boolean | SubOrderCountOutputTypeCountItemsArgs
+  returnRequests?: boolean | SubOrderCountOutputTypeCountReturnRequestsArgs
 }
 
 /**
@@ -788,6 +1064,13 @@ export type SubOrderCountOutputTypeCountItemsArgs<ExtArgs extends runtime.Types.
   where?: Prisma.SubOrderItemWhereInput
 }
 
+/**
+ * SubOrderCountOutputType without action
+ */
+export type SubOrderCountOutputTypeCountReturnRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReturnRequestWhereInput
+}
+
 
 export type SubOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -795,11 +1078,14 @@ export type SubOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   sellerId?: boolean
   status?: boolean
   subtotal?: boolean
+  deliveryManId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   masterOrder?: boolean | Prisma.MasterOrderDefaultArgs<ExtArgs>
   seller?: boolean | Prisma.SellerProfileDefaultArgs<ExtArgs>
+  deliveryMan?: boolean | Prisma.SubOrder$deliveryManArgs<ExtArgs>
   items?: boolean | Prisma.SubOrder$itemsArgs<ExtArgs>
+  returnRequests?: boolean | Prisma.SubOrder$returnRequestsArgs<ExtArgs>
   _count?: boolean | Prisma.SubOrderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["subOrder"]>
 
@@ -809,10 +1095,12 @@ export type SubOrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   sellerId?: boolean
   status?: boolean
   subtotal?: boolean
+  deliveryManId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   masterOrder?: boolean | Prisma.MasterOrderDefaultArgs<ExtArgs>
   seller?: boolean | Prisma.SellerProfileDefaultArgs<ExtArgs>
+  deliveryMan?: boolean | Prisma.SubOrder$deliveryManArgs<ExtArgs>
 }, ExtArgs["result"]["subOrder"]>
 
 export type SubOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -821,10 +1109,12 @@ export type SubOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   sellerId?: boolean
   status?: boolean
   subtotal?: boolean
+  deliveryManId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   masterOrder?: boolean | Prisma.MasterOrderDefaultArgs<ExtArgs>
   seller?: boolean | Prisma.SellerProfileDefaultArgs<ExtArgs>
+  deliveryMan?: boolean | Prisma.SubOrder$deliveryManArgs<ExtArgs>
 }, ExtArgs["result"]["subOrder"]>
 
 export type SubOrderSelectScalar = {
@@ -833,24 +1123,29 @@ export type SubOrderSelectScalar = {
   sellerId?: boolean
   status?: boolean
   subtotal?: boolean
+  deliveryManId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SubOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "masterOrderId" | "sellerId" | "status" | "subtotal" | "createdAt" | "updatedAt", ExtArgs["result"]["subOrder"]>
+export type SubOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "masterOrderId" | "sellerId" | "status" | "subtotal" | "deliveryManId" | "createdAt" | "updatedAt", ExtArgs["result"]["subOrder"]>
 export type SubOrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   masterOrder?: boolean | Prisma.MasterOrderDefaultArgs<ExtArgs>
   seller?: boolean | Prisma.SellerProfileDefaultArgs<ExtArgs>
+  deliveryMan?: boolean | Prisma.SubOrder$deliveryManArgs<ExtArgs>
   items?: boolean | Prisma.SubOrder$itemsArgs<ExtArgs>
+  returnRequests?: boolean | Prisma.SubOrder$returnRequestsArgs<ExtArgs>
   _count?: boolean | Prisma.SubOrderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SubOrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   masterOrder?: boolean | Prisma.MasterOrderDefaultArgs<ExtArgs>
   seller?: boolean | Prisma.SellerProfileDefaultArgs<ExtArgs>
+  deliveryMan?: boolean | Prisma.SubOrder$deliveryManArgs<ExtArgs>
 }
 export type SubOrderIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   masterOrder?: boolean | Prisma.MasterOrderDefaultArgs<ExtArgs>
   seller?: boolean | Prisma.SellerProfileDefaultArgs<ExtArgs>
+  deliveryMan?: boolean | Prisma.SubOrder$deliveryManArgs<ExtArgs>
 }
 
 export type $SubOrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -858,7 +1153,9 @@ export type $SubOrderPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   objects: {
     masterOrder: Prisma.$MasterOrderPayload<ExtArgs>
     seller: Prisma.$SellerProfilePayload<ExtArgs>
+    deliveryMan: Prisma.$DeliveryManPayload<ExtArgs> | null
     items: Prisma.$SubOrderItemPayload<ExtArgs>[]
+    returnRequests: Prisma.$ReturnRequestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -866,6 +1163,7 @@ export type $SubOrderPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     sellerId: string
     status: $Enums.SubOrderStatus
     subtotal: runtime.Decimal
+    deliveryManId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["subOrder"]>
@@ -1264,7 +1562,9 @@ export interface Prisma__SubOrderClient<T, Null = never, ExtArgs extends runtime
   readonly [Symbol.toStringTag]: "PrismaPromise"
   masterOrder<T extends Prisma.MasterOrderDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MasterOrderDefaultArgs<ExtArgs>>): Prisma.Prisma__MasterOrderClient<runtime.Types.Result.GetResult<Prisma.$MasterOrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   seller<T extends Prisma.SellerProfileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SellerProfileDefaultArgs<ExtArgs>>): Prisma.Prisma__SellerProfileClient<runtime.Types.Result.GetResult<Prisma.$SellerProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  deliveryMan<T extends Prisma.SubOrder$deliveryManArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SubOrder$deliveryManArgs<ExtArgs>>): Prisma.Prisma__DeliveryManClient<runtime.Types.Result.GetResult<Prisma.$DeliveryManPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   items<T extends Prisma.SubOrder$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SubOrder$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubOrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  returnRequests<T extends Prisma.SubOrder$returnRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SubOrder$returnRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReturnRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1299,6 +1599,7 @@ export interface SubOrderFieldRefs {
   readonly sellerId: Prisma.FieldRef<"SubOrder", 'String'>
   readonly status: Prisma.FieldRef<"SubOrder", 'SubOrderStatus'>
   readonly subtotal: Prisma.FieldRef<"SubOrder", 'Decimal'>
+  readonly deliveryManId: Prisma.FieldRef<"SubOrder", 'String'>
   readonly createdAt: Prisma.FieldRef<"SubOrder", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"SubOrder", 'DateTime'>
 }
@@ -1702,6 +2003,25 @@ export type SubOrderDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
+ * SubOrder.deliveryMan
+ */
+export type SubOrder$deliveryManArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeliveryMan
+   */
+  select?: Prisma.DeliveryManSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeliveryMan
+   */
+  omit?: Prisma.DeliveryManOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeliveryManInclude<ExtArgs> | null
+  where?: Prisma.DeliveryManWhereInput
+}
+
+/**
  * SubOrder.items
  */
 export type SubOrder$itemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1723,6 +2043,30 @@ export type SubOrder$itemsArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.SubOrderItemScalarFieldEnum | Prisma.SubOrderItemScalarFieldEnum[]
+}
+
+/**
+ * SubOrder.returnRequests
+ */
+export type SubOrder$returnRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReturnRequest
+   */
+  select?: Prisma.ReturnRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReturnRequest
+   */
+  omit?: Prisma.ReturnRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReturnRequestInclude<ExtArgs> | null
+  where?: Prisma.ReturnRequestWhereInput
+  orderBy?: Prisma.ReturnRequestOrderByWithRelationInput | Prisma.ReturnRequestOrderByWithRelationInput[]
+  cursor?: Prisma.ReturnRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReturnRequestScalarFieldEnum | Prisma.ReturnRequestScalarFieldEnum[]
 }
 
 /**

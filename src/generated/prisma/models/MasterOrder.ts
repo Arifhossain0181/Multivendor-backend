@@ -39,6 +39,8 @@ export type MasterOrderMinAggregateOutputType = {
   customerId: string | null
   totalAmount: runtime.Decimal | null
   status: $Enums.MasterOrderStatus | null
+  shippingAddress: string | null
+  customerPhone: string | null
   stripeSessionId: string | null
   stripePaymentIntent: string | null
   createdAt: Date | null
@@ -50,6 +52,8 @@ export type MasterOrderMaxAggregateOutputType = {
   customerId: string | null
   totalAmount: runtime.Decimal | null
   status: $Enums.MasterOrderStatus | null
+  shippingAddress: string | null
+  customerPhone: string | null
   stripeSessionId: string | null
   stripePaymentIntent: string | null
   createdAt: Date | null
@@ -61,6 +65,8 @@ export type MasterOrderCountAggregateOutputType = {
   customerId: number
   totalAmount: number
   status: number
+  shippingAddress: number
+  customerPhone: number
   stripeSessionId: number
   stripePaymentIntent: number
   createdAt: number
@@ -82,6 +88,8 @@ export type MasterOrderMinAggregateInputType = {
   customerId?: true
   totalAmount?: true
   status?: true
+  shippingAddress?: true
+  customerPhone?: true
   stripeSessionId?: true
   stripePaymentIntent?: true
   createdAt?: true
@@ -93,6 +101,8 @@ export type MasterOrderMaxAggregateInputType = {
   customerId?: true
   totalAmount?: true
   status?: true
+  shippingAddress?: true
+  customerPhone?: true
   stripeSessionId?: true
   stripePaymentIntent?: true
   createdAt?: true
@@ -104,6 +114,8 @@ export type MasterOrderCountAggregateInputType = {
   customerId?: true
   totalAmount?: true
   status?: true
+  shippingAddress?: true
+  customerPhone?: true
   stripeSessionId?: true
   stripePaymentIntent?: true
   createdAt?: true
@@ -202,6 +214,8 @@ export type MasterOrderGroupByOutputType = {
   customerId: string
   totalAmount: runtime.Decimal
   status: $Enums.MasterOrderStatus
+  shippingAddress: string | null
+  customerPhone: string | null
   stripeSessionId: string | null
   stripePaymentIntent: string | null
   createdAt: Date
@@ -236,6 +250,8 @@ export type MasterOrderWhereInput = {
   customerId?: Prisma.StringFilter<"MasterOrder"> | string
   totalAmount?: Prisma.DecimalFilter<"MasterOrder"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFilter<"MasterOrder"> | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.StringNullableFilter<"MasterOrder"> | string | null
+  customerPhone?: Prisma.StringNullableFilter<"MasterOrder"> | string | null
   stripeSessionId?: Prisma.StringNullableFilter<"MasterOrder"> | string | null
   stripePaymentIntent?: Prisma.StringNullableFilter<"MasterOrder"> | string | null
   createdAt?: Prisma.DateTimeFilter<"MasterOrder"> | Date | string
@@ -249,6 +265,8 @@ export type MasterOrderOrderByWithRelationInput = {
   customerId?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  shippingAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  customerPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripePaymentIntent?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -267,6 +285,8 @@ export type MasterOrderWhereUniqueInput = Prisma.AtLeast<{
   customerId?: Prisma.StringFilter<"MasterOrder"> | string
   totalAmount?: Prisma.DecimalFilter<"MasterOrder"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFilter<"MasterOrder"> | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.StringNullableFilter<"MasterOrder"> | string | null
+  customerPhone?: Prisma.StringNullableFilter<"MasterOrder"> | string | null
   createdAt?: Prisma.DateTimeFilter<"MasterOrder"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MasterOrder"> | Date | string
   customer?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -278,6 +298,8 @@ export type MasterOrderOrderByWithAggregationInput = {
   customerId?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  shippingAddress?: Prisma.SortOrderInput | Prisma.SortOrder
+  customerPhone?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripePaymentIntent?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -297,6 +319,8 @@ export type MasterOrderScalarWhereWithAggregatesInput = {
   customerId?: Prisma.StringWithAggregatesFilter<"MasterOrder"> | string
   totalAmount?: Prisma.DecimalWithAggregatesFilter<"MasterOrder"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusWithAggregatesFilter<"MasterOrder"> | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.StringNullableWithAggregatesFilter<"MasterOrder"> | string | null
+  customerPhone?: Prisma.StringNullableWithAggregatesFilter<"MasterOrder"> | string | null
   stripeSessionId?: Prisma.StringNullableWithAggregatesFilter<"MasterOrder"> | string | null
   stripePaymentIntent?: Prisma.StringNullableWithAggregatesFilter<"MasterOrder"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"MasterOrder"> | Date | string
@@ -307,6 +331,8 @@ export type MasterOrderCreateInput = {
   id?: string
   totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.MasterOrderStatus
+  shippingAddress?: string | null
+  customerPhone?: string | null
   stripeSessionId?: string | null
   stripePaymentIntent?: string | null
   createdAt?: Date | string
@@ -320,6 +346,8 @@ export type MasterOrderUncheckedCreateInput = {
   customerId: string
   totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.MasterOrderStatus
+  shippingAddress?: string | null
+  customerPhone?: string | null
   stripeSessionId?: string | null
   stripePaymentIntent?: string | null
   createdAt?: Date | string
@@ -331,6 +359,8 @@ export type MasterOrderUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFieldUpdateOperationsInput | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -344,6 +374,8 @@ export type MasterOrderUncheckedUpdateInput = {
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFieldUpdateOperationsInput | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -356,6 +388,8 @@ export type MasterOrderCreateManyInput = {
   customerId: string
   totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.MasterOrderStatus
+  shippingAddress?: string | null
+  customerPhone?: string | null
   stripeSessionId?: string | null
   stripePaymentIntent?: string | null
   createdAt?: Date | string
@@ -366,6 +400,8 @@ export type MasterOrderUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFieldUpdateOperationsInput | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -377,6 +413,8 @@ export type MasterOrderUncheckedUpdateManyInput = {
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFieldUpdateOperationsInput | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -388,6 +426,8 @@ export type MasterOrderCountOrderByAggregateInput = {
   customerId?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  shippingAddress?: Prisma.SortOrder
+  customerPhone?: Prisma.SortOrder
   stripeSessionId?: Prisma.SortOrder
   stripePaymentIntent?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -403,6 +443,8 @@ export type MasterOrderMaxOrderByAggregateInput = {
   customerId?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  shippingAddress?: Prisma.SortOrder
+  customerPhone?: Prisma.SortOrder
   stripeSessionId?: Prisma.SortOrder
   stripePaymentIntent?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -414,6 +456,8 @@ export type MasterOrderMinOrderByAggregateInput = {
   customerId?: Prisma.SortOrder
   totalAmount?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  shippingAddress?: Prisma.SortOrder
+  customerPhone?: Prisma.SortOrder
   stripeSessionId?: Prisma.SortOrder
   stripePaymentIntent?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -511,6 +555,8 @@ export type MasterOrderCreateWithoutSubOrdersInput = {
   id?: string
   totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.MasterOrderStatus
+  shippingAddress?: string | null
+  customerPhone?: string | null
   stripeSessionId?: string | null
   stripePaymentIntent?: string | null
   createdAt?: Date | string
@@ -523,6 +569,8 @@ export type MasterOrderUncheckedCreateWithoutSubOrdersInput = {
   customerId: string
   totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.MasterOrderStatus
+  shippingAddress?: string | null
+  customerPhone?: string | null
   stripeSessionId?: string | null
   stripePaymentIntent?: string | null
   createdAt?: Date | string
@@ -549,6 +597,8 @@ export type MasterOrderUpdateWithoutSubOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFieldUpdateOperationsInput | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -561,6 +611,8 @@ export type MasterOrderUncheckedUpdateWithoutSubOrdersInput = {
   customerId?: Prisma.StringFieldUpdateOperationsInput | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFieldUpdateOperationsInput | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -571,6 +623,8 @@ export type MasterOrderCreateWithoutCustomerInput = {
   id?: string
   totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.MasterOrderStatus
+  shippingAddress?: string | null
+  customerPhone?: string | null
   stripeSessionId?: string | null
   stripePaymentIntent?: string | null
   createdAt?: Date | string
@@ -582,6 +636,8 @@ export type MasterOrderUncheckedCreateWithoutCustomerInput = {
   id?: string
   totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.MasterOrderStatus
+  shippingAddress?: string | null
+  customerPhone?: string | null
   stripeSessionId?: string | null
   stripePaymentIntent?: string | null
   createdAt?: Date | string
@@ -623,6 +679,8 @@ export type MasterOrderScalarWhereInput = {
   customerId?: Prisma.StringFilter<"MasterOrder"> | string
   totalAmount?: Prisma.DecimalFilter<"MasterOrder"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFilter<"MasterOrder"> | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.StringNullableFilter<"MasterOrder"> | string | null
+  customerPhone?: Prisma.StringNullableFilter<"MasterOrder"> | string | null
   stripeSessionId?: Prisma.StringNullableFilter<"MasterOrder"> | string | null
   stripePaymentIntent?: Prisma.StringNullableFilter<"MasterOrder"> | string | null
   createdAt?: Prisma.DateTimeFilter<"MasterOrder"> | Date | string
@@ -633,6 +691,8 @@ export type MasterOrderCreateManyCustomerInput = {
   id?: string
   totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.MasterOrderStatus
+  shippingAddress?: string | null
+  customerPhone?: string | null
   stripeSessionId?: string | null
   stripePaymentIntent?: string | null
   createdAt?: Date | string
@@ -643,6 +703,8 @@ export type MasterOrderUpdateWithoutCustomerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFieldUpdateOperationsInput | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -654,6 +716,8 @@ export type MasterOrderUncheckedUpdateWithoutCustomerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFieldUpdateOperationsInput | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -665,6 +729,8 @@ export type MasterOrderUncheckedUpdateManyWithoutCustomerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumMasterOrderStatusFieldUpdateOperationsInput | $Enums.MasterOrderStatus
+  shippingAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -707,6 +773,8 @@ export type MasterOrderSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   customerId?: boolean
   totalAmount?: boolean
   status?: boolean
+  shippingAddress?: boolean
+  customerPhone?: boolean
   stripeSessionId?: boolean
   stripePaymentIntent?: boolean
   createdAt?: boolean
@@ -721,6 +789,8 @@ export type MasterOrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   customerId?: boolean
   totalAmount?: boolean
   status?: boolean
+  shippingAddress?: boolean
+  customerPhone?: boolean
   stripeSessionId?: boolean
   stripePaymentIntent?: boolean
   createdAt?: boolean
@@ -733,6 +803,8 @@ export type MasterOrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   customerId?: boolean
   totalAmount?: boolean
   status?: boolean
+  shippingAddress?: boolean
+  customerPhone?: boolean
   stripeSessionId?: boolean
   stripePaymentIntent?: boolean
   createdAt?: boolean
@@ -745,13 +817,15 @@ export type MasterOrderSelectScalar = {
   customerId?: boolean
   totalAmount?: boolean
   status?: boolean
+  shippingAddress?: boolean
+  customerPhone?: boolean
   stripeSessionId?: boolean
   stripePaymentIntent?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type MasterOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "totalAmount" | "status" | "stripeSessionId" | "stripePaymentIntent" | "createdAt" | "updatedAt", ExtArgs["result"]["masterOrder"]>
+export type MasterOrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customerId" | "totalAmount" | "status" | "shippingAddress" | "customerPhone" | "stripeSessionId" | "stripePaymentIntent" | "createdAt" | "updatedAt", ExtArgs["result"]["masterOrder"]>
 export type MasterOrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   subOrders?: boolean | Prisma.MasterOrder$subOrdersArgs<ExtArgs>
@@ -775,6 +849,8 @@ export type $MasterOrderPayload<ExtArgs extends runtime.Types.Extensions.Interna
     customerId: string
     totalAmount: runtime.Decimal
     status: $Enums.MasterOrderStatus
+    shippingAddress: string | null
+    customerPhone: string | null
     stripeSessionId: string | null
     stripePaymentIntent: string | null
     createdAt: Date
@@ -1208,6 +1284,8 @@ export interface MasterOrderFieldRefs {
   readonly customerId: Prisma.FieldRef<"MasterOrder", 'String'>
   readonly totalAmount: Prisma.FieldRef<"MasterOrder", 'Decimal'>
   readonly status: Prisma.FieldRef<"MasterOrder", 'MasterOrderStatus'>
+  readonly shippingAddress: Prisma.FieldRef<"MasterOrder", 'String'>
+  readonly customerPhone: Prisma.FieldRef<"MasterOrder", 'String'>
   readonly stripeSessionId: Prisma.FieldRef<"MasterOrder", 'String'>
   readonly stripePaymentIntent: Prisma.FieldRef<"MasterOrder", 'String'>
   readonly createdAt: Prisma.FieldRef<"MasterOrder", 'DateTime'>

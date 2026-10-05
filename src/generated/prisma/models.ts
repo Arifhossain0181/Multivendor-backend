@@ -8,6 +8,7 @@
  *
  * 🟢 You can import this file directly.
  */
+export type * from './models/AuditLog'
 export type * from './models/Cart'
 export type * from './models/CartItem'
 export type * from './models/Category'
@@ -18,6 +19,8 @@ export type * from './models/PageContent'
 export type * from './models/ProcessedStripeEvent'
 export type * from './models/Product'
 export type * from './models/ProductVariant'
+export type * from './models/ReturnRequest'
+export type * from './models/Dispute'
 export type * from './models/Review'
 export type * from './models/SellerProfile'
 export type * from './models/SubOrderItem'

@@ -27,11 +27,51 @@ export type AggregateDeliveryMan = {
 export type DeliveryManMinAggregateOutputType = {
   id: string | null
   userId: string | null
+  firstName: string | null
+  lastName: string | null
+  mobileNumber: string | null
+  gender: string | null
+  dateOfBirth: Date | null
+  city: string | null
+  serviceType: string | null
+  identityType: string | null
+  identityNumber: string | null
+  referralCode: string | null
+  profilePhoto: string | null
+  vehicleBrand: string | null
+  vehicleModel: string | null
+  registrationNumber: string | null
+  registrationRegion: string | null
+  registrationCategory: string | null
+  registrationDigits: string | null
+  vehicleYear: string | null
+  taxTokenNumber: string | null
+  fitnessNumber: string | null
   district: string | null
   zela: string | null
   thana: string | null
   area: string | null
-  status: $Enums.DeliveryStatus | null
+  profileImage: string | null
+  vehicleType: string | null
+  vehicleImage: string | null
+  vehicleRegistrationImage: string | null
+  drivingLicenseNumber: string | null
+  drivingLicenseImage: string | null
+  registrationCertificateImage: string | null
+  taxTokenImage: string | null
+  fitnessCertificateImage: string | null
+  routePermitImage: string | null
+  nidNumber: string | null
+  nidFrontImage: string | null
+  nidBackImage: string | null
+  serviceZones: string | null
+  emergencyContactName: string | null
+  emergencyContactPhone: string | null
+  emergencyContactRelation: string | null
+  termsAccepted: boolean | null
+  privacyPolicyAccepted: boolean | null
+  status: $Enums.DeliveryManStatus | null
+  rejectionReason: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -39,11 +79,51 @@ export type DeliveryManMinAggregateOutputType = {
 export type DeliveryManMaxAggregateOutputType = {
   id: string | null
   userId: string | null
+  firstName: string | null
+  lastName: string | null
+  mobileNumber: string | null
+  gender: string | null
+  dateOfBirth: Date | null
+  city: string | null
+  serviceType: string | null
+  identityType: string | null
+  identityNumber: string | null
+  referralCode: string | null
+  profilePhoto: string | null
+  vehicleBrand: string | null
+  vehicleModel: string | null
+  registrationNumber: string | null
+  registrationRegion: string | null
+  registrationCategory: string | null
+  registrationDigits: string | null
+  vehicleYear: string | null
+  taxTokenNumber: string | null
+  fitnessNumber: string | null
   district: string | null
   zela: string | null
   thana: string | null
   area: string | null
-  status: $Enums.DeliveryStatus | null
+  profileImage: string | null
+  vehicleType: string | null
+  vehicleImage: string | null
+  vehicleRegistrationImage: string | null
+  drivingLicenseNumber: string | null
+  drivingLicenseImage: string | null
+  registrationCertificateImage: string | null
+  taxTokenImage: string | null
+  fitnessCertificateImage: string | null
+  routePermitImage: string | null
+  nidNumber: string | null
+  nidFrontImage: string | null
+  nidBackImage: string | null
+  serviceZones: string | null
+  emergencyContactName: string | null
+  emergencyContactPhone: string | null
+  emergencyContactRelation: string | null
+  termsAccepted: boolean | null
+  privacyPolicyAccepted: boolean | null
+  status: $Enums.DeliveryManStatus | null
+  rejectionReason: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -51,11 +131,51 @@ export type DeliveryManMaxAggregateOutputType = {
 export type DeliveryManCountAggregateOutputType = {
   id: number
   userId: number
+  firstName: number
+  lastName: number
+  mobileNumber: number
+  gender: number
+  dateOfBirth: number
+  city: number
+  serviceType: number
+  identityType: number
+  identityNumber: number
+  referralCode: number
+  profilePhoto: number
+  vehicleBrand: number
+  vehicleModel: number
+  registrationNumber: number
+  registrationRegion: number
+  registrationCategory: number
+  registrationDigits: number
+  vehicleYear: number
+  taxTokenNumber: number
+  fitnessNumber: number
   district: number
   zela: number
   thana: number
   area: number
+  profileImage: number
+  vehicleType: number
+  vehicleImage: number
+  vehicleRegistrationImage: number
+  drivingLicenseNumber: number
+  drivingLicenseImage: number
+  registrationCertificateImage: number
+  taxTokenImage: number
+  fitnessCertificateImage: number
+  routePermitImage: number
+  nidNumber: number
+  nidFrontImage: number
+  nidBackImage: number
+  serviceZones: number
+  emergencyContactName: number
+  emergencyContactPhone: number
+  emergencyContactRelation: number
+  termsAccepted: number
+  privacyPolicyAccepted: number
   status: number
+  rejectionReason: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -65,11 +185,51 @@ export type DeliveryManCountAggregateOutputType = {
 export type DeliveryManMinAggregateInputType = {
   id?: true
   userId?: true
+  firstName?: true
+  lastName?: true
+  mobileNumber?: true
+  gender?: true
+  dateOfBirth?: true
+  city?: true
+  serviceType?: true
+  identityType?: true
+  identityNumber?: true
+  referralCode?: true
+  profilePhoto?: true
+  vehicleBrand?: true
+  vehicleModel?: true
+  registrationNumber?: true
+  registrationRegion?: true
+  registrationCategory?: true
+  registrationDigits?: true
+  vehicleYear?: true
+  taxTokenNumber?: true
+  fitnessNumber?: true
   district?: true
   zela?: true
   thana?: true
   area?: true
+  profileImage?: true
+  vehicleType?: true
+  vehicleImage?: true
+  vehicleRegistrationImage?: true
+  drivingLicenseNumber?: true
+  drivingLicenseImage?: true
+  registrationCertificateImage?: true
+  taxTokenImage?: true
+  fitnessCertificateImage?: true
+  routePermitImage?: true
+  nidNumber?: true
+  nidFrontImage?: true
+  nidBackImage?: true
+  serviceZones?: true
+  emergencyContactName?: true
+  emergencyContactPhone?: true
+  emergencyContactRelation?: true
+  termsAccepted?: true
+  privacyPolicyAccepted?: true
   status?: true
+  rejectionReason?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -77,11 +237,51 @@ export type DeliveryManMinAggregateInputType = {
 export type DeliveryManMaxAggregateInputType = {
   id?: true
   userId?: true
+  firstName?: true
+  lastName?: true
+  mobileNumber?: true
+  gender?: true
+  dateOfBirth?: true
+  city?: true
+  serviceType?: true
+  identityType?: true
+  identityNumber?: true
+  referralCode?: true
+  profilePhoto?: true
+  vehicleBrand?: true
+  vehicleModel?: true
+  registrationNumber?: true
+  registrationRegion?: true
+  registrationCategory?: true
+  registrationDigits?: true
+  vehicleYear?: true
+  taxTokenNumber?: true
+  fitnessNumber?: true
   district?: true
   zela?: true
   thana?: true
   area?: true
+  profileImage?: true
+  vehicleType?: true
+  vehicleImage?: true
+  vehicleRegistrationImage?: true
+  drivingLicenseNumber?: true
+  drivingLicenseImage?: true
+  registrationCertificateImage?: true
+  taxTokenImage?: true
+  fitnessCertificateImage?: true
+  routePermitImage?: true
+  nidNumber?: true
+  nidFrontImage?: true
+  nidBackImage?: true
+  serviceZones?: true
+  emergencyContactName?: true
+  emergencyContactPhone?: true
+  emergencyContactRelation?: true
+  termsAccepted?: true
+  privacyPolicyAccepted?: true
   status?: true
+  rejectionReason?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -89,11 +289,51 @@ export type DeliveryManMaxAggregateInputType = {
 export type DeliveryManCountAggregateInputType = {
   id?: true
   userId?: true
+  firstName?: true
+  lastName?: true
+  mobileNumber?: true
+  gender?: true
+  dateOfBirth?: true
+  city?: true
+  serviceType?: true
+  identityType?: true
+  identityNumber?: true
+  referralCode?: true
+  profilePhoto?: true
+  vehicleBrand?: true
+  vehicleModel?: true
+  registrationNumber?: true
+  registrationRegion?: true
+  registrationCategory?: true
+  registrationDigits?: true
+  vehicleYear?: true
+  taxTokenNumber?: true
+  fitnessNumber?: true
   district?: true
   zela?: true
   thana?: true
   area?: true
+  profileImage?: true
+  vehicleType?: true
+  vehicleImage?: true
+  vehicleRegistrationImage?: true
+  drivingLicenseNumber?: true
+  drivingLicenseImage?: true
+  registrationCertificateImage?: true
+  taxTokenImage?: true
+  fitnessCertificateImage?: true
+  routePermitImage?: true
+  nidNumber?: true
+  nidFrontImage?: true
+  nidBackImage?: true
+  serviceZones?: true
+  emergencyContactName?: true
+  emergencyContactPhone?: true
+  emergencyContactRelation?: true
+  termsAccepted?: true
+  privacyPolicyAccepted?: true
   status?: true
+  rejectionReason?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -174,11 +414,51 @@ export type DeliveryManGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 export type DeliveryManGroupByOutputType = {
   id: string
   userId: string
+  firstName: string
+  lastName: string
+  mobileNumber: string
+  gender: string
+  dateOfBirth: Date | null
+  city: string
+  serviceType: string | null
+  identityType: string
+  identityNumber: string | null
+  referralCode: string | null
+  profilePhoto: string | null
+  vehicleBrand: string | null
+  vehicleModel: string | null
+  registrationNumber: string | null
+  registrationRegion: string | null
+  registrationCategory: string | null
+  registrationDigits: string | null
+  vehicleYear: string | null
+  taxTokenNumber: string | null
+  fitnessNumber: string | null
   district: string
   zela: string
   thana: string
   area: string
-  status: $Enums.DeliveryStatus
+  profileImage: string | null
+  vehicleType: string | null
+  vehicleImage: string | null
+  vehicleRegistrationImage: string | null
+  drivingLicenseNumber: string | null
+  drivingLicenseImage: string | null
+  registrationCertificateImage: string | null
+  taxTokenImage: string | null
+  fitnessCertificateImage: string | null
+  routePermitImage: string | null
+  nidNumber: string | null
+  nidFrontImage: string | null
+  nidBackImage: string | null
+  serviceZones: string | null
+  emergencyContactName: string | null
+  emergencyContactPhone: string | null
+  emergencyContactRelation: string | null
+  termsAccepted: boolean
+  privacyPolicyAccepted: boolean
+  status: $Enums.DeliveryManStatus
+  rejectionReason: string | null
   createdAt: Date
   updatedAt: Date
   _count: DeliveryManCountAggregateOutputType | null
@@ -207,27 +487,109 @@ export type DeliveryManWhereInput = {
   NOT?: Prisma.DeliveryManWhereInput | Prisma.DeliveryManWhereInput[]
   id?: Prisma.StringFilter<"DeliveryMan"> | string
   userId?: Prisma.StringFilter<"DeliveryMan"> | string
+  firstName?: Prisma.StringFilter<"DeliveryMan"> | string
+  lastName?: Prisma.StringFilter<"DeliveryMan"> | string
+  mobileNumber?: Prisma.StringFilter<"DeliveryMan"> | string
+  gender?: Prisma.StringFilter<"DeliveryMan"> | string
+  dateOfBirth?: Prisma.DateTimeNullableFilter<"DeliveryMan"> | Date | string | null
+  city?: Prisma.StringFilter<"DeliveryMan"> | string
+  serviceType?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  identityType?: Prisma.StringFilter<"DeliveryMan"> | string
+  identityNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  referralCode?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  profilePhoto?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleBrand?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleModel?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  registrationNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  registrationRegion?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  registrationCategory?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  registrationDigits?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleYear?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  taxTokenNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  fitnessNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
   district?: Prisma.StringFilter<"DeliveryMan"> | string
   zela?: Prisma.StringFilter<"DeliveryMan"> | string
   thana?: Prisma.StringFilter<"DeliveryMan"> | string
   area?: Prisma.StringFilter<"DeliveryMan"> | string
-  status?: Prisma.EnumDeliveryStatusFilter<"DeliveryMan"> | $Enums.DeliveryStatus
+  profileImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleType?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleRegistrationImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  drivingLicenseNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  drivingLicenseImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  registrationCertificateImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  taxTokenImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  fitnessCertificateImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  routePermitImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  nidNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  nidFrontImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  nidBackImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  serviceZones?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  emergencyContactName?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  emergencyContactPhone?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  emergencyContactRelation?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  termsAccepted?: Prisma.BoolFilter<"DeliveryMan"> | boolean
+  privacyPolicyAccepted?: Prisma.BoolFilter<"DeliveryMan"> | boolean
+  status?: Prisma.EnumDeliveryManStatusFilter<"DeliveryMan"> | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DeliveryMan"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DeliveryMan"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  subOrders?: Prisma.SubOrderListRelationFilter
 }
 
 export type DeliveryManOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  firstName?: Prisma.SortOrder
+  lastName?: Prisma.SortOrder
+  mobileNumber?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  dateOfBirth?: Prisma.SortOrderInput | Prisma.SortOrder
+  city?: Prisma.SortOrder
+  serviceType?: Prisma.SortOrderInput | Prisma.SortOrder
+  identityType?: Prisma.SortOrder
+  identityNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  referralCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  profilePhoto?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleBrand?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleModel?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationRegion?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationCategory?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationDigits?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleYear?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxTokenNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  fitnessNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   district?: Prisma.SortOrder
   zela?: Prisma.SortOrder
   thana?: Prisma.SortOrder
   area?: Prisma.SortOrder
+  profileImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleType?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleRegistrationImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  drivingLicenseNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  drivingLicenseImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationCertificateImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxTokenImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  fitnessCertificateImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  routePermitImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  nidNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  nidFrontImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  nidBackImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  serviceZones?: Prisma.SortOrderInput | Prisma.SortOrder
+  emergencyContactName?: Prisma.SortOrderInput | Prisma.SortOrder
+  emergencyContactPhone?: Prisma.SortOrderInput | Prisma.SortOrder
+  emergencyContactRelation?: Prisma.SortOrderInput | Prisma.SortOrder
+  termsAccepted?: Prisma.SortOrder
+  privacyPolicyAccepted?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  rejectionReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  subOrders?: Prisma.SubOrderOrderByRelationAggregateInput
 }
 
 export type DeliveryManWhereUniqueInput = Prisma.AtLeast<{
@@ -236,24 +598,105 @@ export type DeliveryManWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.DeliveryManWhereInput | Prisma.DeliveryManWhereInput[]
   OR?: Prisma.DeliveryManWhereInput[]
   NOT?: Prisma.DeliveryManWhereInput | Prisma.DeliveryManWhereInput[]
+  firstName?: Prisma.StringFilter<"DeliveryMan"> | string
+  lastName?: Prisma.StringFilter<"DeliveryMan"> | string
+  mobileNumber?: Prisma.StringFilter<"DeliveryMan"> | string
+  gender?: Prisma.StringFilter<"DeliveryMan"> | string
+  dateOfBirth?: Prisma.DateTimeNullableFilter<"DeliveryMan"> | Date | string | null
+  city?: Prisma.StringFilter<"DeliveryMan"> | string
+  serviceType?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  identityType?: Prisma.StringFilter<"DeliveryMan"> | string
+  identityNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  referralCode?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  profilePhoto?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleBrand?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleModel?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  registrationNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  registrationRegion?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  registrationCategory?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  registrationDigits?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleYear?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  taxTokenNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  fitnessNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
   district?: Prisma.StringFilter<"DeliveryMan"> | string
   zela?: Prisma.StringFilter<"DeliveryMan"> | string
   thana?: Prisma.StringFilter<"DeliveryMan"> | string
   area?: Prisma.StringFilter<"DeliveryMan"> | string
-  status?: Prisma.EnumDeliveryStatusFilter<"DeliveryMan"> | $Enums.DeliveryStatus
+  profileImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleType?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  vehicleRegistrationImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  drivingLicenseNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  drivingLicenseImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  registrationCertificateImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  taxTokenImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  fitnessCertificateImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  routePermitImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  nidNumber?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  nidFrontImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  nidBackImage?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  serviceZones?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  emergencyContactName?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  emergencyContactPhone?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  emergencyContactRelation?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
+  termsAccepted?: Prisma.BoolFilter<"DeliveryMan"> | boolean
+  privacyPolicyAccepted?: Prisma.BoolFilter<"DeliveryMan"> | boolean
+  status?: Prisma.EnumDeliveryManStatusFilter<"DeliveryMan"> | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.StringNullableFilter<"DeliveryMan"> | string | null
   createdAt?: Prisma.DateTimeFilter<"DeliveryMan"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DeliveryMan"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  subOrders?: Prisma.SubOrderListRelationFilter
 }, "id" | "userId">
 
 export type DeliveryManOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  firstName?: Prisma.SortOrder
+  lastName?: Prisma.SortOrder
+  mobileNumber?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  dateOfBirth?: Prisma.SortOrderInput | Prisma.SortOrder
+  city?: Prisma.SortOrder
+  serviceType?: Prisma.SortOrderInput | Prisma.SortOrder
+  identityType?: Prisma.SortOrder
+  identityNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  referralCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  profilePhoto?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleBrand?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleModel?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationRegion?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationCategory?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationDigits?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleYear?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxTokenNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  fitnessNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   district?: Prisma.SortOrder
   zela?: Prisma.SortOrder
   thana?: Prisma.SortOrder
   area?: Prisma.SortOrder
+  profileImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleType?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  vehicleRegistrationImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  drivingLicenseNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  drivingLicenseImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  registrationCertificateImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  taxTokenImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  fitnessCertificateImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  routePermitImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  nidNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  nidFrontImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  nidBackImage?: Prisma.SortOrderInput | Prisma.SortOrder
+  serviceZones?: Prisma.SortOrderInput | Prisma.SortOrder
+  emergencyContactName?: Prisma.SortOrderInput | Prisma.SortOrder
+  emergencyContactPhone?: Prisma.SortOrderInput | Prisma.SortOrder
+  emergencyContactRelation?: Prisma.SortOrderInput | Prisma.SortOrder
+  termsAccepted?: Prisma.SortOrder
+  privacyPolicyAccepted?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  rejectionReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DeliveryManCountOrderByAggregateInput
@@ -267,82 +710,366 @@ export type DeliveryManScalarWhereWithAggregatesInput = {
   NOT?: Prisma.DeliveryManScalarWhereWithAggregatesInput | Prisma.DeliveryManScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
   userId?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
+  firstName?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
+  lastName?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
+  mobileNumber?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
+  gender?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
+  dateOfBirth?: Prisma.DateTimeNullableWithAggregatesFilter<"DeliveryMan"> | Date | string | null
+  city?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
+  serviceType?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  identityType?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
+  identityNumber?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  referralCode?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  profilePhoto?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  vehicleBrand?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  vehicleModel?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  registrationNumber?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  registrationRegion?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  registrationCategory?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  registrationDigits?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  vehicleYear?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  taxTokenNumber?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  fitnessNumber?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
   district?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
   zela?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
   thana?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
   area?: Prisma.StringWithAggregatesFilter<"DeliveryMan"> | string
-  status?: Prisma.EnumDeliveryStatusWithAggregatesFilter<"DeliveryMan"> | $Enums.DeliveryStatus
+  profileImage?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  vehicleType?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  vehicleImage?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  vehicleRegistrationImage?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  drivingLicenseNumber?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  drivingLicenseImage?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  registrationCertificateImage?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  taxTokenImage?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  fitnessCertificateImage?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  routePermitImage?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  nidNumber?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  nidFrontImage?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  nidBackImage?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  serviceZones?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  emergencyContactName?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  emergencyContactPhone?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  emergencyContactRelation?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
+  termsAccepted?: Prisma.BoolWithAggregatesFilter<"DeliveryMan"> | boolean
+  privacyPolicyAccepted?: Prisma.BoolWithAggregatesFilter<"DeliveryMan"> | boolean
+  status?: Prisma.EnumDeliveryManStatusWithAggregatesFilter<"DeliveryMan"> | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.StringNullableWithAggregatesFilter<"DeliveryMan"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DeliveryMan"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"DeliveryMan"> | Date | string
 }
 
 export type DeliveryManCreateInput = {
   id?: string
+  firstName: string
+  lastName: string
+  mobileNumber: string
+  gender: string
+  dateOfBirth?: Date | string | null
+  city: string
+  serviceType?: string | null
+  identityType: string
+  identityNumber?: string | null
+  referralCode?: string | null
+  profilePhoto?: string | null
+  vehicleBrand?: string | null
+  vehicleModel?: string | null
+  registrationNumber?: string | null
+  registrationRegion?: string | null
+  registrationCategory?: string | null
+  registrationDigits?: string | null
+  vehicleYear?: string | null
+  taxTokenNumber?: string | null
+  fitnessNumber?: string | null
   district: string
   zela: string
   thana: string
   area: string
-  status?: $Enums.DeliveryStatus
+  profileImage?: string | null
+  vehicleType?: string | null
+  vehicleImage?: string | null
+  vehicleRegistrationImage?: string | null
+  drivingLicenseNumber?: string | null
+  drivingLicenseImage?: string | null
+  registrationCertificateImage?: string | null
+  taxTokenImage?: string | null
+  fitnessCertificateImage?: string | null
+  routePermitImage?: string | null
+  nidNumber?: string | null
+  nidFrontImage?: string | null
+  nidBackImage?: string | null
+  serviceZones?: string | null
+  emergencyContactName?: string | null
+  emergencyContactPhone?: string | null
+  emergencyContactRelation?: string | null
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
+  status?: $Enums.DeliveryManStatus
+  rejectionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutDeliveryManProfileInput
+  subOrders?: Prisma.SubOrderCreateNestedManyWithoutDeliveryManInput
 }
 
 export type DeliveryManUncheckedCreateInput = {
   id?: string
   userId: string
+  firstName: string
+  lastName: string
+  mobileNumber: string
+  gender: string
+  dateOfBirth?: Date | string | null
+  city: string
+  serviceType?: string | null
+  identityType: string
+  identityNumber?: string | null
+  referralCode?: string | null
+  profilePhoto?: string | null
+  vehicleBrand?: string | null
+  vehicleModel?: string | null
+  registrationNumber?: string | null
+  registrationRegion?: string | null
+  registrationCategory?: string | null
+  registrationDigits?: string | null
+  vehicleYear?: string | null
+  taxTokenNumber?: string | null
+  fitnessNumber?: string | null
   district: string
   zela: string
   thana: string
   area: string
-  status?: $Enums.DeliveryStatus
+  profileImage?: string | null
+  vehicleType?: string | null
+  vehicleImage?: string | null
+  vehicleRegistrationImage?: string | null
+  drivingLicenseNumber?: string | null
+  drivingLicenseImage?: string | null
+  registrationCertificateImage?: string | null
+  taxTokenImage?: string | null
+  fitnessCertificateImage?: string | null
+  routePermitImage?: string | null
+  nidNumber?: string | null
+  nidFrontImage?: string | null
+  nidBackImage?: string | null
+  serviceZones?: string | null
+  emergencyContactName?: string | null
+  emergencyContactPhone?: string | null
+  emergencyContactRelation?: string | null
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
+  status?: $Enums.DeliveryManStatus
+  rejectionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  subOrders?: Prisma.SubOrderUncheckedCreateNestedManyWithoutDeliveryManInput
 }
 
 export type DeliveryManUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  mobileNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  gender?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.StringFieldUpdateOperationsInput | string
+  identityNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profilePhoto?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleYear?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.StringFieldUpdateOperationsInput | string
   zela?: Prisma.StringFieldUpdateOperationsInput | string
   thana?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleRegistrationImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  routePermitImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidFrontImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidBackImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactRelation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  privacyPolicyAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumDeliveryManStatusFieldUpdateOperationsInput | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryManProfileNestedInput
+  subOrders?: Prisma.SubOrderUpdateManyWithoutDeliveryManNestedInput
 }
 
 export type DeliveryManUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  mobileNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  gender?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.StringFieldUpdateOperationsInput | string
+  identityNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profilePhoto?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleYear?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.StringFieldUpdateOperationsInput | string
   zela?: Prisma.StringFieldUpdateOperationsInput | string
   thana?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleRegistrationImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  routePermitImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidFrontImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidBackImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactRelation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  privacyPolicyAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumDeliveryManStatusFieldUpdateOperationsInput | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subOrders?: Prisma.SubOrderUncheckedUpdateManyWithoutDeliveryManNestedInput
 }
 
 export type DeliveryManCreateManyInput = {
   id?: string
   userId: string
+  firstName: string
+  lastName: string
+  mobileNumber: string
+  gender: string
+  dateOfBirth?: Date | string | null
+  city: string
+  serviceType?: string | null
+  identityType: string
+  identityNumber?: string | null
+  referralCode?: string | null
+  profilePhoto?: string | null
+  vehicleBrand?: string | null
+  vehicleModel?: string | null
+  registrationNumber?: string | null
+  registrationRegion?: string | null
+  registrationCategory?: string | null
+  registrationDigits?: string | null
+  vehicleYear?: string | null
+  taxTokenNumber?: string | null
+  fitnessNumber?: string | null
   district: string
   zela: string
   thana: string
   area: string
-  status?: $Enums.DeliveryStatus
+  profileImage?: string | null
+  vehicleType?: string | null
+  vehicleImage?: string | null
+  vehicleRegistrationImage?: string | null
+  drivingLicenseNumber?: string | null
+  drivingLicenseImage?: string | null
+  registrationCertificateImage?: string | null
+  taxTokenImage?: string | null
+  fitnessCertificateImage?: string | null
+  routePermitImage?: string | null
+  nidNumber?: string | null
+  nidFrontImage?: string | null
+  nidBackImage?: string | null
+  serviceZones?: string | null
+  emergencyContactName?: string | null
+  emergencyContactPhone?: string | null
+  emergencyContactRelation?: string | null
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
+  status?: $Enums.DeliveryManStatus
+  rejectionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type DeliveryManUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  mobileNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  gender?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.StringFieldUpdateOperationsInput | string
+  identityNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profilePhoto?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleYear?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.StringFieldUpdateOperationsInput | string
   zela?: Prisma.StringFieldUpdateOperationsInput | string
   thana?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleRegistrationImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  routePermitImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidFrontImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidBackImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactRelation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  privacyPolicyAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumDeliveryManStatusFieldUpdateOperationsInput | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -350,11 +1077,51 @@ export type DeliveryManUpdateManyMutationInput = {
 export type DeliveryManUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  mobileNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  gender?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.StringFieldUpdateOperationsInput | string
+  identityNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profilePhoto?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleYear?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.StringFieldUpdateOperationsInput | string
   zela?: Prisma.StringFieldUpdateOperationsInput | string
   thana?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleRegistrationImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  routePermitImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidFrontImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidBackImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactRelation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  privacyPolicyAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumDeliveryManStatusFieldUpdateOperationsInput | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -362,11 +1129,51 @@ export type DeliveryManUncheckedUpdateManyInput = {
 export type DeliveryManCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  firstName?: Prisma.SortOrder
+  lastName?: Prisma.SortOrder
+  mobileNumber?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  dateOfBirth?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  serviceType?: Prisma.SortOrder
+  identityType?: Prisma.SortOrder
+  identityNumber?: Prisma.SortOrder
+  referralCode?: Prisma.SortOrder
+  profilePhoto?: Prisma.SortOrder
+  vehicleBrand?: Prisma.SortOrder
+  vehicleModel?: Prisma.SortOrder
+  registrationNumber?: Prisma.SortOrder
+  registrationRegion?: Prisma.SortOrder
+  registrationCategory?: Prisma.SortOrder
+  registrationDigits?: Prisma.SortOrder
+  vehicleYear?: Prisma.SortOrder
+  taxTokenNumber?: Prisma.SortOrder
+  fitnessNumber?: Prisma.SortOrder
   district?: Prisma.SortOrder
   zela?: Prisma.SortOrder
   thana?: Prisma.SortOrder
   area?: Prisma.SortOrder
+  profileImage?: Prisma.SortOrder
+  vehicleType?: Prisma.SortOrder
+  vehicleImage?: Prisma.SortOrder
+  vehicleRegistrationImage?: Prisma.SortOrder
+  drivingLicenseNumber?: Prisma.SortOrder
+  drivingLicenseImage?: Prisma.SortOrder
+  registrationCertificateImage?: Prisma.SortOrder
+  taxTokenImage?: Prisma.SortOrder
+  fitnessCertificateImage?: Prisma.SortOrder
+  routePermitImage?: Prisma.SortOrder
+  nidNumber?: Prisma.SortOrder
+  nidFrontImage?: Prisma.SortOrder
+  nidBackImage?: Prisma.SortOrder
+  serviceZones?: Prisma.SortOrder
+  emergencyContactName?: Prisma.SortOrder
+  emergencyContactPhone?: Prisma.SortOrder
+  emergencyContactRelation?: Prisma.SortOrder
+  termsAccepted?: Prisma.SortOrder
+  privacyPolicyAccepted?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  rejectionReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -374,11 +1181,51 @@ export type DeliveryManCountOrderByAggregateInput = {
 export type DeliveryManMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  firstName?: Prisma.SortOrder
+  lastName?: Prisma.SortOrder
+  mobileNumber?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  dateOfBirth?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  serviceType?: Prisma.SortOrder
+  identityType?: Prisma.SortOrder
+  identityNumber?: Prisma.SortOrder
+  referralCode?: Prisma.SortOrder
+  profilePhoto?: Prisma.SortOrder
+  vehicleBrand?: Prisma.SortOrder
+  vehicleModel?: Prisma.SortOrder
+  registrationNumber?: Prisma.SortOrder
+  registrationRegion?: Prisma.SortOrder
+  registrationCategory?: Prisma.SortOrder
+  registrationDigits?: Prisma.SortOrder
+  vehicleYear?: Prisma.SortOrder
+  taxTokenNumber?: Prisma.SortOrder
+  fitnessNumber?: Prisma.SortOrder
   district?: Prisma.SortOrder
   zela?: Prisma.SortOrder
   thana?: Prisma.SortOrder
   area?: Prisma.SortOrder
+  profileImage?: Prisma.SortOrder
+  vehicleType?: Prisma.SortOrder
+  vehicleImage?: Prisma.SortOrder
+  vehicleRegistrationImage?: Prisma.SortOrder
+  drivingLicenseNumber?: Prisma.SortOrder
+  drivingLicenseImage?: Prisma.SortOrder
+  registrationCertificateImage?: Prisma.SortOrder
+  taxTokenImage?: Prisma.SortOrder
+  fitnessCertificateImage?: Prisma.SortOrder
+  routePermitImage?: Prisma.SortOrder
+  nidNumber?: Prisma.SortOrder
+  nidFrontImage?: Prisma.SortOrder
+  nidBackImage?: Prisma.SortOrder
+  serviceZones?: Prisma.SortOrder
+  emergencyContactName?: Prisma.SortOrder
+  emergencyContactPhone?: Prisma.SortOrder
+  emergencyContactRelation?: Prisma.SortOrder
+  termsAccepted?: Prisma.SortOrder
+  privacyPolicyAccepted?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  rejectionReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -386,11 +1233,51 @@ export type DeliveryManMaxOrderByAggregateInput = {
 export type DeliveryManMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  firstName?: Prisma.SortOrder
+  lastName?: Prisma.SortOrder
+  mobileNumber?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
+  dateOfBirth?: Prisma.SortOrder
+  city?: Prisma.SortOrder
+  serviceType?: Prisma.SortOrder
+  identityType?: Prisma.SortOrder
+  identityNumber?: Prisma.SortOrder
+  referralCode?: Prisma.SortOrder
+  profilePhoto?: Prisma.SortOrder
+  vehicleBrand?: Prisma.SortOrder
+  vehicleModel?: Prisma.SortOrder
+  registrationNumber?: Prisma.SortOrder
+  registrationRegion?: Prisma.SortOrder
+  registrationCategory?: Prisma.SortOrder
+  registrationDigits?: Prisma.SortOrder
+  vehicleYear?: Prisma.SortOrder
+  taxTokenNumber?: Prisma.SortOrder
+  fitnessNumber?: Prisma.SortOrder
   district?: Prisma.SortOrder
   zela?: Prisma.SortOrder
   thana?: Prisma.SortOrder
   area?: Prisma.SortOrder
+  profileImage?: Prisma.SortOrder
+  vehicleType?: Prisma.SortOrder
+  vehicleImage?: Prisma.SortOrder
+  vehicleRegistrationImage?: Prisma.SortOrder
+  drivingLicenseNumber?: Prisma.SortOrder
+  drivingLicenseImage?: Prisma.SortOrder
+  registrationCertificateImage?: Prisma.SortOrder
+  taxTokenImage?: Prisma.SortOrder
+  fitnessCertificateImage?: Prisma.SortOrder
+  routePermitImage?: Prisma.SortOrder
+  nidNumber?: Prisma.SortOrder
+  nidFrontImage?: Prisma.SortOrder
+  nidBackImage?: Prisma.SortOrder
+  serviceZones?: Prisma.SortOrder
+  emergencyContactName?: Prisma.SortOrder
+  emergencyContactPhone?: Prisma.SortOrder
+  emergencyContactRelation?: Prisma.SortOrder
+  termsAccepted?: Prisma.SortOrder
+  privacyPolicyAccepted?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  rejectionReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -400,8 +1287,32 @@ export type DeliveryManNullableScalarRelationFilter = {
   isNot?: Prisma.DeliveryManWhereInput | null
 }
 
-export type EnumDeliveryStatusFieldUpdateOperationsInput = {
-  set?: $Enums.DeliveryStatus
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
+export type EnumDeliveryManStatusFieldUpdateOperationsInput = {
+  set?: $Enums.DeliveryManStatus
+}
+
+export type DeliveryManCreateNestedOneWithoutSubOrdersInput = {
+  create?: Prisma.XOR<Prisma.DeliveryManCreateWithoutSubOrdersInput, Prisma.DeliveryManUncheckedCreateWithoutSubOrdersInput>
+  connectOrCreate?: Prisma.DeliveryManCreateOrConnectWithoutSubOrdersInput
+  connect?: Prisma.DeliveryManWhereUniqueInput
+}
+
+export type DeliveryManUpdateOneWithoutSubOrdersNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryManCreateWithoutSubOrdersInput, Prisma.DeliveryManUncheckedCreateWithoutSubOrdersInput>
+  connectOrCreate?: Prisma.DeliveryManCreateOrConnectWithoutSubOrdersInput
+  upsert?: Prisma.DeliveryManUpsertWithoutSubOrdersInput
+  disconnect?: Prisma.DeliveryManWhereInput | boolean
+  delete?: Prisma.DeliveryManWhereInput | boolean
+  connect?: Prisma.DeliveryManWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryManUpdateToOneWithWhereWithoutSubOrdersInput, Prisma.DeliveryManUpdateWithoutSubOrdersInput>, Prisma.DeliveryManUncheckedUpdateWithoutSubOrdersInput>
 }
 
 export type DeliveryManCreateNestedOneWithoutUserInput = {
@@ -436,26 +1347,332 @@ export type DeliveryManUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryManUpdateToOneWithWhereWithoutUserInput, Prisma.DeliveryManUpdateWithoutUserInput>, Prisma.DeliveryManUncheckedUpdateWithoutUserInput>
 }
 
-export type DeliveryManCreateWithoutUserInput = {
+export type DeliveryManCreateWithoutSubOrdersInput = {
   id?: string
+  firstName: string
+  lastName: string
+  mobileNumber: string
+  gender: string
+  dateOfBirth?: Date | string | null
+  city: string
+  serviceType?: string | null
+  identityType: string
+  identityNumber?: string | null
+  referralCode?: string | null
+  profilePhoto?: string | null
+  vehicleBrand?: string | null
+  vehicleModel?: string | null
+  registrationNumber?: string | null
+  registrationRegion?: string | null
+  registrationCategory?: string | null
+  registrationDigits?: string | null
+  vehicleYear?: string | null
+  taxTokenNumber?: string | null
+  fitnessNumber?: string | null
   district: string
   zela: string
   thana: string
   area: string
-  status?: $Enums.DeliveryStatus
+  profileImage?: string | null
+  vehicleType?: string | null
+  vehicleImage?: string | null
+  vehicleRegistrationImage?: string | null
+  drivingLicenseNumber?: string | null
+  drivingLicenseImage?: string | null
+  registrationCertificateImage?: string | null
+  taxTokenImage?: string | null
+  fitnessCertificateImage?: string | null
+  routePermitImage?: string | null
+  nidNumber?: string | null
+  nidFrontImage?: string | null
+  nidBackImage?: string | null
+  serviceZones?: string | null
+  emergencyContactName?: string | null
+  emergencyContactPhone?: string | null
+  emergencyContactRelation?: string | null
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
+  status?: $Enums.DeliveryManStatus
+  rejectionReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutDeliveryManProfileInput
+}
+
+export type DeliveryManUncheckedCreateWithoutSubOrdersInput = {
+  id?: string
+  userId: string
+  firstName: string
+  lastName: string
+  mobileNumber: string
+  gender: string
+  dateOfBirth?: Date | string | null
+  city: string
+  serviceType?: string | null
+  identityType: string
+  identityNumber?: string | null
+  referralCode?: string | null
+  profilePhoto?: string | null
+  vehicleBrand?: string | null
+  vehicleModel?: string | null
+  registrationNumber?: string | null
+  registrationRegion?: string | null
+  registrationCategory?: string | null
+  registrationDigits?: string | null
+  vehicleYear?: string | null
+  taxTokenNumber?: string | null
+  fitnessNumber?: string | null
+  district: string
+  zela: string
+  thana: string
+  area: string
+  profileImage?: string | null
+  vehicleType?: string | null
+  vehicleImage?: string | null
+  vehicleRegistrationImage?: string | null
+  drivingLicenseNumber?: string | null
+  drivingLicenseImage?: string | null
+  registrationCertificateImage?: string | null
+  taxTokenImage?: string | null
+  fitnessCertificateImage?: string | null
+  routePermitImage?: string | null
+  nidNumber?: string | null
+  nidFrontImage?: string | null
+  nidBackImage?: string | null
+  serviceZones?: string | null
+  emergencyContactName?: string | null
+  emergencyContactPhone?: string | null
+  emergencyContactRelation?: string | null
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
+  status?: $Enums.DeliveryManStatus
+  rejectionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
-export type DeliveryManUncheckedCreateWithoutUserInput = {
+export type DeliveryManCreateOrConnectWithoutSubOrdersInput = {
+  where: Prisma.DeliveryManWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeliveryManCreateWithoutSubOrdersInput, Prisma.DeliveryManUncheckedCreateWithoutSubOrdersInput>
+}
+
+export type DeliveryManUpsertWithoutSubOrdersInput = {
+  update: Prisma.XOR<Prisma.DeliveryManUpdateWithoutSubOrdersInput, Prisma.DeliveryManUncheckedUpdateWithoutSubOrdersInput>
+  create: Prisma.XOR<Prisma.DeliveryManCreateWithoutSubOrdersInput, Prisma.DeliveryManUncheckedCreateWithoutSubOrdersInput>
+  where?: Prisma.DeliveryManWhereInput
+}
+
+export type DeliveryManUpdateToOneWithWhereWithoutSubOrdersInput = {
+  where?: Prisma.DeliveryManWhereInput
+  data: Prisma.XOR<Prisma.DeliveryManUpdateWithoutSubOrdersInput, Prisma.DeliveryManUncheckedUpdateWithoutSubOrdersInput>
+}
+
+export type DeliveryManUpdateWithoutSubOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  mobileNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  gender?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.StringFieldUpdateOperationsInput | string
+  identityNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profilePhoto?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleYear?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.StringFieldUpdateOperationsInput | string
+  zela?: Prisma.StringFieldUpdateOperationsInput | string
+  thana?: Prisma.StringFieldUpdateOperationsInput | string
+  area?: Prisma.StringFieldUpdateOperationsInput | string
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleRegistrationImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  routePermitImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidFrontImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidBackImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactRelation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  privacyPolicyAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumDeliveryManStatusFieldUpdateOperationsInput | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryManProfileNestedInput
+}
+
+export type DeliveryManUncheckedUpdateWithoutSubOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  mobileNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  gender?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.StringFieldUpdateOperationsInput | string
+  identityNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profilePhoto?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleYear?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  district?: Prisma.StringFieldUpdateOperationsInput | string
+  zela?: Prisma.StringFieldUpdateOperationsInput | string
+  thana?: Prisma.StringFieldUpdateOperationsInput | string
+  area?: Prisma.StringFieldUpdateOperationsInput | string
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleRegistrationImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  routePermitImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidFrontImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidBackImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactRelation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  privacyPolicyAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumDeliveryManStatusFieldUpdateOperationsInput | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type DeliveryManCreateWithoutUserInput = {
   id?: string
+  firstName: string
+  lastName: string
+  mobileNumber: string
+  gender: string
+  dateOfBirth?: Date | string | null
+  city: string
+  serviceType?: string | null
+  identityType: string
+  identityNumber?: string | null
+  referralCode?: string | null
+  profilePhoto?: string | null
+  vehicleBrand?: string | null
+  vehicleModel?: string | null
+  registrationNumber?: string | null
+  registrationRegion?: string | null
+  registrationCategory?: string | null
+  registrationDigits?: string | null
+  vehicleYear?: string | null
+  taxTokenNumber?: string | null
+  fitnessNumber?: string | null
   district: string
   zela: string
   thana: string
   area: string
-  status?: $Enums.DeliveryStatus
+  profileImage?: string | null
+  vehicleType?: string | null
+  vehicleImage?: string | null
+  vehicleRegistrationImage?: string | null
+  drivingLicenseNumber?: string | null
+  drivingLicenseImage?: string | null
+  registrationCertificateImage?: string | null
+  taxTokenImage?: string | null
+  fitnessCertificateImage?: string | null
+  routePermitImage?: string | null
+  nidNumber?: string | null
+  nidFrontImage?: string | null
+  nidBackImage?: string | null
+  serviceZones?: string | null
+  emergencyContactName?: string | null
+  emergencyContactPhone?: string | null
+  emergencyContactRelation?: string | null
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
+  status?: $Enums.DeliveryManStatus
+  rejectionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  subOrders?: Prisma.SubOrderCreateNestedManyWithoutDeliveryManInput
+}
+
+export type DeliveryManUncheckedCreateWithoutUserInput = {
+  id?: string
+  firstName: string
+  lastName: string
+  mobileNumber: string
+  gender: string
+  dateOfBirth?: Date | string | null
+  city: string
+  serviceType?: string | null
+  identityType: string
+  identityNumber?: string | null
+  referralCode?: string | null
+  profilePhoto?: string | null
+  vehicleBrand?: string | null
+  vehicleModel?: string | null
+  registrationNumber?: string | null
+  registrationRegion?: string | null
+  registrationCategory?: string | null
+  registrationDigits?: string | null
+  vehicleYear?: string | null
+  taxTokenNumber?: string | null
+  fitnessNumber?: string | null
+  district: string
+  zela: string
+  thana: string
+  area: string
+  profileImage?: string | null
+  vehicleType?: string | null
+  vehicleImage?: string | null
+  vehicleRegistrationImage?: string | null
+  drivingLicenseNumber?: string | null
+  drivingLicenseImage?: string | null
+  registrationCertificateImage?: string | null
+  taxTokenImage?: string | null
+  fitnessCertificateImage?: string | null
+  routePermitImage?: string | null
+  nidNumber?: string | null
+  nidFrontImage?: string | null
+  nidBackImage?: string | null
+  serviceZones?: string | null
+  emergencyContactName?: string | null
+  emergencyContactPhone?: string | null
+  emergencyContactRelation?: string | null
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
+  status?: $Enums.DeliveryManStatus
+  rejectionReason?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  subOrders?: Prisma.SubOrderUncheckedCreateNestedManyWithoutDeliveryManInput
 }
 
 export type DeliveryManCreateOrConnectWithoutUserInput = {
@@ -476,49 +1693,242 @@ export type DeliveryManUpdateToOneWithWhereWithoutUserInput = {
 
 export type DeliveryManUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  mobileNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  gender?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.StringFieldUpdateOperationsInput | string
+  identityNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profilePhoto?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleYear?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.StringFieldUpdateOperationsInput | string
   zela?: Prisma.StringFieldUpdateOperationsInput | string
   thana?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleRegistrationImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  routePermitImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidFrontImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidBackImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactRelation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  privacyPolicyAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumDeliveryManStatusFieldUpdateOperationsInput | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subOrders?: Prisma.SubOrderUpdateManyWithoutDeliveryManNestedInput
 }
 
 export type DeliveryManUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  mobileNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  gender?: Prisma.StringFieldUpdateOperationsInput | string
+  dateOfBirth?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  city?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  identityType?: Prisma.StringFieldUpdateOperationsInput | string
+  identityNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  referralCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  profilePhoto?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleBrand?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleModel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationRegion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCategory?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationDigits?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleYear?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   district?: Prisma.StringFieldUpdateOperationsInput | string
   zela?: Prisma.StringFieldUpdateOperationsInput | string
   thana?: Prisma.StringFieldUpdateOperationsInput | string
   area?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus
+  profileImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  vehicleRegistrationImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  drivingLicenseImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  registrationCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  taxTokenImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fitnessCertificateImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  routePermitImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidFrontImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  nidBackImage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZones?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactPhone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContactRelation?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  termsAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  privacyPolicyAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumDeliveryManStatusFieldUpdateOperationsInput | $Enums.DeliveryManStatus
+  rejectionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  subOrders?: Prisma.SubOrderUncheckedUpdateManyWithoutDeliveryManNestedInput
 }
 
+
+/**
+ * Count Type DeliveryManCountOutputType
+ */
+
+export type DeliveryManCountOutputType = {
+  subOrders: number
+}
+
+export type DeliveryManCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  subOrders?: boolean | DeliveryManCountOutputTypeCountSubOrdersArgs
+}
+
+/**
+ * DeliveryManCountOutputType without action
+ */
+export type DeliveryManCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeliveryManCountOutputType
+   */
+  select?: Prisma.DeliveryManCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * DeliveryManCountOutputType without action
+ */
+export type DeliveryManCountOutputTypeCountSubOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SubOrderWhereInput
+}
 
 
 export type DeliveryManSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  firstName?: boolean
+  lastName?: boolean
+  mobileNumber?: boolean
+  gender?: boolean
+  dateOfBirth?: boolean
+  city?: boolean
+  serviceType?: boolean
+  identityType?: boolean
+  identityNumber?: boolean
+  referralCode?: boolean
+  profilePhoto?: boolean
+  vehicleBrand?: boolean
+  vehicleModel?: boolean
+  registrationNumber?: boolean
+  registrationRegion?: boolean
+  registrationCategory?: boolean
+  registrationDigits?: boolean
+  vehicleYear?: boolean
+  taxTokenNumber?: boolean
+  fitnessNumber?: boolean
   district?: boolean
   zela?: boolean
   thana?: boolean
   area?: boolean
+  profileImage?: boolean
+  vehicleType?: boolean
+  vehicleImage?: boolean
+  vehicleRegistrationImage?: boolean
+  drivingLicenseNumber?: boolean
+  drivingLicenseImage?: boolean
+  registrationCertificateImage?: boolean
+  taxTokenImage?: boolean
+  fitnessCertificateImage?: boolean
+  routePermitImage?: boolean
+  nidNumber?: boolean
+  nidFrontImage?: boolean
+  nidBackImage?: boolean
+  serviceZones?: boolean
+  emergencyContactName?: boolean
+  emergencyContactPhone?: boolean
+  emergencyContactRelation?: boolean
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
   status?: boolean
+  rejectionReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  subOrders?: boolean | Prisma.DeliveryMan$subOrdersArgs<ExtArgs>
+  _count?: boolean | Prisma.DeliveryManCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["deliveryMan"]>
 
 export type DeliveryManSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  firstName?: boolean
+  lastName?: boolean
+  mobileNumber?: boolean
+  gender?: boolean
+  dateOfBirth?: boolean
+  city?: boolean
+  serviceType?: boolean
+  identityType?: boolean
+  identityNumber?: boolean
+  referralCode?: boolean
+  profilePhoto?: boolean
+  vehicleBrand?: boolean
+  vehicleModel?: boolean
+  registrationNumber?: boolean
+  registrationRegion?: boolean
+  registrationCategory?: boolean
+  registrationDigits?: boolean
+  vehicleYear?: boolean
+  taxTokenNumber?: boolean
+  fitnessNumber?: boolean
   district?: boolean
   zela?: boolean
   thana?: boolean
   area?: boolean
+  profileImage?: boolean
+  vehicleType?: boolean
+  vehicleImage?: boolean
+  vehicleRegistrationImage?: boolean
+  drivingLicenseNumber?: boolean
+  drivingLicenseImage?: boolean
+  registrationCertificateImage?: boolean
+  taxTokenImage?: boolean
+  fitnessCertificateImage?: boolean
+  routePermitImage?: boolean
+  nidNumber?: boolean
+  nidFrontImage?: boolean
+  nidBackImage?: boolean
+  serviceZones?: boolean
+  emergencyContactName?: boolean
+  emergencyContactPhone?: boolean
+  emergencyContactRelation?: boolean
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
   status?: boolean
+  rejectionReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -527,11 +1937,51 @@ export type DeliveryManSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
 export type DeliveryManSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
+  firstName?: boolean
+  lastName?: boolean
+  mobileNumber?: boolean
+  gender?: boolean
+  dateOfBirth?: boolean
+  city?: boolean
+  serviceType?: boolean
+  identityType?: boolean
+  identityNumber?: boolean
+  referralCode?: boolean
+  profilePhoto?: boolean
+  vehicleBrand?: boolean
+  vehicleModel?: boolean
+  registrationNumber?: boolean
+  registrationRegion?: boolean
+  registrationCategory?: boolean
+  registrationDigits?: boolean
+  vehicleYear?: boolean
+  taxTokenNumber?: boolean
+  fitnessNumber?: boolean
   district?: boolean
   zela?: boolean
   thana?: boolean
   area?: boolean
+  profileImage?: boolean
+  vehicleType?: boolean
+  vehicleImage?: boolean
+  vehicleRegistrationImage?: boolean
+  drivingLicenseNumber?: boolean
+  drivingLicenseImage?: boolean
+  registrationCertificateImage?: boolean
+  taxTokenImage?: boolean
+  fitnessCertificateImage?: boolean
+  routePermitImage?: boolean
+  nidNumber?: boolean
+  nidFrontImage?: boolean
+  nidBackImage?: boolean
+  serviceZones?: boolean
+  emergencyContactName?: boolean
+  emergencyContactPhone?: boolean
+  emergencyContactRelation?: boolean
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
   status?: boolean
+  rejectionReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -540,18 +1990,60 @@ export type DeliveryManSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
 export type DeliveryManSelectScalar = {
   id?: boolean
   userId?: boolean
+  firstName?: boolean
+  lastName?: boolean
+  mobileNumber?: boolean
+  gender?: boolean
+  dateOfBirth?: boolean
+  city?: boolean
+  serviceType?: boolean
+  identityType?: boolean
+  identityNumber?: boolean
+  referralCode?: boolean
+  profilePhoto?: boolean
+  vehicleBrand?: boolean
+  vehicleModel?: boolean
+  registrationNumber?: boolean
+  registrationRegion?: boolean
+  registrationCategory?: boolean
+  registrationDigits?: boolean
+  vehicleYear?: boolean
+  taxTokenNumber?: boolean
+  fitnessNumber?: boolean
   district?: boolean
   zela?: boolean
   thana?: boolean
   area?: boolean
+  profileImage?: boolean
+  vehicleType?: boolean
+  vehicleImage?: boolean
+  vehicleRegistrationImage?: boolean
+  drivingLicenseNumber?: boolean
+  drivingLicenseImage?: boolean
+  registrationCertificateImage?: boolean
+  taxTokenImage?: boolean
+  fitnessCertificateImage?: boolean
+  routePermitImage?: boolean
+  nidNumber?: boolean
+  nidFrontImage?: boolean
+  nidBackImage?: boolean
+  serviceZones?: boolean
+  emergencyContactName?: boolean
+  emergencyContactPhone?: boolean
+  emergencyContactRelation?: boolean
+  termsAccepted?: boolean
+  privacyPolicyAccepted?: boolean
   status?: boolean
+  rejectionReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DeliveryManOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "district" | "zela" | "thana" | "area" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["deliveryMan"]>
+export type DeliveryManOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "firstName" | "lastName" | "mobileNumber" | "gender" | "dateOfBirth" | "city" | "serviceType" | "identityType" | "identityNumber" | "referralCode" | "profilePhoto" | "vehicleBrand" | "vehicleModel" | "registrationNumber" | "registrationRegion" | "registrationCategory" | "registrationDigits" | "vehicleYear" | "taxTokenNumber" | "fitnessNumber" | "district" | "zela" | "thana" | "area" | "profileImage" | "vehicleType" | "vehicleImage" | "vehicleRegistrationImage" | "drivingLicenseNumber" | "drivingLicenseImage" | "registrationCertificateImage" | "taxTokenImage" | "fitnessCertificateImage" | "routePermitImage" | "nidNumber" | "nidFrontImage" | "nidBackImage" | "serviceZones" | "emergencyContactName" | "emergencyContactPhone" | "emergencyContactRelation" | "termsAccepted" | "privacyPolicyAccepted" | "status" | "rejectionReason" | "createdAt" | "updatedAt", ExtArgs["result"]["deliveryMan"]>
 export type DeliveryManInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  subOrders?: boolean | Prisma.DeliveryMan$subOrdersArgs<ExtArgs>
+  _count?: boolean | Prisma.DeliveryManCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DeliveryManIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -564,15 +2056,56 @@ export type $DeliveryManPayload<ExtArgs extends runtime.Types.Extensions.Interna
   name: "DeliveryMan"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    subOrders: Prisma.$SubOrderPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
+    firstName: string
+    lastName: string
+    mobileNumber: string
+    gender: string
+    dateOfBirth: Date | null
+    city: string
+    serviceType: string | null
+    identityType: string
+    identityNumber: string | null
+    referralCode: string | null
+    profilePhoto: string | null
+    vehicleBrand: string | null
+    vehicleModel: string | null
+    registrationNumber: string | null
+    registrationRegion: string | null
+    registrationCategory: string | null
+    registrationDigits: string | null
+    vehicleYear: string | null
+    taxTokenNumber: string | null
+    fitnessNumber: string | null
     district: string
     zela: string
     thana: string
     area: string
-    status: $Enums.DeliveryStatus
+    profileImage: string | null
+    vehicleType: string | null
+    vehicleImage: string | null
+    vehicleRegistrationImage: string | null
+    drivingLicenseNumber: string | null
+    drivingLicenseImage: string | null
+    registrationCertificateImage: string | null
+    taxTokenImage: string | null
+    fitnessCertificateImage: string | null
+    routePermitImage: string | null
+    nidNumber: string | null
+    nidFrontImage: string | null
+    nidBackImage: string | null
+    serviceZones: string | null
+    emergencyContactName: string | null
+    emergencyContactPhone: string | null
+    emergencyContactRelation: string | null
+    termsAccepted: boolean
+    privacyPolicyAccepted: boolean
+    status: $Enums.DeliveryManStatus
+    rejectionReason: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["deliveryMan"]>
@@ -970,6 +2503,7 @@ readonly fields: DeliveryManFieldRefs;
 export interface Prisma__DeliveryManClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  subOrders<T extends Prisma.DeliveryMan$subOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryMan$subOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1001,11 +2535,51 @@ export interface Prisma__DeliveryManClient<T, Null = never, ExtArgs extends runt
 export interface DeliveryManFieldRefs {
   readonly id: Prisma.FieldRef<"DeliveryMan", 'String'>
   readonly userId: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly firstName: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly lastName: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly mobileNumber: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly gender: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly dateOfBirth: Prisma.FieldRef<"DeliveryMan", 'DateTime'>
+  readonly city: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly serviceType: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly identityType: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly identityNumber: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly referralCode: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly profilePhoto: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly vehicleBrand: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly vehicleModel: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly registrationNumber: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly registrationRegion: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly registrationCategory: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly registrationDigits: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly vehicleYear: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly taxTokenNumber: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly fitnessNumber: Prisma.FieldRef<"DeliveryMan", 'String'>
   readonly district: Prisma.FieldRef<"DeliveryMan", 'String'>
   readonly zela: Prisma.FieldRef<"DeliveryMan", 'String'>
   readonly thana: Prisma.FieldRef<"DeliveryMan", 'String'>
   readonly area: Prisma.FieldRef<"DeliveryMan", 'String'>
-  readonly status: Prisma.FieldRef<"DeliveryMan", 'DeliveryStatus'>
+  readonly profileImage: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly vehicleType: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly vehicleImage: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly vehicleRegistrationImage: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly drivingLicenseNumber: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly drivingLicenseImage: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly registrationCertificateImage: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly taxTokenImage: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly fitnessCertificateImage: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly routePermitImage: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly nidNumber: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly nidFrontImage: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly nidBackImage: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly serviceZones: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly emergencyContactName: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly emergencyContactPhone: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly emergencyContactRelation: Prisma.FieldRef<"DeliveryMan", 'String'>
+  readonly termsAccepted: Prisma.FieldRef<"DeliveryMan", 'Boolean'>
+  readonly privacyPolicyAccepted: Prisma.FieldRef<"DeliveryMan", 'Boolean'>
+  readonly status: Prisma.FieldRef<"DeliveryMan", 'DeliveryManStatus'>
+  readonly rejectionReason: Prisma.FieldRef<"DeliveryMan", 'String'>
   readonly createdAt: Prisma.FieldRef<"DeliveryMan", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"DeliveryMan", 'DateTime'>
 }
@@ -1406,6 +2980,30 @@ export type DeliveryManDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.I
    * Limit how many DeliveryMen to delete.
    */
   limit?: number
+}
+
+/**
+ * DeliveryMan.subOrders
+ */
+export type DeliveryMan$subOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SubOrder
+   */
+  select?: Prisma.SubOrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SubOrder
+   */
+  omit?: Prisma.SubOrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubOrderInclude<ExtArgs> | null
+  where?: Prisma.SubOrderWhereInput
+  orderBy?: Prisma.SubOrderOrderByWithRelationInput | Prisma.SubOrderOrderByWithRelationInput[]
+  cursor?: Prisma.SubOrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SubOrderScalarFieldEnum | Prisma.SubOrderScalarFieldEnum[]
 }
 
 /**

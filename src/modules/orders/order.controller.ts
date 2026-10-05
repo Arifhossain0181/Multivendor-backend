@@ -17,8 +17,8 @@ export const getMyOrders = async (req: Request, res: Response) => {
             data: result
         });
     } catch (error: any) {
-        console.error(`[Get Orders Error]`, error.message);
-        return res.status(500).json({ success: false, error: 'Failed to fetch orders' });
+        console.error(`[Get Orders Error]`, error);
+        return res.status(500).json({ success: false, error: error.message || 'Failed to fetch orders' });
     }
 };
 

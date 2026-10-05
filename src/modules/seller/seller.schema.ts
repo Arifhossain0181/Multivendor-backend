@@ -11,9 +11,18 @@ export const applySellerSchema = z.object({
 // UUpdate the status of a sub-order (e.g. CONFIRMED, SHIPPED, DELIVERED)
 export const updateSubOrderStatusSchema = z.object({
     params: z.object({
-        id: z.string().uuid('Invalid sub-order ID'),
+        id: z.string().min(1, 'Invalid sub-order ID'),
     }),
     body: z.object({
         status: z.enum(['CONFIRMED', 'SHIPPED', 'DELIVERED']),
+    }),
+});
+
+export const assignDeliveryManSchema = z.object({
+    params: z.object({
+        id: z.string().min(1, 'Invalid sub-order ID'),
+    }),
+    body: z.object({
+        deliveryManId: z.string().min(1, 'Invalid delivery man ID'),
     }),
 });

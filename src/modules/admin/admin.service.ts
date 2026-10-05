@@ -1,9 +1,20 @@
 import { prisma } from "../../prisma/client";
 import { ApiError } from "../../utlits/ApiError.js";
 import * as inventoryService from "../inventory/inventory.service.js";
+import { assignDeliveryManToSubOrder } from "../delivery/deliveryAssign.service.js";
+import { createAuditLog } from "../auditLog/auditLog.service.js";
 
 type SellerModerationStatus = "APPROVED" | "REJECTED" | "PENDING" | "SUSPENDED";
 type ProductModerationStatus = "ACTIVE" | "BLOCKED";
+
+type AuditLogContext = {
+  adminId: string;
+  action: string;
+  entityType?: string;
+  entityId?: string;
+  oldValue?: string;
+  newValue?: string;
+};
 
 const DEFAULT_PAGE_SIZE = 10;
 const MAX_PAGE_SIZE = 50;
@@ -112,6 +123,14 @@ const mapOrder = (order: any) => ({
     status: subOrder.status,
     subtotal: toNumber(subOrder.subtotal),
     itemCount: subOrder.items?.length ?? 0,
+    deliveryManId: subOrder.deliveryManId ?? null,
+    deliveryMan: subOrder.deliveryMan
+      ? {
+          id: subOrder.deliveryMan.id,
+          name: subOrder.deliveryMan.user?.name ?? ((`${subOrder.deliveryMan.firstName ?? ""} ${subOrder.deliveryMan.lastName ?? ""}`.trim()) || "Unknown delivery man"),
+          mobileNumber: subOrder.deliveryMan.mobileNumber ?? "",
+        }
+      : null,
   })),
 });
 
@@ -206,6 +225,7 @@ export const listUsers = async (
 export const updateSellerStatus = async (
   userId: string,
   status: SellerModerationStatus,
+  auditLogCtx?: AuditLogContext,
 ) => {
   const sellerProfile = await prisma.sellerProfile.findUnique({
     where: { userId },
@@ -245,6 +265,15 @@ export const updateSellerStatus = async (
       });
     }
 
+    if (auditLogCtx) {
+      await createAuditLog({
+        ...auditLogCtx,
+        entityType: "SELLER",
+        entityId: userId,
+        newValue: status,
+      }).catch(() => {});
+    }
+
     return {
       ...updatedSeller,
       createdAt: toIso(updatedSeller.createdAt),
@@ -253,7 +282,7 @@ export const updateSellerStatus = async (
   });
 };
 
-export const toggleUserActive = async (userId: string, isActive: boolean) => {
+export const toggleUserActive = async (userId: string, isActive: boolean, auditLogCtx?: AuditLogContext) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, isActive: true },
@@ -287,6 +316,15 @@ export const toggleUserActive = async (userId: string, isActive: boolean) => {
       },
     },
   });
+
+  if (auditLogCtx) {
+    await createAuditLog({
+      ...auditLogCtx,
+      entityType: "USER",
+      entityId: userId,
+      newValue: String(isActive),
+    }).catch(() => {});
+  }
 
   return mapUser(updatedUser);
 };
@@ -358,6 +396,7 @@ export const listProducts = async (
 export const updateProductStatus = async (
   productId: string,
   status: ProductModerationStatus,
+  auditLogCtx?: AuditLogContext,
 ) => {
   const product = await prisma.product.findUnique({
     where: { id: productId },
@@ -402,10 +441,19 @@ export const updateProductStatus = async (
     },
   });
 
+  if (auditLogCtx) {
+    await createAuditLog({
+      ...auditLogCtx,
+      entityType: "PRODUCT",
+      entityId: productId,
+      newValue: status,
+    }).catch(() => {});
+  }
+
   return mapProduct(updated);
 };
 
-export const deleteProduct = async (productId: string) => {
+export const deleteProduct = async (productId: string, auditLogCtx?: AuditLogContext) => {
   const product = await prisma.product.findUnique({
     where: { id: productId },
     select: {
@@ -446,6 +494,15 @@ export const deleteProduct = async (productId: string) => {
     });
   });
 
+  if (auditLogCtx) {
+    await createAuditLog({
+      ...auditLogCtx,
+      entityType: "PRODUCT",
+      entityId: productId,
+      newValue: "DELETED",
+    }).catch(() => {});
+  }
+
   return { success: true, message: "Product deleted successfully" };
 };
 
@@ -474,6 +531,21 @@ export const listOrders = async (page?: number, limit?: number) => {
             id: true,
             status: true,
             subtotal: true,
+            deliveryManId: true,
+            deliveryMan: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                mobileNumber: true,
+                user: {
+                  select: {
+                    name: true,
+                    email: true,
+                  },
+                },
+              },
+            },
             seller: {
               select: {
                 shopName: true,
@@ -563,7 +635,7 @@ export const listFulfillments = async (page?: number, limit?: number) => {
   };
 };
 
-export const cancelOrder = async (masterOrderId: string) => {
+export const cancelOrder = async (masterOrderId: string, auditLogCtx?: AuditLogContext) => {
   const masterOrder = await prisma.masterOrder.findUnique({
     where: { id: masterOrderId },
     include: {
@@ -606,5 +678,33 @@ export const cancelOrder = async (masterOrderId: string) => {
     });
   });
 
+  if (auditLogCtx) {
+    await createAuditLog({
+      ...auditLogCtx,
+      entityType: "ORDER",
+      entityId: masterOrderId,
+      newValue: "CANCELLED",
+    }).catch(() => {});
+  }
+
   return { success: true, message: "Order cancelled and stock restored" };
+};
+
+export const assignDeliveryMan = async (subOrderId: string, deliveryManId: string, auditLogCtx?: AuditLogContext) => {
+  const updatedSubOrder = await assignDeliveryManToSubOrder(subOrderId, deliveryManId);
+
+  if (auditLogCtx) {
+    await createAuditLog({
+      ...auditLogCtx,
+      entityType: "SUB_ORDER",
+      entityId: subOrderId,
+      newValue: deliveryManId,
+    }).catch(() => {});
+  }
+
+  return {
+    success: true,
+    message: "Delivery man assigned successfully",
+    data: updatedSubOrder,
+  };
 };

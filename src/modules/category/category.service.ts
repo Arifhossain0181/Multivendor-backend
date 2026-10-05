@@ -3,7 +3,7 @@ import { prisma } from '../../prisma/client';
 import { ApiError } from '../../utlits/ApiError.js';
 import { uploadImage } from '../../config/cloudinary.js';
 
-export const createCategory = async(name: string, slug: string , imageUrl?: string) => {
+export const createCategory = async(name: string, slug: string , description?: string, imageUrl?: string) => {
     const existingCategory = await prisma.category.findUnique({
         where: { slug },
     })
@@ -13,7 +13,12 @@ export const createCategory = async(name: string, slug: string , imageUrl?: stri
 
     let uploadedImageUrl: string | undefined;
     if (imageUrl && imageUrl.startsWith('data:image/')) {
-        uploadedImageUrl = await uploadImage(imageUrl, 'categories');
+        try {
+            uploadedImageUrl = await uploadImage(imageUrl, 'categories');
+        } catch (uploadError) {
+            console.error('Failed to upload category image to Cloudinary:', uploadError);
+            throw new Error('Failed to upload image. Please try again or use an image URL.');
+        }
     } else {
         uploadedImageUrl = imageUrl;
     }
@@ -22,6 +27,7 @@ export const createCategory = async(name: string, slug: string , imageUrl?: stri
         data: {
             name,
             slug,
+            description,
             imageUrl: uploadedImageUrl,
         }
     })
@@ -33,7 +39,8 @@ export const getAllCategories = async() => {
         select :{
             id:true,
             name:true,
-            slug:true ,
+            slug:true,
+            description:true,
             imageUrl:true
 
         },
@@ -43,7 +50,7 @@ export const getAllCategories = async() => {
     })
 }
 
-export const updateCategoryById = async (id: string, data: { name?: string; slug?: string; imageUrl?: string }) => {
+export const updateCategoryById = async (id: string, data: { name?: string; slug?: string; description?: string; imageUrl?: string }) => {
     const category = await prisma.category.findUnique({ where: { id } });
     if (!category) {
        throw new ApiError(

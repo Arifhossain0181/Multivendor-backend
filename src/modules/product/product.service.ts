@@ -52,6 +52,7 @@ const mapProduct = (product: any) => {
         description: product.description,
         stock,
         categoryId: product.categoryId,
+        sellerId: product.sellerId,
         variants: (product.variants ?? []).map((variant: any) => ({
             id: variant.id,
             name: variant.name,

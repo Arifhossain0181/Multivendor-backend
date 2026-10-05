@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  assignDeliveryMan,
   cancelOrder,
   deleteProduct,
   getOrders,
@@ -13,6 +14,8 @@ import {
 } from './admin.controller';
 import { authenticate } from '../../middleware/authenticate.js';
 import { authorize } from '../../middleware/authorize.js';
+import { validate } from '../../middleware/validation.js';
+import { assignDeliveryManSchema } from '../delivery/delivery.schema.js';
 
 const router = Router();
 
@@ -28,5 +31,6 @@ router.delete('/products/:id', deleteProduct);
 router.get('/orders', getOrders);
 router.patch('/orders/:id/cancel', cancelOrder);
 router.get('/fulfillments', getFulfillments);
+router.patch('/sub-orders/:id/assign-delivery', validate(assignDeliveryManSchema), assignDeliveryMan);
 
 export default router;

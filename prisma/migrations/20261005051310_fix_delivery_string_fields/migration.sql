@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "delivery_men" ALTER COLUMN "vehicleType" DROP NOT NULL,
+ALTER COLUMN "vehicleType" SET DATA TYPE TEXT,
+ALTER COLUMN "serviceType" DROP NOT NULL,
+ALTER COLUMN "serviceType" SET DATA TYPE TEXT;

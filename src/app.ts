@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import { errorHandler } from './middleware/errorHandler';
 import productViewRoutes from "./modules/Productview/Product.router";
 
@@ -18,6 +19,8 @@ import adminRouter from './modules/admin/admin.router';
 import deliveryRouter from './modules/delivery/delivery.route';
 import pageContentRouter from './modules/pageContent/pageContent.routes';
 import adminPageContentRouter from './modules/pageContent/admin.routes';
+import refundRouter from './modules/refund/refund.routes';
+import auditLogRouter from './modules/auditLog/auditLog.router';
 
 const app = express();
 
@@ -33,6 +36,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
+app.use(cookieParser());
 app.use(express.json({
 	limit: "10mb"
 })); // json Parse body 
@@ -54,6 +58,9 @@ app.use('/api/checkout', checkoutRouter);
 app.use('/api/orders', orderRouter);
 app.use('/api/fulfillments', fulfillmentRouter);
 app.use('/api/reviews', reviewRouter);
+app.use('/api/refunds', refundRouter);
+app.use('/api/admin/audit-logs', auditLogRouter);
+
 app.use('/api/admin', adminRouter);
 app.use('/api/delivery', deliveryRouter);
 app.use('/api/page-content', pageContentRouter);

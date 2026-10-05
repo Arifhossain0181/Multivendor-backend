@@ -1,0 +1,59 @@
+model ReturnRequest {
+  id            String    @id @default(cuid())
+  subOrderId    String
+  userId        String
+  sellerId      String
+  reason        String
+  status        ReturnStatus @default(PENDING)
+  requestedQty  Int
+  refundAmount  Decimal?  @db.Decimal(10, 2)
+  disputeNote   String?
+  resolvedBy    String?
+  resolvedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  subOrder      SubOrder  @relation(fields: [subOrderId], references: [id], onDelete: Cascade)
+  customer      User       @relation(fields: [userId], references: [id])
+  seller        SellerProfile @relation(fields: [sellerId], references: [id])
+  dispute       Dispute?
+
+  @@index([subOrderId])
+  @@index([userId])
+  @@index([sellerId])
+  @@index([status])
+  @@map("return_requests")
+}
+
+model Dispute {
+  id             String    @id @default(cuid())
+  returnRequestId String   @unique
+  adminId        String?
+  status         DisputeStatus @default(OPEN)
+  resolution     String?
+  resolvedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  returnRequest  ReturnRequest @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)
+  admin          User?        @relation(fields: [adminId], references: [id])
+
+  @@index([returnRequestId])
+  @@index([adminId])
+  @@index([status])
+  @@map("disputes")
+}
+
+enum ReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  REFUNDED
+  DISPUTED
+}
+
+enum DisputeStatus {
+  OPEN
+  RESOLVED
+  CLOSED
+}

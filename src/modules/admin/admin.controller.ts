@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import * as adminService from './admin.service';
+import { assignDeliveryManSchema } from '../delivery/delivery.schema.js';
+import { validate } from '../../middleware/validation.js';
 
 const parsePage = (value: unknown, fallback = 1) => {
   const parsed = Number(value);
@@ -41,6 +43,7 @@ export const updateSeller = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+    const adminId = (req as any).user?.id;
 
     if (typeof id !== 'string' || !id) {
       return res.status(400).json({ error: 'Invalid seller profile id' });
@@ -50,7 +53,10 @@ export const updateSeller = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
-    const updated = await adminService.updateSellerStatus(id, status);
+    const updated = await adminService.updateSellerStatus(id, status, {
+      adminId,
+      action: status === 'APPROVED' ? 'APPROVE_SELLER' : status === 'REJECTED' ? 'REJECT_SELLER' : 'UPDATE_SELLER_STATUS',
+    });
     return res.status(200).json(updated);
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
@@ -63,6 +69,7 @@ export const toggleUserActive = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { isActive } = req.body;
+    const adminId = (req as any).user?.id;
 
     if (typeof id !== 'string' || !id) {
       return res.status(400).json({ error: 'Invalid user id' });
@@ -72,7 +79,10 @@ export const toggleUserActive = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'isActive must be a boolean' });
     }
 
-    const updated = await adminService.toggleUserActive(id, isActive);
+    const updated = await adminService.toggleUserActive(id, isActive, {
+      adminId,
+      action: isActive ? 'UNBLOCK_USER' : 'BLOCK_USER',
+    });
     return res.status(200).json(updated);
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
@@ -100,6 +110,7 @@ export const updateProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+    const adminId = (req as any).user?.id;
 
     if (typeof id !== 'string' || !id) {
       return res.status(400).json({ error: 'Invalid product id' });
@@ -109,7 +120,10 @@ export const updateProduct = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
-    const updated = await adminService.updateProductStatus(id, status);
+    const updated = await adminService.updateProductStatus(id, status, {
+      adminId,
+      action: status === 'BLOCKED' ? 'BLOCK_PRODUCT' : 'UNBLOCK_PRODUCT',
+    });
     return res.status(200).json(updated);
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
@@ -121,12 +135,16 @@ export const updateProduct = async (req: Request, res: Response) => {
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const adminId = (req as any).user?.id;
 
     if (typeof id !== "string" || !id) {
       return res.status(400).json({ error: "Invalid product id" });
     }
 
-    const result = await adminService.deleteProduct(id);
+    const result = await adminService.deleteProduct(id, {
+      adminId,
+      action: 'DELETE_PRODUCT',
+    });
     return res.status(200).json(result);
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
@@ -166,7 +184,38 @@ export const getFulfillments = async (req: Request, res: Response) => {
 export const cancelOrder = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const result = await adminService.cancelOrder(id as string);
+        const adminId = (req as any).user?.id;
+        const result = await adminService.cancelOrder(id as string, {
+          adminId,
+          action: 'CANCEL_ORDER',
+        });
+        return res.status(200).json(result);
+    } catch (error: any) {
+        const statusCode = error.statusCode || 500;
+        return res.status(statusCode).json({
+            error: error.message || 'Internal Server Error',
+        });
+    }
+};
+
+export const assignDeliveryMan = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { deliveryManId } = req.body;
+        const adminId = (req as any).user?.id;
+
+        if (typeof id !== 'string' || !id) {
+            return res.status(400).json({ error: 'Invalid sub-order id' });
+        }
+
+        if (typeof deliveryManId !== 'string' || !deliveryManId) {
+            return res.status(400).json({ error: 'Invalid delivery man id' });
+        }
+
+        const result = await adminService.assignDeliveryMan(id, deliveryManId, {
+          adminId,
+          action: 'ASSIGN_DELIVERY_MAN',
+        });
         return res.status(200).json(result);
     } catch (error: any) {
         const statusCode = error.statusCode || 500;

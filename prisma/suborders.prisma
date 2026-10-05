@@ -4,16 +4,20 @@ model SubOrder {
   sellerId      String
   status        SubOrderStatus @default(PENDING)
   subtotal      Decimal        @db.Decimal(12, 2)
+  deliveryManId String?
 
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 
   masterOrder MasterOrder   @relation(fields: [masterOrderId], references: [id], onDelete: Cascade)
   seller      SellerProfile @relation(fields: [sellerId], references: [id])
+  deliveryMan DeliveryMan?  @relation(fields: [deliveryManId], references: [id])
 
   items       SubOrderItem[]
+  returnRequests ReturnRequest[]
 
   @@index([sellerId, status])
   @@index([masterOrderId])
+  @@index([deliveryManId])
   @@map("sub_orders")
 }
