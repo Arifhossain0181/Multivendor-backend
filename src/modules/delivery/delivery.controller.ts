@@ -101,11 +101,11 @@ export const getMyProfile = async (req: Request, res: Response) => {
 
 export const listDeliveryMen = async (req: Request, res: Response) => {
   try {
-    const page = Number(req.query.page) || 1;
+    const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
     const limit = Number(req.query.limit) || 10;
     const status = typeof req.query.status === "string" ? req.query.status : undefined;
 
-    const result = await deliveryService.listDeliveryMen(page, limit, status);
+    const result = await deliveryService.listDeliveryMen(cursor, limit, status);
 
     return res.status(200).json({
       success: true,
@@ -123,10 +123,10 @@ export const listDeliveryMen = async (req: Request, res: Response) => {
 
 export const listApprovedDeliveryMen = async (req: Request, res: Response) => {
   try {
-    const page = Number(req.query.page) || 1;
+    const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
     const limit = Number(req.query.limit) || 50;
 
-    const result = await deliveryService.listDeliveryMen(page, limit, "APPROVED");
+    const result = await deliveryService.listDeliveryMen(cursor, limit, "APPROVED");
 
     return res.status(200).json({
       success: true,

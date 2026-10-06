@@ -18,7 +18,7 @@ export const createReview = async (req: Request, res: Response) => {
 export const replyReview = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user.id;
-        const { id } = req.params;
+        const id = typeof req.params.id === 'string' ? req.params.id : Array.isArray(req.params.id) ? req.params.id[0] : '';
         const { reply } = req.body;
 
         const review = await reviewService.replyToReview(userId, id, reply);
@@ -32,9 +32,11 @@ export const replyReview = async (req: Request, res: Response) => {
 
 export const getProductReviews = async (req: Request, res: Response) => {
     try {
-        const { productId } = req.params;
+        const productId = typeof req.params.productId === 'string' ? req.params.productId : Array.isArray(req.params.productId) ? req.params.productId[0] : '';
+        const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
+        const limit = parseInt(req.query.limit as string) || 10;
 
-        const result = await reviewService.getProductReviews(productId);
+        const result = await reviewService.getProductReviews(productId, cursor, limit);
 
         return res.status(200).json({ success: true, data: result });
     } catch (error: any) {
@@ -45,9 +47,11 @@ export const getProductReviews = async (req: Request, res: Response) => {
 
 export const getSellerReviews = async (req: Request, res: Response) => {
     try {
-        const { sellerId } = req.params;
+        const sellerId = typeof req.params.sellerId === 'string' ? req.params.sellerId : Array.isArray(req.params.sellerId) ? req.params.sellerId[0] : '';
+        const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
+        const limit = parseInt(req.query.limit as string) || 10;
 
-        const result = await reviewService.getSellerReviews(sellerId);
+        const result = await reviewService.getSellerReviews(sellerId, cursor, limit);
 
         return res.status(200).json({ success: true, data: result });
     } catch (error: any) {
@@ -59,8 +63,10 @@ export const getSellerReviews = async (req: Request, res: Response) => {
 export const getMyReviews = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user.id;
+        const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
+        const limit = parseInt(req.query.limit as string) || 10;
 
-        const reviews = await reviewService.getMyReviews(userId);
+        const reviews = await reviewService.getMyReviews(userId, cursor, limit);
 
         return res.status(200).json({ success: true, data: reviews });
     } catch (error: any) {

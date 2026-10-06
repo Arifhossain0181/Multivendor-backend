@@ -6,22 +6,21 @@ import * as fulfillmentService from './fulfillment.service';
 export const getMyFulfillments = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user.id;
-        const page = parseInt(req.query.page as string) || 1;
+        const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
         const limit = parseInt(req.query.limit as string) || 10;
 
-        // Seller Profile check and approval status check
         const sellerProfile = await prisma.sellerProfile.findUnique({ where: { userId } });
         if (!sellerProfile || sellerProfile.status !== 'APPROVED') {
             return res.status(403).json({ success: false, error: 'Forbidden: Only approved sellers can view fulfillments' });
         }
 
-        const result = await fulfillmentService.getSellerSubOrders(sellerProfile.id, page, limit);
+        const result = await fulfillmentService.getSellerSubOrders(sellerProfile.id, cursor, limit);
 
         return res.status(200).json({
             success: true,
             message: 'Seller sub-orders retrieved successfully',
-            data: result.subOrders,
-            meta: { total: result.total, page: result.page, limit: result.limit, totalPages: result.totalPages }
+            data: result.items,
+            meta: { total: result.total, nextCursor: result.nextCursor, hasMore: result.hasMore }
         });
     } catch (error: any) {
         return res.status(500).json({ success: false, error: error.message || 'Internal Server Error' });

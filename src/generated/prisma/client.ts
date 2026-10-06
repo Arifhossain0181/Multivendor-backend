@@ -117,6 +117,11 @@ export type Review = Prisma.ReviewModel
  */
 export type SellerProfile = Prisma.SellerProfileModel
 /**
+ * Model StripeEvent
+ * 
+ */
+export type StripeEvent = Prisma.StripeEventModel
+/**
  * Model SubOrderItem
  * 
  */

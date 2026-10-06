@@ -9,7 +9,6 @@ router.use(authenticate, authorize('ADMIN'));
 
 router.get('/', async (req: Request, res: Response) => {
   try {
-    const page = typeof req.query.page === 'string' ? parseInt(req.query.page, 10) : 1;
     const limit = typeof req.query.limit === 'string' ? parseInt(req.query.limit, 10) : 20;
 
     const filters: any = {};
@@ -19,8 +18,9 @@ router.get('/', async (req: Request, res: Response) => {
     if (typeof req.query.adminId === 'string') filters.adminId = req.query.adminId;
     if (typeof req.query.startDate === 'string') filters.startDate = req.query.startDate;
     if (typeof req.query.endDate === 'string') filters.endDate = req.query.endDate;
+    const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
 
-    const logs = await getAuditLogs(filters, page, limit);
+    const logs = await getAuditLogs(filters, cursor, limit);
     return res.status(200).json(logs);
   } catch (error: any) {
     const statusCode = error.statusCode || 500;

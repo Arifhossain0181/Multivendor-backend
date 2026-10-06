@@ -18,7 +18,7 @@ export const createReturnRequest = async (req: Request, res: Response) => {
 export const resolveReturn = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
-    const { id } = req.params;
+    const id = typeof req.params.id === 'string' ? req.params.id : Array.isArray(req.params.id) ? req.params.id[0] : '';
     const { action, note } = req.body;
 
     const result = await refundService.resolveReturnRequest(userId, id, action, note);
@@ -33,7 +33,7 @@ export const resolveReturn = async (req: Request, res: Response) => {
 export const processRefund = async (req: Request, res: Response) => {
   try {
     const adminId = (req as any).user.id;
-    const { id } = req.params;
+    const id = typeof req.params.id === 'string' ? req.params.id : Array.isArray(req.params.id) ? req.params.id[0] : '';
 
     const result = await refundService.processRefund(adminId, id);
 
@@ -47,7 +47,7 @@ export const processRefund = async (req: Request, res: Response) => {
 export const createDispute = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
-    const { returnId } = req.params;
+    const returnId = typeof req.params.returnId === 'string' ? req.params.returnId : Array.isArray(req.params.returnId) ? req.params.returnId[0] : '';
     const { resolution } = req.body;
 
     const dispute = await refundService.createDispute(userId, returnId, resolution);
@@ -62,7 +62,7 @@ export const createDispute = async (req: Request, res: Response) => {
 export const resolveDispute = async (req: Request, res: Response) => {
   try {
     const adminId = (req as any).user.id;
-    const { disputeId } = req.params;
+    const disputeId = typeof req.params.disputeId === 'string' ? req.params.disputeId : Array.isArray(req.params.disputeId) ? req.params.disputeId[0] : '';
     const { resolution } = req.body;
 
     const dispute = await refundService.resolveDispute(adminId, disputeId, resolution);
@@ -100,9 +100,9 @@ export const getSellerReturns = async (req: Request, res: Response) => {
 
 export const getAllReturns = async (req: Request, res: Response) => {
   try {
-    const page = parseInt(req.query.page as string) || 1;
+    const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
     const limit = parseInt(req.query.limit as string) || 10;
-    const result = await refundService.getAllReturns(page, limit);
+    const result = await refundService.getAllReturns(cursor, limit);
 
     return res.status(200).json({ success: true, data: result });
   } catch (error: any) {
@@ -113,9 +113,9 @@ export const getAllReturns = async (req: Request, res: Response) => {
 
 export const getAllDisputes = async (req: Request, res: Response) => {
   try {
-    const page = parseInt(req.query.page as string) || 1;
+    const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
     const limit = parseInt(req.query.limit as string) || 10;
-    const result = await refundService.getAllDisputes(page, limit);
+    const result = await refundService.getAllDisputes(cursor, limit);
 
     return res.status(200).json({ success: true, data: result });
   } catch (error: any) {

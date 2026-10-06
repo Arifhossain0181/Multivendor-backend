@@ -4,9 +4,8 @@ import * as webhookService from './webhook.service';
 import { stripe } from '../../config/stripe';
 
 export const handleStripeWebhook = async (req: Request, res: Response) => {
-    //
     const sig = req.headers['stripe-signature'];
-    
+
     if (!sig) {
         return res.status(400).json({ success: false, error: 'Missing stripe-signature header' });
     }
@@ -14,10 +13,9 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
     let event;
 
     try {
-        // 
         event = stripe.webhooks.constructEvent(
-            (req as any).rawBody, 
-            sig, 
+            (req as any).rawBody,
+            sig,
             process.env.STRIPE_WEBHOOK_SECRET!
         );
     } catch (err: any) {
@@ -25,26 +23,31 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
         return res.status(400).send(`Webhook Signature Verification Failed: ${err.message}`);
     }
 
-    // 
     try {
-        // checkout.session.completed 
-        if (event.type === 'checkout.session.completed') {
-            const session = event.data.object as any;
-            
-            // 
-            const masterOrderId = session.metadata.masterOrderId;
+        const stripeEvent = await webhookService.recordEvent(event);
 
-            if (masterOrderId) {
-                // 
-                await webhookService.handleSuccessfulPayment(masterOrderId, event.id);
-            }
+        if (stripeEvent.status === 'PROCESSED') {
+            return res.status(200).json({ received: true });
         }
 
-        // 
+        if (stripeEvent.status === 'FAILED' && stripeEvent.retryCount >= stripeEvent.maxRetries) {
+            return res.status(200).json({ received: true });
+        }
+
+        if (stripeEvent.type === 'checkout.session.completed') {
+            await webhookService.processStripeEvent(event);
+        }
+
+        await webhookService.markProcessed(event.id);
+
         return res.status(200).json({ received: true });
     } catch (error: any) {
         console.error(`[Webhook Process Error]`, error.message);
-        // 
+
+        if (event?.id) {
+            await webhookService.markFailed(event.id, error.message);
+        }
+
         return res.status(500).json({ success: false, error: 'Internal Webhook Handler Error' });
     }
 };

@@ -1,6 +1,7 @@
 import { ApiError } from "../../utlits/ApiError.js";
 import { prisma } from "../../prisma/client.js";
 import { uploadImages } from "../../config/cloudinary.js";
+import { decodeCursor, encodeCursor, PaginatedResult, buildCursorWhere } from "../common/pagination.js";
 
 const DEFAULT_PRODUCT_IMAGE_URL = "/globe.svg";
 
@@ -154,22 +155,20 @@ export const createProductBySeller = async (
     });
 };
 
-export const getPublicProducts = async (page = 1, pageSize = 12, categoryId?: string) => {
-    const take = Math.max(1, Math.min(pageSize, 50));
-    const skip = (Math.max(1, page) - 1) * take;
-
-    const where: any = { status: "ACTIVE" };
+export const getPublicProducts = async (cursor?: string, limit = 12, categoryId?: string): Promise<PaginatedResult<ReturnType<typeof mapProduct>>> => {
+    const safeLimit = Math.min(limit, 50);
+    const decodedCursor = decodeCursor(cursor);
+    const where: any = buildCursorWhere({ status: "ACTIVE" }, decodedCursor);
     if (categoryId) {
-        where.categoryId = categoryId;
+      where.categoryId = categoryId;
     }
 
     const [total, products] = await prisma.$transaction([
         prisma.product.count({ where }),
         prisma.product.findMany({
             where,
-            skip,
-            take,
-            orderBy: { createdAt: "desc" },
+            take: safeLimit + 1,
+            orderBy: [{ createdAt: "desc" }, { id: "desc" }],
             include: {
                 variants: true,
                 inventory: true,
@@ -183,14 +182,16 @@ export const getPublicProducts = async (page = 1, pageSize = 12, categoryId?: st
         }),
     ]);
 
+    const hasMore = products.length > safeLimit;
+    const items = products.slice(0, safeLimit).map(mapProduct);
+    const lastItem = products[items.length - 1];
+    const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
     return {
-        data: products.map(mapProduct),
-        meta: {
-            page: Math.max(1, page),
-            pageSize: take,
-            total,
-            totalPages: Math.max(1, Math.ceil(total / take)),
-        },
+        items,
+        nextCursor,
+        hasMore,
+        total,
     };
 };
 
@@ -365,33 +366,30 @@ export const deleteProduct = async (id: string) => {
     });
 };
 
-export const getMyProducts = async (userId: string, page = 1, pageSize = 12) => {
+export const getMyProducts = async (userId: string, cursor?: string, limit = 12): Promise<PaginatedResult<ReturnType<typeof mapProduct>>> => {
     const sellerProfile = await prisma.sellerProfile.findUnique({
         where: { userId },
     });
 
     if (!sellerProfile) {
         return {
-            data: [],
-            meta: {
-                page: 1,
-                pageSize,
-                total: 0,
-                totalPages: 0,
-            },
+            items: [],
+            nextCursor: null,
+            hasMore: false,
+            total: 0,
         };
     }
 
-    const take = Math.max(1, Math.min(pageSize, 50));
-    const skip = (Math.max(1, page) - 1) * take;
+    const safeLimit = Math.min(limit, 50);
+    const decodedCursor = decodeCursor(cursor);
+    const where = buildCursorWhere({ sellerId: sellerProfile.id }, decodedCursor);
 
     const [total, products] = await prisma.$transaction([
-        prisma.product.count({ where: { sellerId: sellerProfile.id } }),
+        prisma.product.count({ where }),
         prisma.product.findMany({
-            where: { sellerId: sellerProfile.id },
-            skip,
-            take,
-            orderBy: { createdAt: "desc" },
+            where,
+            take: safeLimit + 1,
+            orderBy: [{ createdAt: "desc" }, { id: "desc" }],
             include: {
                 variants: true,
                 inventory: true,
@@ -399,13 +397,15 @@ export const getMyProducts = async (userId: string, page = 1, pageSize = 12) => 
         }),
     ]);
 
+    const hasMore = products.length > safeLimit;
+    const items = products.slice(0, safeLimit).map(mapProduct);
+    const lastItem = products[items.length - 1];
+    const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
     return {
-        data: products.map(mapProduct),
-        meta: {
-            page: Math.max(1, page),
-            pageSize: take,
-            total,
-            totalPages: Math.max(1, Math.ceil(total / take)),
-        },
+        items,
+        nextCursor,
+        hasMore,
+        total,
     };
 };

@@ -128,11 +128,11 @@ export const updateProduct = async (req: Request, res: Response) => {
 
 export const listProducts = async (req: Request, res: Response) => {
     try {
-        const page = parsePageParam(req.query.page, 1);
-        const pageSize = parsePageParam(req.query.pageSize, 12);
+        const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
+        const limit = parsePageParam(req.query.limit, 12);
         const categoryId = typeof req.query.categoryId === "string" ? req.query.categoryId : undefined;
 
-        const result = await productService.getPublicProducts(page, pageSize, categoryId);
+        const result = await productService.getPublicProducts(cursor, limit, categoryId);
 
         return res.status(200).json(result);
     } catch (error: any) {
@@ -160,10 +160,10 @@ export const getProduct = async (req: Request, res: Response) => {
 export const getMyProducts = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user.id;
-        const page = parsePageParam(req.query.page, 1);
-        const pageSize = parsePageParam(req.query.pageSize, 12);
+        const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
+        const limit = parsePageParam(req.query.limit, 12);
 
-        const result = await productService.getMyProducts(userId, page, pageSize);
+        const result = await productService.getMyProducts(userId, cursor, limit);
 
         return res.status(200).json(result);
     } catch (error: any) {

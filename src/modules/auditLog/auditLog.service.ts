@@ -1,4 +1,5 @@
 import { prisma } from "../../prisma/client.js";
+import { decodeCursor, encodeCursor, PaginatedResult, buildCursorWhere } from "../common/pagination.js";
 
 export type AuditLogContext = {
   adminId: string;
@@ -35,10 +36,9 @@ export type AuditLogFilter = {
   endDate?: string;
 };
 
-export const getAuditLogs = async (filter: AuditLogFilter = {}, page = 1, limit = 20) => {
-  const skip = (page - 1) * limit;
-
-  const where: any = {};
+export const getAuditLogs = async (filter: AuditLogFilter = {}, cursor?: string, limit = 20): Promise<PaginatedResult<any>> => {
+  const decodedCursor = decodeCursor(cursor);
+  const where: any = buildCursorWhere({}, decodedCursor);
 
   if (filter.action) {
     where.action = filter.action;
@@ -70,26 +70,29 @@ export const getAuditLogs = async (filter: AuditLogFilter = {}, page = 1, limit 
     prisma.auditLog.count({ where }),
     prisma.auditLog.findMany({
       where,
-      skip,
-      take: limit,
-      orderBy: { createdAt: "desc" },
+      take: limit + 1,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     }),
   ]);
 
+  const hasMore = logs.length > limit;
+  const items = logs.slice(0, limit).map((log: { id: string; adminId: string; action: string; entityType: string | null; entityId: string | null; oldValue: string | null; newValue: string | null; createdAt: Date }) => ({
+    id: log.id,
+    adminId: log.adminId,
+    action: log.action,
+    entityType: log.entityType,
+    entityId: log.entityId,
+    oldValue: log.oldValue,
+    newValue: log.newValue,
+    createdAt: log.createdAt.toISOString(),
+  }));
+  const lastItem = logs[items.length - 1];
+  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
   return {
-    items: logs.map((log: { id: string; adminId: string; action: string; entityType: string | null; entityId: string | null; oldValue: string | null; newValue: string | null; createdAt: Date }) => ({
-      id: log.id,
-      adminId: log.adminId,
-      action: log.action,
-      entityType: log.entityType,
-      entityId: log.entityId,
-      oldValue: log.oldValue,
-      newValue: log.newValue,
-      createdAt: log.createdAt.toISOString(),
-    })),
+    items,
+    nextCursor,
+    hasMore,
     total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
   };
 };

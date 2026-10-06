@@ -3,14 +3,9 @@ import * as adminService from './admin.service';
 import { assignDeliveryManSchema } from '../delivery/delivery.schema.js';
 import { validate } from '../../middleware/validation.js';
 
-const parsePage = (value: unknown, fallback = 1) => {
-  const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : fallback;
-};
-
 const parseLimit = (value: unknown, fallback = 10) => {
   const parsed = Number(value);
-  return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : fallback;
+  return Number.isFinite(parsed) && parsed > 0 ? Math.min(Math.floor(parsed), 50) : fallback;
 };
 
 export const getStats = async (_req: Request, res: Response) => {
@@ -27,10 +22,10 @@ export const getStats = async (_req: Request, res: Response) => {
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const role = typeof req.query.role === 'string' ? req.query.role : undefined;
-    const page = parsePage(req.query.page, 1);
+    const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
     const limit = parseLimit(req.query.limit, 10);
     const hasPaidOrders = req.query.hasPaidOrders === 'true';
-    const users = await adminService.listUsers(role, page, limit, { hasPaidOrders });
+    const users = await adminService.listUsers(role, cursor, limit, { hasPaidOrders });
     return res.status(200).json(users);
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
@@ -95,9 +90,9 @@ export const getProducts = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
     const status = typeof req.query.status === 'string' ? req.query.status : undefined;
-    const page = parsePage(req.query.page, 1);
+    const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
     const limit = parseLimit(req.query.limit, 10);
-    const products = await adminService.listProducts(userId, status, page, limit, true);
+    const products = await adminService.listProducts(userId, status, cursor, limit, true);
     return res.status(200).json(products);
   } catch (error: any) {
     return res.status(error.statusCode || 500).json({
@@ -155,9 +150,9 @@ export const deleteProduct = async (req: Request, res: Response) => {
 
 export const getOrders = async (req: Request, res: Response) => {
     try {
-        const page = parsePage(req.query.page, 1);
+        const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
         const limit = parseLimit(req.query.limit, 10);
-        const orders = await adminService.listOrders(page, limit);
+        const orders = await adminService.listOrders(cursor, limit);
         return res.status(200).json(orders);
     } catch (error: any) {
         const statusCode = error.statusCode || 500;
@@ -169,9 +164,9 @@ export const getOrders = async (req: Request, res: Response) => {
 
 export const getFulfillments = async (req: Request, res: Response) => {
     try {
-        const page = parsePage(req.query.page, 1);
+        const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
         const limit = parseLimit(req.query.limit, 10);
-        const result = await adminService.listFulfillments(page, limit);
+        const result = await adminService.listFulfillments(cursor, limit);
         return res.status(200).json(result);
     } catch (error: any) {
         const statusCode = error.statusCode || 500;

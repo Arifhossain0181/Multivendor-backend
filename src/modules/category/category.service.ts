@@ -44,9 +44,9 @@ export const getAllCategories = async() => {
             imageUrl:true
 
         },
-        orderBy:{
+        orderBy:[{
             name:'asc'
-        }
+        }]
     })
 }
 

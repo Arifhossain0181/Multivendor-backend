@@ -3,6 +3,7 @@ import { ApiError } from "../../utlits/ApiError.js";
 import * as inventoryService from "../inventory/inventory.service.js";
 import { assignDeliveryManToSubOrder } from "../delivery/deliveryAssign.service.js";
 import { createAuditLog } from "../auditLog/auditLog.service.js";
+import { decodeCursor, encodeCursor, PaginatedResult, buildCursorWhere } from "../common/pagination.js";
 
 type SellerModerationStatus = "APPROVED" | "REJECTED" | "PENDING" | "SUSPENDED";
 type ProductModerationStatus = "ACTIVE" | "BLOCKED";
@@ -166,12 +167,13 @@ export const getDashboardStats = async () => {
 
 export const listUsers = async (
   role?: string,
-  page?: number,
-  limit?: number,
+  cursor?: string,
+  limit = DEFAULT_PAGE_SIZE,
   filters?: { hasPaidOrders?: boolean },
-) => {
-  const { skip, limit: take, page: currentPage } = clampPage(page, limit);
-  const where: any = role && role !== "ALL" ? { role } : {};
+): Promise<PaginatedResult<ReturnType<typeof mapUser>>> => {
+  const safeLimit = Math.min(limit, MAX_PAGE_SIZE);
+  const decodedCursor = decodeCursor(cursor);
+  const where: any = buildCursorWhere(role && role !== "ALL" ? { role } : {}, decodedCursor);
 
   if (filters?.hasPaidOrders) {
     where.masterOrders = {
@@ -187,9 +189,8 @@ export const listUsers = async (
     prisma.user.count({ where }),
     prisma.user.findMany({
       where,
-      skip,
-      take,
-      orderBy: { createdAt: "desc" },
+      take: safeLimit + 1,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       select: {
         id: true,
         name: true,
@@ -214,11 +215,16 @@ export const listUsers = async (
     }),
   ]);
 
+  const hasMore = users.length > safeLimit;
+  const items = users.slice(0, safeLimit).map(mapUser);
+  const lastItem = users[items.length - 1];
+  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
   return {
-    items: users.map(mapUser),
+    items,
+    nextCursor,
+    hasMore,
     total,
-    page: currentPage,
-    limit: take,
   };
 };
 
@@ -332,11 +338,12 @@ export const toggleUserActive = async (userId: string, isActive: boolean, auditL
 export const listProducts = async (
   userId: string,
   status?: string,
-  page?: number,
-  limit?: number,
+  cursor?: string,
+  limit = DEFAULT_PAGE_SIZE,
   includeAll = false,
-) => {
-  const { skip, limit: take, page: currentPage } = clampPage(page, limit);
+): Promise<PaginatedResult<ReturnType<typeof mapProduct>>> => {
+  const safeLimit = Math.min(limit, MAX_PAGE_SIZE);
+  const decodedCursor = decodeCursor(cursor);
 
   let sellerId: string | undefined;
   if (!includeAll) {
@@ -346,15 +353,15 @@ export const listProducts = async (
     sellerId = sellerProfile?.id;
   }
 
-  const where = status && status !== "ALL" ? { sellerId, status } : { sellerId };
+  const baseWhere = status && status !== "ALL" ? { sellerId, status } : { sellerId };
+  const where = buildCursorWhere(baseWhere, decodedCursor);
 
   const [total, products] = await prisma.$transaction([
-    prisma.product.count({ where }),
+    prisma.product.count({ where: baseWhere }),
     prisma.product.findMany({
       where,
-      skip,
-      take,
-      orderBy: { createdAt: "desc" },
+      take: safeLimit + 1,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       select: {
         id: true,
         name: true,
@@ -385,11 +392,16 @@ export const listProducts = async (
     }),
   ]);
 
+  const hasMore = products.length > safeLimit;
+  const items = products.slice(0, safeLimit).map(mapProduct);
+  const lastItem = products[items.length - 1];
+  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
   return {
-    items: products.map(mapProduct),
+    items,
+    nextCursor,
+    hasMore,
     total,
-    page: currentPage,
-    limit: take,
   };
 };
 
@@ -506,15 +518,17 @@ export const deleteProduct = async (productId: string, auditLogCtx?: AuditLogCon
   return { success: true, message: "Product deleted successfully" };
 };
 
-export const listOrders = async (page?: number, limit?: number) => {
-  const { skip, limit: take, page: currentPage } = clampPage(page, limit);
+export const listOrders = async (cursor?: string, limit = DEFAULT_PAGE_SIZE): Promise<PaginatedResult<ReturnType<typeof mapOrder>>> => {
+  const safeLimit = Math.min(limit, MAX_PAGE_SIZE);
+  const decodedCursor = decodeCursor(cursor);
+  const where = buildCursorWhere({}, decodedCursor);
 
   const [total, orders] = await prisma.$transaction([
-    prisma.masterOrder.count(),
+    prisma.masterOrder.count({ where }),
     prisma.masterOrder.findMany({
-      skip,
-      take,
-      orderBy: { createdAt: "desc" },
+      where,
+      take: safeLimit + 1,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       select: {
         id: true,
         totalAmount: true,
@@ -562,23 +576,30 @@ export const listOrders = async (page?: number, limit?: number) => {
     }),
   ]);
 
+  const hasMore = orders.length > safeLimit;
+  const items = orders.slice(0, safeLimit).map(mapOrder);
+  const lastItem = orders[items.length - 1];
+  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
   return {
-    items: orders.map(mapOrder),
+    items,
+    nextCursor,
+    hasMore,
     total,
-    page: currentPage,
-    limit: take,
   };
 };
 
-export const listFulfillments = async (page?: number, limit?: number) => {
-  const { skip, limit: take, page: currentPage } = clampPage(page, limit);
+export const listFulfillments = async (cursor?: string, limit = DEFAULT_PAGE_SIZE): Promise<PaginatedResult<any>> => {
+  const safeLimit = Math.min(limit, MAX_PAGE_SIZE);
+  const decodedCursor = decodeCursor(cursor);
+  const where = buildCursorWhere({}, decodedCursor);
 
   const [total, subOrders] = await prisma.$transaction([
-    prisma.subOrder.count(),
+    prisma.subOrder.count({ where }),
     prisma.subOrder.findMany({
-      skip,
-      take,
-      orderBy: { createdAt: "desc" },
+      where,
+      take: safeLimit + 1,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       include: {
         items: true,
         seller: {
@@ -608,30 +629,35 @@ export const listFulfillments = async (page?: number, limit?: number) => {
     }),
   ]);
 
-  return {
-    items: subOrders.map((subOrder: any) => ({
-      id: subOrder.id,
-      masterOrderId: subOrder.masterOrderId,
-      status: subOrder.status,
-      subtotal: toNumber(subOrder.subtotal),
-      itemCount: subOrder.items.length,
-      sellerName: subOrder.seller?.shopName ?? "Unknown seller",
-      sellerEmail: subOrder.seller?.user?.email ?? "",
-      customerName: subOrder.masterOrder?.customer?.name ?? "Unknown customer",
-      customerEmail: subOrder.masterOrder?.customer?.email ?? "",
-      masterOrderStatus: subOrder.masterOrder?.status ?? "UNKNOWN",
-      createdAt: toIso(subOrder.createdAt),
-      items: subOrder.items.map((item: any) => ({
-        id: item.id,
-        productName: item.productName,
-        variantName: item.variantName,
-        quantity: item.quantity,
-        unitPrice: toNumber(item.unitPrice),
-      })),
+  const hasMore = subOrders.length > safeLimit;
+  const items = subOrders.slice(0, safeLimit).map((subOrder: any) => ({
+    id: subOrder.id,
+    masterOrderId: subOrder.masterOrderId,
+    status: subOrder.status,
+    subtotal: toNumber(subOrder.subtotal),
+    itemCount: subOrder.items.length,
+    sellerName: subOrder.seller?.shopName ?? "Unknown seller",
+    sellerEmail: subOrder.seller?.user?.email ?? "",
+    customerName: subOrder.masterOrder?.customer?.name ?? "Unknown customer",
+    customerEmail: subOrder.masterOrder?.customer?.email ?? "",
+    masterOrderStatus: subOrder.masterOrder?.status ?? "UNKNOWN",
+    createdAt: toIso(subOrder.createdAt),
+    items: subOrder.items.map((item: any) => ({
+      id: item.id,
+      productName: item.productName,
+      variantName: item.variantName,
+      quantity: item.quantity,
+      unitPrice: toNumber(item.unitPrice),
     })),
+  }));
+  const lastItem = subOrders[items.length - 1];
+  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
+  return {
+    items,
+    nextCursor,
+    hasMore,
     total,
-    page: currentPage,
-    limit: take,
   };
 };
 

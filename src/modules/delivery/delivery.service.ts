@@ -1,6 +1,7 @@
 import { prisma } from "../../prisma/client.js";
 import { ApiError } from "../../utlits/ApiError.js";
 import bcrypt from "bcryptjs";
+import { decodeCursor, encodeCursor, PaginatedResult, buildCursorWhere } from "../common/pagination.js";
 
 export const createDeliveryMan = async (data: {
   name: string;
@@ -160,18 +161,18 @@ export const getMyDeliveryProfile = async (userId: string) => {
   return profile;
 };
 
-export const listDeliveryMen = async (page = 1, limit = 10, status?: string) => {
-  const { skip, limit: take, page: currentPage } = clampPage(page, limit);
-
-  const where = status && status !== "ALL" ? { status } : {};
+export const listDeliveryMen = async (cursor?: string, limit = 10, status?: string): Promise<PaginatedResult<any>> => {
+  const safeLimit = Math.min(limit, 50);
+  const decodedCursor = decodeCursor(cursor);
+  const baseWhere = status && status !== "ALL" ? { status } : {};
+  const where = buildCursorWhere(baseWhere, decodedCursor);
 
   const [total, deliveryMen] = await prisma.$transaction([
-    prisma.deliveryMan.count({ where }),
+    prisma.deliveryMan.count({ where: baseWhere }),
     prisma.deliveryMan.findMany({
       where,
-      skip,
-      take,
-      orderBy: { createdAt: "desc" },
+      take: safeLimit + 1,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       include: {
         user: {
           select: {
@@ -186,11 +187,16 @@ export const listDeliveryMen = async (page = 1, limit = 10, status?: string) => 
     }),
   ]);
 
+  const hasMore = deliveryMen.length > safeLimit;
+  const items = deliveryMen.slice(0, safeLimit);
+  const lastItem = items[items.length - 1];
+  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
   return {
-    items: deliveryMen,
+    items,
+    nextCursor,
+    hasMore,
     total,
-    page: currentPage,
-    limit: take,
   };
 };
 
@@ -248,7 +254,7 @@ export const getMyAssignments = async (userId: string) => {
 
   const subOrders = await prisma.subOrder.findMany({
     where: { deliveryManId: deliveryMan.id },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }],
     include: {
       masterOrder: {
         select: {

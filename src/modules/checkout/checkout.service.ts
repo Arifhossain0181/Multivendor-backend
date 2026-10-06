@@ -1,19 +1,8 @@
-import Stripe from 'stripe';
 import { prisma } from '../../prisma/client.js';
 import { ApiError } from '../../utlits/ApiError.js';
 import { clearCart } from '../cart/cart.service.js';
 import * as inventoryService from '../inventory/inventory.service.js';
-
-let _stripe: Stripe;
-function getStripe() {
-  if (!_stripe) {
-    const key = process.env.STRIPE_SECRET_KEY;
-    if (!key) throw new Error('STRIPE_SECRET_KEY is not set');
-    _stripe = new Stripe(key);
-  }
-  return _stripe;
-}
-
+import { stripe } from '../../config/stripe.js';
 
 export const processCheckout= async (userId:string,shippingAddress: string, customerPhone?: string)=>{
     const cart = await prisma.cart.findUnique({
@@ -128,18 +117,22 @@ export const processCheckout= async (userId:string,shippingAddress: string, cust
     
     let session;
     try {
-        session = await getStripe().checkout.sessions.create({
-            payment_method_types: ['card'],
-            line_items: lineItems,
-            mode: 'payment',
-            success_url: `${process.env.FRONTEND_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.FRONTEND_URL}/checkout/cancel`,
-            // 
-            metadata: {
-                masterOrderId: masterOrder.id,
-                userId
-            }
-        });
+        session = await stripe.checkout.sessions.create(
+            {
+                payment_method_types: ['card'],
+                line_items: lineItems,
+                mode: 'payment',
+                success_url: `${process.env.FRONTEND_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: `${process.env.FRONTEND_URL}/checkout/cancel`,
+                metadata: {
+                    masterOrderId: masterOrder.id,
+                    userId,
+                },
+            },
+            {
+                idempotencyKey: `checkout_${masterOrder.id}`,
+            },
+        );
     } catch (stripeError: any) {
         await prisma.masterOrder.delete({
             where: { id: masterOrder.id },
@@ -158,7 +151,7 @@ export const verifyCheckoutSuccess = async (sessionId: string) => {
     );
   }
 
-  const session = await getStripe().checkout.sessions.retrieve(sessionId);
+  const session = await stripe.checkout.sessions.retrieve(sessionId);
 
   if (!session) {
     throw ApiError.notFound("Stripe session not found");

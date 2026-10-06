@@ -1,0 +1,23 @@
+enum StripeEventStatus {
+  PENDING
+  PROCESSED
+  FAILED
+}
+
+model StripeEvent {
+  id          String           @id @default(cuid())
+  eventId     String           @unique
+  type        String
+  status      StripeEventStatus @default(PENDING)
+  payload     Json
+  error       String?
+  retryCount  Int              @default(0)
+  maxRetries  Int              @default(3)
+  nextRetryAt DateTime?
+  processedAt DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([status, nextRetryAt])
+  @@map("stripe_events")
+}

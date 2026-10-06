@@ -1,6 +1,7 @@
 import { prisma } from "../../prisma/client.js";
 import { ApiError } from "../../utlits/ApiError.js";
 import { getStripeClient } from "../../config/stripe.js";
+import { decodeCursor, encodeCursor, PaginatedResult, buildCursorWhere } from "../common/pagination.js";
 
 export const createReturnRequest = async (userId: string, subOrderId: string, reason: string, requestedQty: number) => {
   const subOrder = await prisma.subOrder.findUnique({
@@ -16,7 +17,7 @@ export const createReturnRequest = async (userId: string, subOrderId: string, re
     throw ApiError.forbidden("You can only request return for your own orders");
   }
 
-  const totalQty = subOrder.items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalQty = subOrder.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
   if (requestedQty > totalQty) {
     throw ApiError.badRequest("Requested quantity exceeds ordered quantity");
   }
@@ -369,7 +370,7 @@ export const resolveDispute = async (adminId: string, disputeId: string, resolut
 export const getMyReturns = async (userId: string) => {
   const returns = await prisma.returnRequest.findMany({
     where: { userId },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }],
     include: {
       subOrder: {
         include: {
@@ -407,7 +408,7 @@ export const getMyReturns = async (userId: string) => {
 export const getSellerReturns = async (sellerId: string) => {
   const returns = await prisma.returnRequest.findMany({
     where: { sellerId },
-    orderBy: { createdAt: "desc" },
+    orderBy: [{ createdAt: "desc" }],
     include: {
       subOrder: {
         include: {
@@ -448,14 +449,16 @@ export const getSellerReturns = async (sellerId: string) => {
   return returns;
 };
 
-export const getAllReturns = async (page = 1, limit = 10) => {
-  const skip = (page - 1) * limit;
+export const getAllReturns = async (cursor?: string, limit = 10): Promise<PaginatedResult<any>> => {
+  const decodedCursor = decodeCursor(cursor);
+  const where = buildCursorWhere({}, decodedCursor);
+
   const [total, returns] = await prisma.$transaction([
-    prisma.returnRequest.count(),
+    prisma.returnRequest.count({ where }),
     prisma.returnRequest.findMany({
-      skip,
-      take: limit,
-      orderBy: { createdAt: "desc" },
+      where,
+      take: limit + 1,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       include: {
         subOrder: {
           include: {
@@ -501,23 +504,29 @@ export const getAllReturns = async (page = 1, limit = 10) => {
     }),
   ]);
 
+  const hasMore = returns.length > limit;
+  const items = returns.slice(0, limit);
+  const lastItem = items[items.length - 1];
+  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
   return {
-    returns,
+    items,
+    nextCursor,
+    hasMore,
     total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
   };
 };
 
-export const getAllDisputes = async (page = 1, limit = 10) => {
-  const skip = (page - 1) * limit;
+export const getAllDisputes = async (cursor?: string, limit = 10): Promise<PaginatedResult<any>> => {
+  const decodedCursor = decodeCursor(cursor);
+  const where = buildCursorWhere({}, decodedCursor);
+
   const [total, disputes] = await prisma.$transaction([
-    prisma.dispute.count(),
+    prisma.dispute.count({ where }),
     prisma.dispute.findMany({
-      skip,
-      take: limit,
-      orderBy: { createdAt: "desc" },
+      where,
+      take: limit + 1,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       include: {
         returnRequest: {
           include: {
@@ -557,11 +566,16 @@ export const getAllDisputes = async (page = 1, limit = 10) => {
     }),
   ]);
 
+  const hasMore = disputes.length > limit;
+  const items = disputes.slice(0, limit);
+  const lastItem = items[items.length - 1];
+  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
   return {
-    disputes,
+    items,
+    nextCursor,
+    hasMore,
     total,
-    page,
-    limit,
-    totalPages: Math.ceil(total / limit),
   };
 };
+

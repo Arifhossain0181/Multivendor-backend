@@ -2,17 +2,18 @@
 
 import { ApiError } from "../../utlits/ApiError.js";
 import { prisma } from "../../prisma/client.js";
+import { decodeCursor, encodeCursor, PaginatedResult, buildCursorWhere } from "../common/pagination.js";
 
 
-export const getSellerSubOrders = async (sellerId: string, page: number, limit: number) => {
-    const skip = (page - 1) * limit;
+export const getSellerSubOrders = async (sellerId: string, cursor?: string, limit = 10): Promise<PaginatedResult<any>> => {
+    const decodedCursor = decodeCursor(cursor);
+    const where = buildCursorWhere({ sellerId }, decodedCursor);
 
     const [total, subOrders] = await Promise.all([
-        prisma.subOrder.count({ where: { sellerId } }),
+        prisma.subOrder.count({ where }),
         prisma.subOrder.findMany({
-            where: { sellerId },
-            skip,
-            take: limit,
+            where,
+            take: limit + 1,
             include: {
                 items: true,
                 masterOrder: {
@@ -28,11 +29,16 @@ export const getSellerSubOrders = async (sellerId: string, page: number, limit: 
                     }
                 }
             },
-            orderBy: { createdAt: 'desc' }
+            orderBy: [{ createdAt: 'desc' }, { id: 'desc' }]
         })
     ]);
 
-    return { subOrders, total, page, limit, totalPages: Math.ceil(total / limit) };
+    const hasMore = subOrders.length > limit;
+    const items = subOrders.slice(0, limit);
+    const lastItem = items[items.length - 1];
+    const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
+    return { items, nextCursor, hasMore, total };
 };
 
 //*Transition Sub-Order Status & Auto-Complete Master Order

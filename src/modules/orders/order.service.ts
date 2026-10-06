@@ -1,5 +1,6 @@
 import { prisma } from "../../prisma/client";
 import { ApiError } from "../../utlits/ApiError.js";
+import { decodeCursor, encodeCursor, PaginatedResult, buildCursorWhere } from "../common/pagination.js";
 
 const toNumber = (value: unknown) => {
   if (typeof value === "number") return value;
@@ -14,18 +15,18 @@ const toNumber = (value: unknown) => {
 
 export const getCustomerOrders = async (
   userId: string,
-  page: number,
-  limit: number,
-) => {
-  const skip = (page - 1) * limit;
+  cursor?: string,
+  limit = 10,
+): Promise<PaginatedResult<any>> => {
+  const decodedCursor = decodeCursor(cursor);
+  const where = buildCursorWhere({ customerId: userId }, decodedCursor);
+
   const [total, orders] = await Promise.all([
-    prisma.masterOrder.count({
-      where: { customerId: userId },
-    }),
+    prisma.masterOrder.count({ where }),
     prisma.masterOrder.findMany({
-      where: { customerId: userId },
-      skip,
-      take: limit,
+      where,
+      take: limit + 1,
+      orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       select: {
         id: true,
         totalAmount: true,
@@ -63,31 +64,33 @@ export const getCustomerOrders = async (
           },
         },
       },
-      orderBy: { createdAt: "desc" },
     }),
   ]);
 
-  return {
-    orders: orders.map((order) => ({
-      ...order,
-      totalAmount: toNumber(order.totalAmount),
-      subOrders: order.subOrders.map((subOrder) => ({
-        ...subOrder,
-        subtotal: toNumber(subOrder.subtotal),
-        items: subOrder.items.map((item) => ({
-          ...item,
-          unitPrice: toNumber(item.unitPrice),
-        })),
+  const hasMore = orders.length > limit;
+  const items = orders.slice(0, limit).map((order: any) => ({
+    ...order,
+    totalAmount: toNumber(order.totalAmount),
+    subOrders: order.subOrders.map((subOrder: any) => ({
+      ...subOrder,
+      subtotal: toNumber(subOrder.subtotal),
+      items: subOrder.items.map((item: any) => ({
+        ...item,
+        unitPrice: toNumber(item.unitPrice),
       })),
     })),
-    meta: {
-      total,
-      page,
-      limit,
-      totalPages: Math.ceil(total / limit),
-    },
+  }));
+  const lastItem = orders[items.length - 1];
+  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
+
+  return {
+    items,
+    nextCursor,
+    hasMore,
+    total,
   };
 };
+
 
 // *Get Master Order Details by ID (With full line items snapshot)
 export const getOrderDetails = async (
@@ -118,10 +121,10 @@ export const getOrderDetails = async (
   return {
     ...order,
     totalAmount: toNumber(order.totalAmount),
-    subOrders: order.subOrders.map((subOrder) => ({
+    subOrders: order.subOrders.map((subOrder: any) => ({
       ...subOrder,
       subtotal: toNumber(subOrder.subtotal),
-      items: subOrder.items.map((item) => ({
+      items: subOrder.items.map((item: any) => ({
         ...item,
         unitPrice: toNumber(item.unitPrice),
       })),
