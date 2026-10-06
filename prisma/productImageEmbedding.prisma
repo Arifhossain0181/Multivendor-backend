@@ -1,0 +1,14 @@
+model ProductImageEmbedding {
+  id        String   @id @default(cuid())
+  productId String
+  imageUrl  String
+  embedding Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, imageUrl])
+  @@index([productId])
+  @@map("product_image_embeddings")
+}

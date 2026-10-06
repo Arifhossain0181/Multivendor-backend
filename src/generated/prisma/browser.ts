@@ -68,6 +68,11 @@ export type ProcessedStripeEvent = Prisma.ProcessedStripeEventModel
  */
 export type Product = Prisma.ProductModel
 /**
+ * Model ProductImageEmbedding
+ * 
+ */
+export type ProductImageEmbedding = Prisma.ProductImageEmbeddingModel
+/**
  * Model ProductVariant
  * 
  */

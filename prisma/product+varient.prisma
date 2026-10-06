@@ -18,6 +18,7 @@ model Product {
     cartItems CartItem[]
     reviews Review[]
     views ProductView[]
+    imageEmbeddings ProductImageEmbedding[]
 
     @@index([sellerId])
     @@index([categoryId])

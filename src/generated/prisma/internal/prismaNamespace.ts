@@ -394,6 +394,7 @@ export const ModelName = {
   PageContent: 'PageContent',
   ProcessedStripeEvent: 'ProcessedStripeEvent',
   Product: 'Product',
+  ProductImageEmbedding: 'ProductImageEmbedding',
   ProductVariant: 'ProductVariant',
   ReturnRequest: 'ReturnRequest',
   Dispute: 'Dispute',
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auditLog" | "cart" | "cartItem" | "category" | "deliveryMan" | "productInventory" | "masterOrder" | "pageContent" | "processedStripeEvent" | "product" | "productVariant" | "returnRequest" | "dispute" | "review" | "sellerProfile" | "stripeEvent" | "subOrderItem" | "subOrder" | "user" | "productView"
+    modelProps: "auditLog" | "cart" | "cartItem" | "category" | "deliveryMan" | "productInventory" | "masterOrder" | "pageContent" | "processedStripeEvent" | "product" | "productImageEmbedding" | "productVariant" | "returnRequest" | "dispute" | "review" | "sellerProfile" | "stripeEvent" | "subOrderItem" | "subOrder" | "user" | "productView"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1160,6 +1161,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProductCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProductCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProductImageEmbedding: {
+      payload: Prisma.$ProductImageEmbeddingPayload<ExtArgs>
+      fields: Prisma.ProductImageEmbeddingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductImageEmbeddingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductImageEmbeddingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload>
+        }
+        findFirst: {
+          args: Prisma.ProductImageEmbeddingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductImageEmbeddingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload>
+        }
+        findMany: {
+          args: Prisma.ProductImageEmbeddingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload>[]
+        }
+        create: {
+          args: Prisma.ProductImageEmbeddingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload>
+        }
+        createMany: {
+          args: Prisma.ProductImageEmbeddingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductImageEmbeddingCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload>[]
+        }
+        delete: {
+          args: Prisma.ProductImageEmbeddingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload>
+        }
+        update: {
+          args: Prisma.ProductImageEmbeddingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductImageEmbeddingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductImageEmbeddingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductImageEmbeddingUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductImageEmbeddingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductImageEmbeddingPayload>
+        }
+        aggregate: {
+          args: Prisma.ProductImageEmbeddingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductImageEmbedding>
+        }
+        groupBy: {
+          args: Prisma.ProductImageEmbeddingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductImageEmbeddingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductImageEmbeddingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductImageEmbeddingCountAggregateOutputType> | number
         }
       }
     }
@@ -2112,6 +2187,18 @@ export const ProductScalarFieldEnum = {
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
+export const ProductImageEmbeddingScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  imageUrl: 'imageUrl',
+  embedding: 'embedding',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductImageEmbeddingScalarFieldEnum = (typeof ProductImageEmbeddingScalarFieldEnum)[keyof typeof ProductImageEmbeddingScalarFieldEnum]
+
+
 export const ProductVariantScalarFieldEnum = {
   id: 'id',
   productId: 'productId',
@@ -2413,6 +2500,20 @@ export type ListEnumProductStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
  * Reference to a field of type 'ReturnStatus'
  */
 export type EnumReturnStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReturnStatus'>
@@ -2465,20 +2566,6 @@ export type EnumStripeEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType
  * Reference to a field of type 'StripeEventStatus[]'
  */
 export type ListEnumStripeEventStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StripeEventStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -2629,6 +2716,7 @@ export type GlobalOmitConfig = {
   pageContent?: Prisma.PageContentOmit
   processedStripeEvent?: Prisma.ProcessedStripeEventOmit
   product?: Prisma.ProductOmit
+  productImageEmbedding?: Prisma.ProductImageEmbeddingOmit
   productVariant?: Prisma.ProductVariantOmit
   returnRequest?: Prisma.ReturnRequestOmit
   dispute?: Prisma.DisputeOmit

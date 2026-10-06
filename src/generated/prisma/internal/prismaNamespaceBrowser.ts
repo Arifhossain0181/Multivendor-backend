@@ -61,6 +61,7 @@ export const ModelName = {
   PageContent: 'PageContent',
   ProcessedStripeEvent: 'ProcessedStripeEvent',
   Product: 'Product',
+  ProductImageEmbedding: 'ProductImageEmbedding',
   ProductVariant: 'ProductVariant',
   ReturnRequest: 'ReturnRequest',
   Dispute: 'Dispute',
@@ -257,6 +258,18 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const ProductImageEmbeddingScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  imageUrl: 'imageUrl',
+  embedding: 'embedding',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductImageEmbeddingScalarFieldEnum = (typeof ProductImageEmbeddingScalarFieldEnum)[keyof typeof ProductImageEmbeddingScalarFieldEnum]
 
 
 export const ProductVariantScalarFieldEnum = {

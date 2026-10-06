@@ -2,6 +2,7 @@ import { ApiError } from "../../utlits/ApiError.js";
 import { prisma } from "../../prisma/client.js";
 import { uploadImages } from "../../config/cloudinary.js";
 import { decodeCursor, encodeCursor, PaginatedResult, buildCursorWhere } from "../common/pagination.js";
+import { embedProductImages } from "./productVisualSearch.service.js";
 
 const DEFAULT_PRODUCT_IMAGE_URL = "/globe.svg";
 
@@ -108,9 +109,9 @@ export const createProductBySeller = async (
     }
 
     // 3. Transaction: Product + Variants
-    return await prisma.$transaction(async (tx: any) => {
+    const product = await prisma.$transaction(async (tx: any) => {
         // Create Product
-        const product = await tx.product.create({
+        const created = await tx.product.create({
             data: {
                 name: productData.title,
                 description: productData.description,
@@ -126,7 +127,7 @@ export const createProductBySeller = async (
             for (const variant of productData.variants) {
                 const createdVariant = await tx.productVariant.create({
                     data: {
-                        productId: product.id,
+                        productId: created.id,
                         name: variant.attributes?.label ?? variant.sku,
                         sku: variant.sku,
                         price: Number(variant.attributes?.price ?? productData.price),
@@ -135,7 +136,7 @@ export const createProductBySeller = async (
 
                 await tx.productInventory.create({
                     data: {
-                        productId: product.id,
+                        productId: created.id,
                         variantId: createdVariant.id,
                         availableQty: variant.availableQty,
                     },
@@ -144,7 +145,7 @@ export const createProductBySeller = async (
         }
 
         return tx.product.findUnique({
-            where: { id: product.id },
+            where: { id: created.id },
             include: {
                 seller: true,
                 category: true,
@@ -153,6 +154,15 @@ export const createProductBySeller = async (
             },
         });
     });
+
+    // 4. Generate image embeddings in background
+    if (imageUrls.length) {
+        embedProductImages(product.id, imageUrls).catch((err) => {
+            console.error(`[VisualSearch] Failed to embed images for product ${product.id}:`, err.message);
+        });
+    }
+
+    return product;
 };
 
 export const getPublicProducts = async (cursor?: string, limit = 12, categoryId?: string): Promise<PaginatedResult<ReturnType<typeof mapProduct>>> => {
@@ -194,6 +204,11 @@ export const getPublicProducts = async (cursor?: string, limit = 12, categoryId?
         total,
     };
 };
+
+
+
+
+
 
 export const getPublicProductById = async (id: string) => {
     const product = await prisma.product.findFirst({
@@ -270,7 +285,7 @@ export const updateProduct = async (
         }
     }
 
-    return await prisma.$transaction(async (tx: any) => {
+    const updatedProduct = await prisma.$transaction(async (tx: any) => {
         // 1. Update product core fields
         await tx.product.update({
             where: { id },
@@ -352,6 +367,14 @@ export const updateProduct = async (
             },
         });
     });
+
+    if (imageUrls && imageUrls.length) {
+        embedProductImages(id, imageUrls).catch((err) => {
+            console.error(`[VisualSearch] Failed to embed images for product ${id}:`, err.message);
+        });
+    }
+
+    return updatedProduct;
 };
 
 export const deleteProduct = async (id: string) => {
@@ -409,3 +432,6 @@ export const getMyProducts = async (userId: string, cursor?: string, limit = 12)
         total,
     };
 };
+
+
+export { searchProductsByImage } from "./productVisualSearch.service.js";

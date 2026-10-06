@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import * as productService from "./product.service";
 import { prisma } from "../../prisma/client";
+import fs from "fs";
+import path from "path";
 
 const parsePageParam = (value: unknown, fallback: number) => {
     const parsed = Number(value);
@@ -170,6 +172,48 @@ export const getMyProducts = async (req: Request, res: Response) => {
         return res.status(error.statusCode || 500).json({
             success: false,
             error: error.message || "Internal Server Error",
+        });
+    }
+};
+
+export const visualSearchProducts = async (req: Request, res: Response) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({
+                success: false,
+                error: "Image file is required",
+            });
+        }
+
+        const buffer = await fs.promises.readFile(req.file.path);
+        const result = await productService.searchProductsByImage(buffer, req.file.mimetype);
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                items: result.map((item) => ({
+                    ...item.product,
+                    similarity: item.similarity,
+                })),
+                total: result.length,
+            },
+        });
+    } catch (error: any) {
+        const message = error?.stack || error?.message || String(error) || "Unknown error";
+        console.error("[VISUAL_SEARCH_ERROR]", message);
+
+        try {
+            fs.appendFileSync(
+                path.join(process.cwd(), "dev.err.log"),
+                new Date().toISOString() + " VISUAL_SEARCH_ERROR: " + message + "\n"
+            );
+        } catch (e) {
+            console.error("[VISUAL_SEARCH_LOG_ERROR]", e);
+        }
+
+        return res.status(error?.statusCode || 500).json({
+            success: false,
+            error: message,
         });
     }
 };

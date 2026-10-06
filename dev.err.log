@@ -1,0 +1,14 @@
+2026-10-06T10:35:56.183Z VISUAL_SEARCH_ERROR: Error: Failed to generate image embedding: An error occurred during model execution: "Missing the following inputs: pixel_values.
+    at TransformersClipEmbedding.generateImageEmbedding (C:\Users\unisoft\Desktop\Multivendor\Multivendor-backend\src\modules\product\clip.service.ts:61:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Module.searchProductsByImage (C:\Users\unisoft\Desktop\Multivendor\Multivendor-backend\src\modules\product\productVisualSearch.service.ts:33:28)
+    at async visualSearchProducts (C:\Users\unisoft\Desktop\Multivendor\Multivendor-backend\src\modules\product\product.controller.ts:188:24)
+2026-10-06T10:39:39.276Z VISUAL_SEARCH_ERROR: Error: Failed to generate image embedding: Failed to load image: Unsupported input type: object
+    at TransformersClipEmbedding.generateImageEmbedding (C:\Users\unisoft\Desktop\Multivendor\Multivendor-backend\src\modules\product\clip.service.ts:59:13)
+    at async Module.searchProductsByImage (C:\Users\unisoft\Desktop\Multivendor\Multivendor-backend\src\modules\product\productVisualSearch.service.ts:33:28)
+    at async visualSearchProducts (C:\Users\unisoft\Desktop\Multivendor\Multivendor-backend\src\modules\product\product.controller.ts:188:24)
+2026-10-06T10:43:53.903Z VISUAL_SEARCH_ERROR: Error: Failed to generate image embedding: An error occurred during model execution: "Missing the following inputs: pixel_values.
+    at TransformersClipEmbedding.generateImageEmbedding (C:\Users\unisoft\Desktop\Multivendor\Multivendor-backend\src\modules\product\clip.service.ts:56:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Module.searchProductsByImage (C:\Users\unisoft\Desktop\Multivendor\Multivendor-backend\src\modules\product\productVisualSearch.service.ts:33:28)
+    at async visualSearchProducts (C:\Users\unisoft\Desktop\Multivendor\Multivendor-backend\src\modules\product\product.controller.ts:188:24)

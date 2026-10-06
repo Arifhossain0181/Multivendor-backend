@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { createProduct, getProduct, listProducts, getMyProducts, updateProduct } from './product.controller';
+import { createProduct, getProduct, listProducts, getMyProducts, updateProduct, visualSearchProducts } from './product.controller';
 import { authenticate } from '../../middleware/authenticate.js';
 import { authorize } from '../../middleware/authorize.js';
 import { validate } from '../../middleware/validation.js';
+import { singleImageUpload } from '../../middleware/upload.js';
 
 
 import { createProductSchema, updateProductSchema } from './product.schema';
@@ -35,5 +36,8 @@ router.put(
     validate(updateProductSchema),
     updateProduct
 );
+
+// POST /api/products/visual-search
+router.post('/visual-search', singleImageUpload, visualSearchProducts);
 
 export default router;
