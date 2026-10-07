@@ -1,3 +1,6 @@
+import { appendFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { prisma } from '../../prisma/client.js';
 import { ApiError } from '../../utlits/ApiError.js';
 import { clearCart } from '../cart/cart.service.js';
@@ -134,10 +137,21 @@ export const processCheckout= async (userId:string,shippingAddress: string, cust
             },
         );
     } catch (stripeError: any) {
-        await prisma.masterOrder.delete({
-            where: { id: masterOrder.id },
-        });
-        throw new ApiError(500, 'STRIPE_SESSION_FAILED', 'Failed to create Stripe checkout session');
+      console.error('[STRIPE_ERROR] Failed to create checkout session:', stripeError?.message || stripeError);
+      try {
+        appendFileSync(
+          join(process.cwd(), 'dev.err.log'),
+          new Date().toISOString() + ' STRIPE_ERROR: ' + (stripeError?.stack || stripeError?.message || String(stripeError)) + '\n'
+        );
+      } catch (e) {
+        console.error('[STRIPE_LOG_ERROR]', e);
+      }
+
+      await prisma.masterOrder.delete({
+        where: { id: masterOrder.id },
+      });
+
+      throw new ApiError(500, 'STRIPE_SESSION_FAILED', `Failed to create Stripe checkout session: ${stripeError?.message || 'unknown'}`);
     }
 
     return { stripeUrl: session.url, masterOrderId: masterOrder.id };

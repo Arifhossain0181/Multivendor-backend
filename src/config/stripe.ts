@@ -9,7 +9,6 @@ export function getStripeClient(): Stripe {
             throw new Error('CRITICAL: STRIPE_SECRET_KEY is missing in environmental variables!');
         }
         _stripe = new Stripe(stripeSecretKey, {
-            apiVersion: '2026-6-18' as any,
             typescript: true,
             appInfo: {
                 name: 'MultiVendor-Marketplace-Backend',

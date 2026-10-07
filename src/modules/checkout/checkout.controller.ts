@@ -1,3 +1,5 @@
+import { appendFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { Request, Response } from 'express';
 import * as checkoutService from './checkout.service';
 
@@ -14,6 +16,15 @@ export const initiateCheckout = async (req: Request, res: Response) => {
             data: result // 
         });
     } catch (error: any) {
+      console.error('[CHECKOUT_ERROR]', error?.stack || error?.message || error);
+      try {
+        appendFileSync(
+          join(process.cwd(), 'dev.err.log'),
+          new Date().toISOString() + ' CHECKOUT_ERROR: ' + (error?.stack || error?.message || String(error)) + '\n'
+        );
+      } catch (e) {
+        console.error('[CHECKOUT_LOG_ERROR]', e);
+      }
         if (error.statusCode === 409 && error.code === 'INSUFFICIENT_STOCK') {
             return res.status(409).json({
                 success: false,

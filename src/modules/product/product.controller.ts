@@ -71,8 +71,8 @@ export const createProduct = async (req: Request, res: Response) => {
 
     } catch (error: any) {
         try {
-            require("fs").appendFileSync(
-                require("path").join(process.cwd(), "dev.err.log"),
+            fs.appendFileSync(
+                path.join(process.cwd(), "dev.err.log"),
                 new Date().toISOString() + " CREATE_PRODUCT_ERROR: " + (error.stack || error.message || String(error)) + "\n"
             );
         } catch (e) { }
@@ -115,8 +115,8 @@ export const updateProduct = async (req: Request, res: Response) => {
         console.error("[UPDATE_PRODUCT_ERROR]", error?.stack || error?.message || error);
 
         try {
-            require("fs").appendFileSync(
-                require("path").join(process.cwd(), "dev.err.log"),
+            fs.appendFileSync(
+                path.join(process.cwd(), "dev.err.log"),
                 new Date().toISOString() + " UPDATE_PRODUCT_ERROR: " + (error.stack || error.message || String(error)) + "\n"
             );
         } catch (e) { }
