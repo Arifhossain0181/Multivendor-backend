@@ -34,6 +34,18 @@ export const getUsers = async (req: Request, res: Response) => {
   }
 };
 
+export const getSellerApplications = async (req: Request, res: Response) => {
+  try {
+    const status = typeof req.query.status === 'string' ? req.query.status : undefined;
+    const applications = await adminService.listSellerApplications(status);
+    return res.status(200).json(applications);
+  } catch (error: any) {
+    return res.status(error.statusCode || 500).json({
+      error: error.message || 'Failed to fetch seller applications',
+    });
+  }
+};
+
 export const updateSeller = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

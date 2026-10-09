@@ -17,13 +17,21 @@ export const createReturnRequest = async (userId: string, subOrderId: string, re
     throw ApiError.forbidden("You can only request return for your own orders");
   }
 
+  if (!(["PAID", "COMPLETED"] as string[]).includes(subOrder.masterOrder.status)) {
+    throw ApiError.badRequest("Returns are available only for paid orders");
+  }
+
+  if (subOrder.status !== "SHIFTED_TO_CUSTOMER" && subOrder.status !== "DELIVERED") {
+    throw ApiError.badRequest("You can request a return after the package is delivered");
+  }
+
   const totalQty = subOrder.items.reduce((sum: number, item: any) => sum + item.quantity, 0);
   if (requestedQty > totalQty) {
     throw ApiError.badRequest("Requested quantity exceeds ordered quantity");
   }
 
   const existingReturn = await prisma.returnRequest.findFirst({
-    where: { subOrderId, status: { in: ["PENDING", "APPROVED"] } },
+    where: { subOrderId, status: { in: ["PENDING", "APPROVED", "DISPUTED"] } },
   });
 
   if (existingReturn) {
@@ -31,8 +39,13 @@ export const createReturnRequest = async (userId: string, subOrderId: string, re
   }
 
   const sellerId = subOrder.sellerId;
-  const unitPrice = Number(subOrder.items[0]?.unitPrice || 0);
-  const refundAmount = Number((unitPrice * requestedQty).toFixed(2));
+  let remainingQty = requestedQty;
+  const refundAmount = subOrder.items.reduce((sum: number, item: any) => {
+    const itemQty = Math.min(remainingQty, item.quantity);
+    remainingQty -= itemQty;
+    return sum + Number(item.unitPrice) * itemQty;
+  }, 0);
+  const roundedRefundAmount = Number(refundAmount.toFixed(2));
 
   const returnRequest = await prisma.returnRequest.create({
     data: {
@@ -41,7 +54,7 @@ export const createReturnRequest = async (userId: string, subOrderId: string, re
       sellerId,
       reason,
       requestedQty,
-      refundAmount,
+      refundAmount: roundedRefundAmount,
     },
     include: {
       subOrder: {
@@ -81,7 +94,7 @@ export const createReturnRequest = async (userId: string, subOrderId: string, re
   return returnRequest;
 };
 
-export const resolveReturnRequest = async (sellerId: string, returnId: string, action: "approve" | "reject", note?: string) => {
+export const resolveReturnRequest = async (sellerId: string, returnId: string, action: "approve" | "reject", note?: string, isAdmin = false) => {
   const returnRequest = await prisma.returnRequest.findUnique({
     where: { id: returnId },
     include: { subOrder: true },
@@ -91,7 +104,7 @@ export const resolveReturnRequest = async (sellerId: string, returnId: string, a
     throw ApiError.notFound("Return request not found");
   }
 
-  if (returnRequest.sellerId !== sellerId) {
+  if (!isAdmin && returnRequest.sellerId !== sellerId) {
     throw ApiError.forbidden("You can only resolve returns for your own products");
   }
 
@@ -177,6 +190,13 @@ export const resolveReturnRequest = async (sellerId: string, returnId: string, a
   return updated;
 };
 
+export const resolveReturnRequestAsAdmin = (
+  adminId: string,
+  returnId: string,
+  action: "approve" | "reject",
+  note?: string,
+) => resolveReturnRequest(adminId, returnId, action, note, true);
+
 export const processRefund = async (adminId: string, returnId: string) => {
   const returnRequest = await prisma.returnRequest.findUnique({
     where: { id: returnId },
@@ -194,25 +214,68 @@ export const processRefund = async (adminId: string, returnId: string) => {
   }
 
   if (returnRequest.status !== "APPROVED") {
-    throw ApiError.badRequest("Only approved return requests can be refunded");
+    throw ApiError.badRequest(`Only approved return requests can be refunded. Current status: ${returnRequest.status}`);
   }
 
   const masterOrder = returnRequest.subOrder.masterOrder;
-  if (!masterOrder.stripePaymentIntent) {
-    throw ApiError.badRequest("No payment intent found for this order");
+  const stripe = getStripeClient();
+  let paymentIntentId = masterOrder.stripePaymentIntent;
+
+  // Older paid orders may have the Checkout Session saved without its PaymentIntent.
+  if (!paymentIntentId && masterOrder.stripeSessionId) {
+    try {
+      const session = await stripe.checkout.sessions.retrieve(masterOrder.stripeSessionId);
+      paymentIntentId = typeof session.payment_intent === "string"
+        ? session.payment_intent
+        : session.payment_intent?.id ?? null;
+
+      if (paymentIntentId) {
+        await prisma.masterOrder.update({
+          where: { id: masterOrder.id },
+          data: { stripePaymentIntent: paymentIntentId },
+        });
+      }
+    } catch (stripeError: any) {
+      throw new ApiError(502, "STRIPE_SESSION_LOOKUP_FAILED", `Could not look up the payment for this order: ${stripeError.message}`);
+    }
   }
 
-  const stripe = getStripeClient();
+  // Recover legacy sessions by the order metadata when neither Stripe ID was saved locally.
+  if (!paymentIntentId && !masterOrder.stripeSessionId) {
+    try {
+      for await (const session of stripe.checkout.sessions.list({ limit: 100 })) {
+        if (session.metadata?.masterOrderId !== masterOrder.id) continue;
+        paymentIntentId = typeof session.payment_intent === "string"
+          ? session.payment_intent
+          : session.payment_intent?.id ?? null;
+        if (paymentIntentId) {
+          await prisma.masterOrder.update({
+            where: { id: masterOrder.id },
+            data: { stripeSessionId: session.id, stripePaymentIntent: paymentIntentId },
+          });
+        }
+        break;
+      }
+    } catch (stripeError: any) {
+      throw new ApiError(502, "STRIPE_SESSION_LOOKUP_FAILED", `Could not find the payment for this order: ${stripeError.message}`);
+    }
+  }
+
+  if (!paymentIntentId) {
+    throw ApiError.badRequest("No Stripe PaymentIntent was found for this order. Verify the payment was made through Stripe Checkout and contact support if it was.");
+  }
 
   try {
     const refund = await stripe.refunds.create({
-      payment_intent: masterOrder.stripePaymentIntent,
+      payment_intent: paymentIntentId,
       amount: Math.round(Number(returnRequest.refundAmount) * 100),
       reason: "requested_by_customer",
       metadata: {
         returnRequestId: returnRequest.id,
         subOrderId: returnRequest.subOrderId,
       },
+    }, {
+      idempotencyKey: `return_refund_${returnRequest.id}`,
     });
 
     await prisma.returnRequest.update({

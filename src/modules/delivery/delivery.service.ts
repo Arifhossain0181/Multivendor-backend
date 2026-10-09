@@ -2,6 +2,7 @@ import { prisma } from "../../prisma/client.js";
 import { ApiError } from "../../utlits/ApiError.js";
 import bcrypt from "bcryptjs";
 import { decodeCursor, encodeCursor, PaginatedResult, buildCursorWhere } from "../common/pagination.js";
+import { uploadImage } from "../../config/cloudinary.js";
 
 export const createDeliveryMan = async (data: {
   name: string;
@@ -62,6 +63,27 @@ export const createDeliveryMan = async (data: {
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10);
+    const documentImageFields = [
+      "drivingLicenseImage",
+      "registrationCertificateImage",
+      "taxTokenImage",
+      "fitnessCertificateImage",
+      "routePermitImage",
+      "nidFrontImage",
+      "nidBackImage",
+    ] as const;
+    const documentImages = await Promise.all(documentImageFields.map(async (field) => {
+      const image = data[field];
+      if (!image) {
+        throw new ApiError(400, "DOCUMENT_REQUIRED", `${field} is required`);
+      }
+      return image.startsWith("data:image/")
+        ? uploadImage(image, "delivery-documents")
+        : image;
+    }));
+    const uploadedDocuments = Object.fromEntries(
+      documentImageFields.map((field, index) => [field, documentImages[index]]),
+    );
 
     const user = await prisma.user.create({
       data: {
@@ -100,14 +122,14 @@ export const createDeliveryMan = async (data: {
             vehicleImage: data.vehicleImage,
             vehicleRegistrationNumber: data.vehicleRegistrationNumber,
             drivingLicenseNumber: data.drivingLicenseNumber,
-            drivingLicenseImage: data.drivingLicenseImage,
-            registrationCertificateImage: data.registrationCertificateImage,
-            taxTokenImage: data.taxTokenImage,
-            fitnessCertificateImage: data.fitnessCertificateImage,
-            routePermitImage: data.routePermitImage,
+            drivingLicenseImage: uploadedDocuments.drivingLicenseImage,
+            registrationCertificateImage: uploadedDocuments.registrationCertificateImage,
+            taxTokenImage: uploadedDocuments.taxTokenImage,
+            fitnessCertificateImage: uploadedDocuments.fitnessCertificateImage,
+            routePermitImage: uploadedDocuments.routePermitImage,
             nidNumber: data.nidNumber,
-            nidFrontImage: data.nidFrontImage,
-            nidBackImage: data.nidBackImage,
+            nidFrontImage: uploadedDocuments.nidFrontImage,
+            nidBackImage: uploadedDocuments.nidBackImage,
             vehicleRegistrationImage: data.vehicleRegistrationImage,
             serviceZones: data.serviceZones,
             emergencyContactName: data.emergencyContactName,
@@ -296,6 +318,43 @@ export const getMyAssignments = async (userId: string) => {
   });
 
   return subOrders;
+};
+
+export const markAssignmentShiftedToCustomer = async (userId: string, subOrderId: string) => {
+  const deliveryMan = await prisma.deliveryMan.findUnique({
+    where: { userId },
+    select: { id: true, status: true },
+  });
+
+  if (!deliveryMan || deliveryMan.status !== "APPROVED") {
+    throw ApiError.forbidden("An approved delivery profile is required");
+  }
+
+  const subOrder = await prisma.subOrder.findFirst({
+    where: { id: subOrderId, deliveryManId: deliveryMan.id },
+    include: { masterOrder: { select: { status: true } } },
+  });
+
+  if (!subOrder) {
+    throw ApiError.notFound("Assigned sub-order not found");
+  }
+
+  if (!["PAID", "COMPLETED"].includes(subOrder.masterOrder.status)) {
+    throw ApiError.badRequest("The master order must be paid before delivery");
+  }
+
+  if (subOrder.status !== "SHIPPED") {
+    throw ApiError.badRequest("Only shipped packages can be marked as shifted to customer");
+  }
+
+  return prisma.subOrder.update({
+    where: { id: subOrder.id },
+    data: { status: "SHIFTED_TO_CUSTOMER" },
+    include: {
+      seller: { select: { id: true, shopName: true } },
+      masterOrder: { select: { id: true, customerId: true, status: true } },
+    },
+  });
 };
 
 const clampPage = (page: number, limit: number) => {

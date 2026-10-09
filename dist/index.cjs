@@ -139,7 +139,7 @@ var config = {
   "clientVersion": "7.8.0",
   "engineVersion": "3c6e192761c0362d496ed980de936e2f3cebcd3a",
   "activeProvider": "postgresql",
-  "inlineSchema": 'model AuditLog {\n  id         String   @id @default(uuid())\n  adminId    String\n  action     String\n  entityType String?\n  entityId   String?\n  oldValue   String?\n  newValue   String?\n  ipAddress  String?\n  userAgent  String?\n  createdAt  DateTime @default(now())\n\n  @@index([adminId])\n  @@index([action])\n  @@index([entityType, entityId])\n  @@index([createdAt])\n  @@map("audit_logs")\n}\n\nmodel Cart {\n  id         String   @id @default(cuid())\n  customerId String   @unique\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  customer User       @relation(fields: [customerId], references: [id], onDelete: Cascade)\n  items    CartItem[]\n\n  @@map("carts")\n}\n\nmodel CartItem {\n  id        String   @id @default(cuid())\n  cartId    String\n  productId String\n  sellerId  String\n  variantId String\n  quantity  Int\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)\n\n  // product & variant relations (integrity should still be validated in code)\n  product Product        @relation(fields: [productId], references: [id])\n  variant ProductVariant @relation(fields: [variantId], references: [id])\n\n  // sellerId is used for grouping into SubOrders; seller relation not strictly required here.\n\n  @@unique([cartId, productId, variantId])\n  @@index([cartId])\n  @@index([productId, variantId])\n  @@map("cart_items")\n}\n\nmodel Category {\n  id          String   @id @default(uuid())\n  name        String   @unique\n  slug        String   @unique\n  description String?\n  imageUrl    String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  products Product[]\n\n  @@map("categories")\n}\n\nmodel DeliveryMan {\n  id     String @id @default(uuid())\n  userId String @unique\n\n  firstName      String\n  lastName       String\n  mobileNumber   String\n  gender         String\n  dateOfBirth    DateTime?\n  city           String\n  serviceType    String?\n  identityType   String\n  identityNumber String?\n  referralCode   String?\n  profilePhoto   String?\n\n  vehicleBrand         String?\n  vehicleModel         String?\n  registrationNumber   String?\n  registrationRegion   String?\n  registrationCategory String?\n  registrationDigits   String?\n  vehicleYear          String?\n  taxTokenNumber       String?\n  fitnessNumber        String?\n\n  district String\n  zela     String\n  thana    String\n  area     String\n\n  profileImage                 String?\n  vehicleType                  String?\n  vehicleImage                 String?\n  vehicleRegistrationImage     String?\n  drivingLicenseNumber         String?\n  drivingLicenseImage          String?\n  registrationCertificateImage String?\n  taxTokenImage                String?\n  fitnessCertificateImage      String?\n  routePermitImage             String?\n  nidNumber                    String?\n  nidFrontImage                String?\n  nidBackImage                 String?\n  serviceZones                 String?\n\n  emergencyContactName     String?\n  emergencyContactPhone    String?\n  emergencyContactRelation String?\n\n  termsAccepted         Boolean @default(false)\n  privacyPolicyAccepted Boolean @default(false)\n\n  status          DeliveryManStatus @default(PENDING)\n  rejectionReason String?\n  createdAt       DateTime          @default(now())\n  updatedAt       DateTime          @updatedAt\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  subOrders SubOrder[]\n\n  @@map("delivery_men")\n}\n\nenum DeliveryManStatus {\n  PENDING\n  APPROVED\n  REJECTED\n}\n\nenum Role {\n  CUSTOMER\n  VENDOR\n  ADMIN\n  DELIVERY\n}\n\nenum SellerStatus {\n  PENDING\n  APPROVED\n  REJECTED\n}\n\nenum ProductStatus {\n  DRAFT\n  ACTIVE\n  BLOCKED\n}\n\nenum MasterOrderStatus {\n  PENDING_PAYMENT\n  PAID\n  COMPLETED\n  CANCELLED\n  PAYMENT_FAILED_STOCK\n}\n\nenum SubOrderStatus {\n  PENDING\n  CONFIRMED\n  SHIPPED\n  DELIVERED\n  CANCELLED\n}\n\nmodel ProductInventory {\n  id           String   @id @default(cuid())\n  productId    String\n  variantId    String   @unique\n  availableQty Int      @default(0)\n  updatedAt    DateTime @updatedAt\n\n  product Product        @relation(fields: [productId], references: [id], onDelete: Cascade)\n  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)\n\n  // (productId, variantId) must be consistent; app will validate strictly too.\n  // Keep unique(productId, variantId) in addition to variantId unique if you want stronger safety:\n  @@unique([productId, variantId])\n  @@index([productId, variantId])\n  @@map("product_stock")\n}\n\nmodel MasterOrder {\n  id              String            @id @default(uuid())\n  customerId      String\n  totalAmount     Decimal           @db.Decimal(10, 2)\n  status          MasterOrderStatus @default(PENDING_PAYMENT)\n  shippingAddress String?\n  customerPhone   String?\n\n  //striPe Reference  \n  stripeSessionId     String? @unique\n  stripePaymentIntent String? @unique\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  customer  User       @relation(fields: [customerId], references: [id], onDelete: Cascade)\n  subOrders SubOrder[]\n\n  @@index([customerId, status])\n  @@map("master_orders")\n}\n\nmodel PageContent {\n  id        String   @id @default(uuid())\n  key       String   @unique\n  content   String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map("page_contents")\n}\n\nmodel ProcessedStripeEvent {\n  id          String   @id @default(cuid())\n  eventId     String   @unique\n  processedAt DateTime @default(now())\n\n  @@index([eventId])\n  @@map("processed_stripe_events")\n}\n\nmodel Product {\n  id          String        @id @default(uuid())\n  sellerId    String\n  categoryId  String\n  name        String\n  description String\n  imageUrls   String[]      @default([])\n  status      ProductStatus @default(DRAFT)\n  createdAt   DateTime      @default(now())\n  updatedAt   DateTime      @updatedAt\n\n  seller   SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)\n  category Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)\n\n  variants  ProductVariant[]\n  inventory ProductInventory[]\n\n  cartItems       CartItem[]\n  reviews         Review[]\n  views           ProductView[]\n  imageEmbeddings ProductImageEmbedding[]\n\n  @@index([sellerId])\n  @@index([categoryId])\n  @@index([status])\n  @@map("products")\n}\n\nmodel ProductImageEmbedding {\n  id        String   @id @default(cuid())\n  productId String\n  imageUrl  String\n  embedding Json\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)\n\n  @@unique([productId, imageUrl])\n  @@index([productId])\n  @@map("product_image_embeddings")\n}\n\nmodel ProductVariant {\n  id        String   @id @default(cuid())\n  productId String\n  name      String\n  sku       String?  @unique\n  price     Decimal  @db.Decimal(12, 2)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  product       Product           @relation(fields: [productId], references: [id], onDelete: Cascade)\n  inventory     ProductInventory?\n  cartItems     CartItem[]\n  subOrderItems SubOrderItem[]\n\n  @@index([productId])\n  @@map("product_variants")\n}\n\nmodel ReturnRequest {\n  id           String       @id @default(cuid())\n  subOrderId   String\n  userId       String\n  sellerId     String\n  reason       String\n  status       ReturnStatus @default(PENDING)\n  requestedQty Int\n  refundAmount Decimal?     @db.Decimal(10, 2)\n  disputeNote  String?\n  resolvedBy   String?\n  resolvedAt   DateTime?\n  createdAt    DateTime     @default(now())\n  updatedAt    DateTime     @updatedAt\n\n  subOrder SubOrder      @relation(fields: [subOrderId], references: [id], onDelete: Cascade)\n  customer User          @relation(fields: [userId], references: [id])\n  seller   SellerProfile @relation(fields: [sellerId], references: [id])\n  dispute  Dispute?\n\n  @@index([subOrderId])\n  @@index([userId])\n  @@index([sellerId])\n  @@index([status])\n  @@map("return_requests")\n}\n\nmodel Dispute {\n  id              String        @id @default(cuid())\n  returnRequestId String        @unique\n  adminId         String?\n  status          DisputeStatus @default(OPEN)\n  resolution      String?\n  resolvedAt      DateTime?\n  createdAt       DateTime      @default(now())\n  updatedAt       DateTime      @updatedAt\n\n  returnRequest ReturnRequest @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)\n  admin         User?         @relation(fields: [adminId], references: [id])\n\n  @@index([returnRequestId])\n  @@index([adminId])\n  @@index([status])\n  @@map("disputes")\n}\n\nenum ReturnStatus {\n  PENDING\n  APPROVED\n  REJECTED\n  REFUNDED\n  DISPUTED\n}\n\nenum DisputeStatus {\n  OPEN\n  RESOLVED\n  CLOSED\n}\n\nmodel Review {\n  id            String    @id @default(cuid())\n  userId        String\n  productId     String\n  rating        Int\n  comment       String?\n  verified      Boolean   @default(false)\n  sellerRating  Int?\n  sellerReply   String?\n  sellerReplyAt DateTime?\n  createdAt     DateTime  @default(now())\n  updatedAt     DateTime  @updatedAt\n\n  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)\n  product  Product        @relation(fields: [productId], references: [id], onDelete: Cascade)\n  seller   SellerProfile? @relation(fields: [sellerId], references: [id], onDelete: SetNull)\n  sellerId String?\n\n  @@unique([userId, productId])\n  @@index([userId, productId])\n  @@index([productId])\n  @@index([sellerId])\n  @@map("reviews")\n}\n\n// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider        = "prisma-client"\n  output          = "../src/generated/prisma"\n  engineType      = "binary"\n  previewFeatures = ["prismaSchemaFolder"]\n}\n\ngenerator client_js {\n  provider        = "prisma-client-js"\n  engineType      = "binary"\n  previewFeatures = ["prismaSchemaFolder"]\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nmodel SellerProfile {\n  id          String       @id @default(uuid())\n  userId      String       @unique\n  shopName    String\n  description String\n  status      SellerStatus @default(PENDING)\n  createdAt   DateTime     @default(now())\n  updatedAt   DateTime     @updatedAt\n\n  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)\n  products       Product[]\n  subOrders      SubOrder[]\n  reviews        Review[]\n  returnRequests ReturnRequest[]\n\n  @@map("seller_profiles")\n}\n\nenum StripeEventStatus {\n  PENDING\n  PROCESSED\n  FAILED\n}\n\nmodel StripeEvent {\n  id          String            @id @default(cuid())\n  eventId     String            @unique\n  type        String\n  status      StripeEventStatus @default(PENDING)\n  payload     Json\n  error       String?\n  retryCount  Int               @default(0)\n  maxRetries  Int               @default(3)\n  nextRetryAt DateTime?\n  processedAt DateTime?\n  createdAt   DateTime          @default(now())\n  updatedAt   DateTime          @updatedAt\n\n  @@index([status, nextRetryAt])\n  @@map("stripe_events")\n}\n\nmodel SubOrderItem {\n  id         String @id @default(cuid())\n  subOrderId String\n\n  productId String\n  variantId String\n\n  productName String\n  variantName String\n\n  unitPrice Decimal @db.Decimal(12, 2)\n  quantity  Int\n\n  createdAt DateTime @default(now())\n\n  subOrder SubOrder       @relation(fields: [subOrderId], references: [id], onDelete: Cascade)\n  variant  ProductVariant @relation(fields: [variantId], references: [id])\n\n  @@index([subOrderId])\n  @@map("sub_order_items")\n}\n\nmodel SubOrder {\n  id            String         @id @default(cuid())\n  masterOrderId String\n  sellerId      String\n  status        SubOrderStatus @default(PENDING)\n  subtotal      Decimal        @db.Decimal(12, 2)\n  deliveryManId String?\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  masterOrder MasterOrder   @relation(fields: [masterOrderId], references: [id], onDelete: Cascade)\n  seller      SellerProfile @relation(fields: [sellerId], references: [id])\n  deliveryMan DeliveryMan?  @relation(fields: [deliveryManId], references: [id])\n\n  items          SubOrderItem[]\n  returnRequests ReturnRequest[]\n\n  @@index([sellerId, status])\n  @@index([masterOrderId])\n  @@index([deliveryManId])\n  @@map("sub_orders")\n}\n\nmodel User {\n  id           String   @id @default(uuid())\n  email        String   @unique\n  passwordHash String\n  name         String\n  role         String   @default("CUSTOMER")\n  isActive     Boolean  @default(true)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  sellerProfile      SellerProfile?\n  deliveryManProfile DeliveryMan?\n  cart               Cart?\n  masterOrders       MasterOrder[]\n  reviews            Review[]\n  productViews       ProductView[]\n  returnRequests     ReturnRequest[]\n  resolvedDisputes   Dispute[]\n\n  @@map("users")\n}\n\nmodel ProductView {\n  id        String @id @default(cuid())\n  productId String\n\n  // dedupe key based on identity + time window/session logic in app\n  dedupeKey String\n\n  userId   String?\n  viewedAt DateTime @default(now())\n\n  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)\n  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)\n\n  @@unique([productId, dedupeKey])\n  @@index([productId, dedupeKey])\n  @@map("product_views")\n}\n',
+  "inlineSchema": 'model AuditLog {\n  id         String   @id @default(uuid())\n  adminId    String\n  action     String\n  entityType String?\n  entityId   String?\n  oldValue   String?\n  newValue   String?\n  ipAddress  String?\n  userAgent  String?\n  createdAt  DateTime @default(now())\n\n  @@index([adminId])\n  @@index([action])\n  @@index([entityType, entityId])\n  @@index([createdAt])\n  @@map("audit_logs")\n}\n\nmodel Cart {\n  id         String   @id @default(cuid())\n  customerId String   @unique\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  customer User       @relation(fields: [customerId], references: [id], onDelete: Cascade)\n  items    CartItem[]\n\n  @@map("carts")\n}\n\nmodel CartItem {\n  id        String   @id @default(cuid())\n  cartId    String\n  productId String\n  sellerId  String\n  variantId String\n  quantity  Int\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  cart Cart @relation(fields: [cartId], references: [id], onDelete: Cascade)\n\n  // product & variant relations (integrity should still be validated in code)\n  product Product        @relation(fields: [productId], references: [id])\n  variant ProductVariant @relation(fields: [variantId], references: [id])\n\n  // sellerId is used for grouping into SubOrders; seller relation not strictly required here.\n\n  @@unique([cartId, productId, variantId])\n  @@index([cartId])\n  @@index([productId, variantId])\n  @@map("cart_items")\n}\n\nmodel Category {\n  id          String   @id @default(uuid())\n  name        String   @unique\n  slug        String   @unique\n  description String?\n  imageUrl    String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  products Product[]\n\n  @@map("categories")\n}\n\nmodel DeliveryMan {\n  id     String @id @default(uuid())\n  userId String @unique\n\n  firstName      String\n  lastName       String\n  mobileNumber   String\n  gender         String\n  dateOfBirth    DateTime?\n  city           String\n  serviceType    String?\n  identityType   String\n  identityNumber String?\n  referralCode   String?\n  profilePhoto   String?\n\n  vehicleBrand         String?\n  vehicleModel         String?\n  registrationNumber   String?\n  registrationRegion   String?\n  registrationCategory String?\n  registrationDigits   String?\n  vehicleYear          String?\n  taxTokenNumber       String?\n  fitnessNumber        String?\n\n  district String\n  zela     String\n  thana    String\n  area     String\n\n  profileImage                 String?\n  vehicleType                  String?\n  vehicleImage                 String?\n  vehicleRegistrationImage     String?\n  drivingLicenseNumber         String?\n  drivingLicenseImage          String?\n  registrationCertificateImage String?\n  taxTokenImage                String?\n  fitnessCertificateImage      String?\n  routePermitImage             String?\n  nidNumber                    String?\n  nidFrontImage                String?\n  nidBackImage                 String?\n  serviceZones                 String?\n\n  emergencyContactName     String?\n  emergencyContactPhone    String?\n  emergencyContactRelation String?\n\n  termsAccepted         Boolean @default(false)\n  privacyPolicyAccepted Boolean @default(false)\n\n  status          DeliveryManStatus @default(PENDING)\n  rejectionReason String?\n  createdAt       DateTime          @default(now())\n  updatedAt       DateTime          @updatedAt\n\n  user User @relation(fields: [userId], references: [id], onDelete: Cascade)\n\n  subOrders SubOrder[]\n\n  @@map("delivery_men")\n}\n\nenum DeliveryManStatus {\n  PENDING\n  APPROVED\n  REJECTED\n}\n\nenum Role {\n  CUSTOMER\n  VENDOR\n  ADMIN\n  DELIVERY\n}\n\nenum SellerStatus {\n  PENDING\n  APPROVED\n  REJECTED\n}\n\nenum ProductStatus {\n  DRAFT\n  ACTIVE\n  BLOCKED\n}\n\nenum MasterOrderStatus {\n  PENDING_PAYMENT\n  PAID\n  COMPLETED\n  CANCELLED\n  PAYMENT_FAILED_STOCK\n}\n\nenum SubOrderStatus {\n  PENDING\n  CONFIRMED\n  SHIPPED\n  SHIFTED_TO_CUSTOMER\n  DELIVERED\n  CANCELLED\n}\n\nmodel ProductInventory {\n  id           String   @id @default(cuid())\n  productId    String\n  variantId    String   @unique\n  availableQty Int      @default(0)\n  updatedAt    DateTime @updatedAt\n\n  product Product        @relation(fields: [productId], references: [id], onDelete: Cascade)\n  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)\n\n  // (productId, variantId) must be consistent; app will validate strictly too.\n  // Keep unique(productId, variantId) in addition to variantId unique if you want stronger safety:\n  @@unique([productId, variantId])\n  @@index([productId, variantId])\n  @@map("product_stock")\n}\n\nmodel MasterOrder {\n  id              String            @id @default(uuid())\n  customerId      String\n  totalAmount     Decimal           @db.Decimal(10, 2)\n  status          MasterOrderStatus @default(PENDING_PAYMENT)\n  shippingAddress String?\n  customerPhone   String?\n\n  //striPe Reference  \n  stripeSessionId     String? @unique\n  stripePaymentIntent String? @unique\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  customer  User       @relation(fields: [customerId], references: [id], onDelete: Cascade)\n  subOrders SubOrder[]\n\n  @@index([customerId, status])\n  @@map("master_orders")\n}\n\nmodel PageContent {\n  id        String   @id @default(uuid())\n  key       String   @unique\n  content   String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  @@map("page_contents")\n}\n\nmodel ProcessedStripeEvent {\n  id          String   @id @default(cuid())\n  eventId     String   @unique\n  processedAt DateTime @default(now())\n\n  @@index([eventId])\n  @@map("processed_stripe_events")\n}\n\nmodel Product {\n  id          String        @id @default(uuid())\n  sellerId    String\n  categoryId  String\n  name        String\n  description String\n  imageUrls   String[]      @default([])\n  status      ProductStatus @default(DRAFT)\n  createdAt   DateTime      @default(now())\n  updatedAt   DateTime      @updatedAt\n\n  seller   SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)\n  category Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)\n\n  variants  ProductVariant[]\n  inventory ProductInventory[]\n\n  cartItems       CartItem[]\n  reviews         Review[]\n  views           ProductView[]\n  imageEmbeddings ProductImageEmbedding[]\n\n  @@index([sellerId])\n  @@index([categoryId])\n  @@index([status])\n  @@map("products")\n}\n\nmodel ProductImageEmbedding {\n  id        String   @id @default(cuid())\n  productId String\n  imageUrl  String\n  embedding Json\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)\n\n  @@unique([productId, imageUrl])\n  @@index([productId])\n  @@map("product_image_embeddings")\n}\n\nmodel ProductVariant {\n  id        String   @id @default(cuid())\n  productId String\n  name      String\n  sku       String?  @unique\n  price     Decimal  @db.Decimal(12, 2)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  product       Product           @relation(fields: [productId], references: [id], onDelete: Cascade)\n  inventory     ProductInventory?\n  cartItems     CartItem[]\n  subOrderItems SubOrderItem[]\n\n  @@index([productId])\n  @@map("product_variants")\n}\n\nmodel ReturnRequest {\n  id           String       @id @default(cuid())\n  subOrderId   String\n  userId       String\n  sellerId     String\n  reason       String\n  status       ReturnStatus @default(PENDING)\n  requestedQty Int\n  refundAmount Decimal?     @db.Decimal(10, 2)\n  disputeNote  String?\n  resolvedBy   String?\n  resolvedAt   DateTime?\n  createdAt    DateTime     @default(now())\n  updatedAt    DateTime     @updatedAt\n\n  subOrder SubOrder      @relation(fields: [subOrderId], references: [id], onDelete: Cascade)\n  customer User          @relation(fields: [userId], references: [id])\n  seller   SellerProfile @relation(fields: [sellerId], references: [id])\n  dispute  Dispute?\n\n  @@index([subOrderId])\n  @@index([userId])\n  @@index([sellerId])\n  @@index([status])\n  @@map("return_requests")\n}\n\nmodel Dispute {\n  id              String        @id @default(cuid())\n  returnRequestId String        @unique\n  adminId         String?\n  status          DisputeStatus @default(OPEN)\n  resolution      String?\n  resolvedAt      DateTime?\n  createdAt       DateTime      @default(now())\n  updatedAt       DateTime      @updatedAt\n\n  returnRequest ReturnRequest @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)\n  admin         User?         @relation(fields: [adminId], references: [id])\n\n  @@index([returnRequestId])\n  @@index([adminId])\n  @@index([status])\n  @@map("disputes")\n}\n\nenum ReturnStatus {\n  PENDING\n  APPROVED\n  REJECTED\n  REFUNDED\n  DISPUTED\n}\n\nenum DisputeStatus {\n  OPEN\n  RESOLVED\n  CLOSED\n}\n\nmodel Review {\n  id            String    @id @default(cuid())\n  userId        String\n  productId     String\n  rating        Int\n  comment       String?\n  verified      Boolean   @default(false)\n  sellerRating  Int?\n  sellerReply   String?\n  sellerReplyAt DateTime?\n  createdAt     DateTime  @default(now())\n  updatedAt     DateTime  @updatedAt\n\n  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)\n  product  Product        @relation(fields: [productId], references: [id], onDelete: Cascade)\n  seller   SellerProfile? @relation(fields: [sellerId], references: [id], onDelete: SetNull)\n  sellerId String?\n\n  @@unique([userId, productId])\n  @@index([userId, productId])\n  @@index([productId])\n  @@index([sellerId])\n  @@map("reviews")\n}\n\n// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider        = "prisma-client"\n  output          = "../src/generated/prisma"\n  engineType      = "binary"\n  previewFeatures = ["prismaSchemaFolder"]\n}\n\ngenerator client_js {\n  provider        = "prisma-client-js"\n  engineType      = "binary"\n  previewFeatures = ["prismaSchemaFolder"]\n}\n\ndatasource db {\n  provider = "postgresql"\n}\n\nmodel SellerProfile {\n  id          String       @id @default(uuid())\n  userId      String       @unique\n  shopName    String\n  description String\n  status      SellerStatus @default(PENDING)\n  createdAt   DateTime     @default(now())\n  updatedAt   DateTime     @updatedAt\n\n  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)\n  products       Product[]\n  subOrders      SubOrder[]\n  reviews        Review[]\n  returnRequests ReturnRequest[]\n\n  @@map("seller_profiles")\n}\n\nenum StripeEventStatus {\n  PENDING\n  PROCESSED\n  FAILED\n}\n\nmodel StripeEvent {\n  id          String            @id @default(cuid())\n  eventId     String            @unique\n  type        String\n  status      StripeEventStatus @default(PENDING)\n  payload     Json\n  error       String?\n  retryCount  Int               @default(0)\n  maxRetries  Int               @default(3)\n  nextRetryAt DateTime?\n  processedAt DateTime?\n  createdAt   DateTime          @default(now())\n  updatedAt   DateTime          @updatedAt\n\n  @@index([status, nextRetryAt])\n  @@map("stripe_events")\n}\n\nmodel SubOrderItem {\n  id         String @id @default(cuid())\n  subOrderId String\n\n  productId String\n  variantId String\n\n  productName String\n  variantName String\n\n  unitPrice Decimal @db.Decimal(12, 2)\n  quantity  Int\n\n  createdAt DateTime @default(now())\n\n  subOrder SubOrder       @relation(fields: [subOrderId], references: [id], onDelete: Cascade)\n  variant  ProductVariant @relation(fields: [variantId], references: [id])\n\n  @@index([subOrderId])\n  @@map("sub_order_items")\n}\n\nmodel SubOrder {\n  id            String         @id @default(cuid())\n  masterOrderId String\n  sellerId      String\n  status        SubOrderStatus @default(PENDING)\n  subtotal      Decimal        @db.Decimal(12, 2)\n  deliveryManId String?\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  masterOrder MasterOrder   @relation(fields: [masterOrderId], references: [id], onDelete: Cascade)\n  seller      SellerProfile @relation(fields: [sellerId], references: [id])\n  deliveryMan DeliveryMan?  @relation(fields: [deliveryManId], references: [id])\n\n  items          SubOrderItem[]\n  returnRequests ReturnRequest[]\n\n  @@index([sellerId, status])\n  @@index([masterOrderId])\n  @@index([deliveryManId])\n  @@map("sub_orders")\n}\n\nmodel User {\n  id           String   @id @default(uuid())\n  email        String   @unique\n  passwordHash String\n  name         String\n  role         String   @default("CUSTOMER")\n  isActive     Boolean  @default(true)\n  createdAt    DateTime @default(now())\n  updatedAt    DateTime @updatedAt\n\n  sellerProfile      SellerProfile?\n  deliveryManProfile DeliveryMan?\n  cart               Cart?\n  masterOrders       MasterOrder[]\n  reviews            Review[]\n  productViews       ProductView[]\n  returnRequests     ReturnRequest[]\n  resolvedDisputes   Dispute[]\n\n  @@map("users")\n}\n\nmodel ProductView {\n  id        String @id @default(cuid())\n  productId String\n\n  // dedupe key based on identity + time window/session logic in app\n  dedupeKey String\n\n  userId   String?\n  viewedAt DateTime @default(now())\n\n  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)\n  user    User?   @relation(fields: [userId], references: [id], onDelete: SetNull)\n\n  @@unique([productId, dedupeKey])\n  @@index([productId, dedupeKey])\n  @@map("product_views")\n}\n',
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -927,7 +927,7 @@ var transitionSubOrder = async (subOrderId, sellerId, nextStatus) => {
       );
     }
     const currentStatus = subOrder.status;
-    const isValidTransition = currentStatus === "PENDING" && nextStatus === "CONFIRMED" || currentStatus === "CONFIRMED" && nextStatus === "SHIPPED" || currentStatus === "SHIPPED" && nextStatus === "DELIVERED";
+    const isValidTransition = currentStatus === "PENDING" && nextStatus === "CONFIRMED" || currentStatus === "CONFIRMED" && nextStatus === "SHIPPED";
     if (!isValidTransition) {
       throw new ApiError(
         400,
@@ -954,7 +954,8 @@ var transitionSubOrder = async (subOrderId, sellerId, nextStatus) => {
 var assignDeliveryMan = async (subOrderId, sellerId, deliveryManId) => {
   try {
     const subOrder = await prisma.subOrder.findUnique({
-      where: { id: subOrderId }
+      where: { id: subOrderId },
+      include: { masterOrder: true }
     });
     if (!subOrder) {
       throw new ApiError(404, "", "Sub-order not found");
@@ -2697,7 +2698,11 @@ var verifyCheckoutSuccess = async (sessionId) => {
       }
       await tx.masterOrder.update({
         where: { id: masterOrderId },
-        data: { status: "PAID" }
+        data: {
+          status: "PAID",
+          stripeSessionId: session.id,
+          stripePaymentIntent: typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null
+        }
       });
       await clearCart(order.customerId);
     });
@@ -2883,9 +2888,9 @@ var processStripeEvent = async (event) => {
   if (!masterOrderId) {
     return;
   }
-  await handleSuccessfulPayment(masterOrderId, event.id, event);
+  await handleSuccessfulPayment(masterOrderId, event.id, event.data?.object);
 };
-var handleSuccessfulPayment = async (masterOrderId, stripeEventId, _event) => {
+var handleSuccessfulPayment = async (masterOrderId, stripeEventId, session) => {
   const stripeEvent = await prisma.stripeEvent.findUnique({
     where: { eventId: stripeEventId }
   });
@@ -2911,7 +2916,19 @@ var handleSuccessfulPayment = async (masterOrderId, stripeEventId, _event) => {
   if (!masterOrder) {
     throw ApiError.notFound("Master order not found for webhook");
   }
-  if (masterOrder.status === "PAID") return;
+  if (masterOrder.status === "PAID") {
+    const paymentIntent = typeof session?.payment_intent === "string" ? session.payment_intent : session?.payment_intent?.id;
+    if (paymentIntent || session?.id) {
+      await prisma.masterOrder.update({
+        where: { id: masterOrderId },
+        data: {
+          stripeSessionId: session?.id ?? void 0,
+          stripePaymentIntent: paymentIntent ?? void 0
+        }
+      });
+    }
+    return;
+  }
   const allItems = masterOrder.subOrders.flatMap((sub) => sub.items);
   const grouped = /* @__PURE__ */ new Map();
   for (const item of allItems) {
@@ -2962,7 +2979,11 @@ var handleSuccessfulPayment = async (masterOrderId, stripeEventId, _event) => {
       }
       await tx.masterOrder.update({
         where: { id: masterOrderId },
-        data: { status: "PAID" }
+        data: {
+          status: "PAID",
+          stripeSessionId: session?.id ?? void 0,
+          stripePaymentIntent: typeof session?.payment_intent === "string" ? session.payment_intent : session?.payment_intent?.id ?? void 0
+        }
       });
       await clearCart(masterOrder.customerId);
     });
@@ -3053,14 +3074,16 @@ var toNumber2 = (value) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : 0;
 };
-var getCustomerOrders = async (userId, cursor, limit = 10) => {
-  const decodedCursor = decodeCursor(cursor);
-  const where = buildCursorWhere({ customerId: userId }, decodedCursor);
+var getCustomerOrders = async (userId, page = 1, limit = 10) => {
+  const safePage = Math.max(1, page);
+  const safeLimit = Math.max(1, limit);
+  const where = { customerId: userId };
   const [total, orders] = await Promise.all([
     prisma.masterOrder.count({ where }),
     prisma.masterOrder.findMany({
       where,
-      take: limit + 1,
+      skip: (safePage - 1) * safeLimit,
+      take: safeLimit,
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       select: {
         id: true,
@@ -3101,8 +3124,7 @@ var getCustomerOrders = async (userId, cursor, limit = 10) => {
       }
     })
   ]);
-  const hasMore = orders.length > limit;
-  const items = orders.slice(0, limit).map((order) => ({
+  const normalizedOrders = orders.map((order) => ({
     ...order,
     totalAmount: toNumber2(order.totalAmount),
     subOrders: order.subOrders.map((subOrder) => ({
@@ -3114,13 +3136,14 @@ var getCustomerOrders = async (userId, cursor, limit = 10) => {
       }))
     }))
   }));
-  const lastItem = orders[items.length - 1];
-  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
   return {
-    items,
-    nextCursor,
-    hasMore,
-    total
+    orders: normalizedOrders,
+    meta: {
+      total,
+      page: safePage,
+      limit: safeLimit,
+      totalPages: Math.ceil(total / safeLimit)
+    }
   };
 };
 var getOrderDetails = async (userId, masterOrderId) => {
@@ -3174,35 +3197,18 @@ var markOrderAsReceived = async (userId, masterOrderId) => {
   if (order.status === "COMPLETED") {
     throw ApiError.badRequest("Order is already completed");
   }
-  const updatedSubOrders = await prisma.subOrder.updateMany({
-    where: {
-      masterOrderId,
-      status: {
-        not: "CANCELLED"
-      }
-    },
-    data: {
-      status: "DELIVERED"
-    }
-  });
-  const hasCancelledSubOrders = await prisma.subOrder.count({
-    where: {
-      masterOrderId,
-      status: "CANCELLED"
-    }
-  });
-  let updatedOrder = await prisma.masterOrder.findUnique({
-    where: { id: masterOrderId },
-    include: {
-      subOrders: {
-        include: {
-          items: true
-        }
-      }
-    }
-  });
-  if (hasCancelledSubOrders === 0) {
-    updatedOrder = await prisma.masterOrder.update({
+  const notReadySubOrder = order.subOrders.find(
+    (subOrder) => !["SHIFTED_TO_CUSTOMER", "CANCELLED"].includes(subOrder.status)
+  );
+  if (notReadySubOrder) {
+    throw ApiError.badRequest("You can mark the order as received after every package is shifted to customer");
+  }
+  const { updatedSubOrders, updatedOrder } = await prisma.$transaction(async (tx) => {
+    const changed = await tx.subOrder.updateMany({
+      where: { masterOrderId, status: "SHIFTED_TO_CUSTOMER" },
+      data: { status: "DELIVERED" }
+    });
+    const completed = await tx.masterOrder.update({
       where: { id: masterOrderId },
       data: { status: "COMPLETED" },
       include: {
@@ -3215,18 +3221,15 @@ var markOrderAsReceived = async (userId, masterOrderId) => {
                 firstName: true,
                 lastName: true,
                 mobileNumber: true,
-                user: {
-                  select: {
-                    name: true
-                  }
-                }
+                user: { select: { name: true } }
               }
             }
           }
         }
       }
     });
-  }
+    return { updatedSubOrders: changed, updatedOrder: completed };
+  });
   return {
     order: updatedOrder,
     updatedSubOrdersCount: updatedSubOrders.count
@@ -3237,9 +3240,9 @@ var markOrderAsReceived = async (userId, masterOrderId) => {
 var getMyOrders = async (req, res) => {
   try {
     const userId = req.user.id;
-    const cursor = typeof req.query.cursor === "string" ? req.query.cursor : void 0;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = parseInt(req.query.limit) || 10;
-    const result = await getCustomerOrders(userId, cursor, limit);
+    const result = await getCustomerOrders(userId, page, limit);
     return res.status(200).json({
       success: true,
       data: result
@@ -3327,6 +3330,13 @@ var getSellerSubOrders = async (sellerId, cursor, limit = 10) => {
       take: limit + 1,
       include: {
         items: true,
+        deliveryMan: {
+          select: {
+            id: true,
+            mobileNumber: true,
+            user: { select: { name: true } }
+          }
+        },
         masterOrder: {
           select: {
             id: true,
@@ -3344,7 +3354,14 @@ var getSellerSubOrders = async (sellerId, cursor, limit = 10) => {
     })
   ]);
   const hasMore = subOrders.length > limit;
-  const items = subOrders.slice(0, limit);
+  const items = subOrders.slice(0, limit).map((subOrder) => ({
+    ...subOrder,
+    deliveryMan: subOrder.deliveryMan ? {
+      id: subOrder.deliveryMan.id,
+      name: subOrder.deliveryMan.user?.name ?? "Delivery man",
+      mobileNumber: subOrder.deliveryMan.mobileNumber
+    } : null
+  }));
   const lastItem = items[items.length - 1];
   const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
   return { items, nextCursor, hasMore, total };
@@ -3361,7 +3378,7 @@ var transitionSubOrderStatus = async (subOrderId, sellerId, nextStatus) => {
       throw ApiError.badRequest(`Fulfillment blocked: Master order status is ${subOrder.masterOrder.status}, not PAID`);
     }
     const currentStatus = subOrder.status;
-    const isValidTransition = currentStatus === "PENDING" && nextStatus === "CONFIRMED" || currentStatus === "CONFIRMED" && nextStatus === "SHIPPED" || currentStatus === "SHIPPED" && nextStatus === "DELIVERED";
+    const isValidTransition = currentStatus === "PENDING" && nextStatus === "CONFIRMED" || currentStatus === "CONFIRMED" && nextStatus === "SHIPPED";
     if (!isValidTransition) {
       throw ApiError.badRequest(`Invalid state transition from ${currentStatus} to ${nextStatus}`);
     }
@@ -4003,6 +4020,17 @@ var listUsers = async (role, cursor, limit = DEFAULT_PAGE_SIZE, filters) => {
     total
   };
 };
+var listSellerApplications = async (status) => {
+  const where = status && ["PENDING", "APPROVED", "REJECTED", "SUSPENDED"].includes(status) ? { status } : {};
+  const applications = await prisma.sellerProfile.findMany({
+    where,
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    include: {
+      user: { select: { id: true, name: true, email: true, role: true, isActive: true } }
+    }
+  });
+  return applications;
+};
 var updateSellerStatus = async (userId, status, auditLogCtx) => {
   const sellerProfile = await prisma.sellerProfile.findUnique({
     where: { userId },
@@ -4482,6 +4510,17 @@ var getUsers = async (req, res) => {
     });
   }
 };
+var getSellerApplications = async (req, res) => {
+  try {
+    const status = typeof req.query.status === "string" ? req.query.status : void 0;
+    const applications = await listSellerApplications(status);
+    return res.status(200).json(applications);
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      error: error.message || "Failed to fetch seller applications"
+    });
+  }
+};
 var updateSeller = async (req, res) => {
   try {
     const { id } = req.params;
@@ -4648,6 +4687,13 @@ var assignDeliveryMan4 = async (req, res) => {
 
 // src/modules/delivery/delivery.schema.ts
 var import_zod11 = require("zod");
+var requiredDocumentImage = import_zod11.z.string().min(1, "Document image is required").refine(
+  (value) => value.startsWith("data:image/") || /^https?:\/\//i.test(value),
+  "Upload a valid document image"
+).refine(
+  (value) => !value.startsWith("data:image/") || value.length <= 13e5,
+  "Document image must be 900 KB or smaller"
+);
 var deliveryManSchema = import_zod11.z.object({
   body: import_zod11.z.object({
     name: import_zod11.z.string().min(2, "Name is required"),
@@ -4663,14 +4709,14 @@ var deliveryManSchema = import_zod11.z.object({
     vehicleImage: import_zod11.z.string().url("Invalid image URL").optional().or(import_zod11.z.literal("")),
     vehicleRegistrationNumber: import_zod11.z.string().optional(),
     drivingLicenseNumber: import_zod11.z.string().optional(),
-    drivingLicenseImage: import_zod11.z.string().url("Invalid image URL").optional().or(import_zod11.z.literal("")),
-    registrationCertificateImage: import_zod11.z.string().url("Invalid image URL").optional().or(import_zod11.z.literal("")),
-    taxTokenImage: import_zod11.z.string().url("Invalid image URL").optional().or(import_zod11.z.literal("")),
-    fitnessCertificateImage: import_zod11.z.string().url("Invalid image URL").optional().or(import_zod11.z.literal("")),
-    routePermitImage: import_zod11.z.string().url("Invalid image URL").optional().or(import_zod11.z.literal("")),
+    drivingLicenseImage: requiredDocumentImage,
+    registrationCertificateImage: requiredDocumentImage,
+    taxTokenImage: requiredDocumentImage,
+    fitnessCertificateImage: requiredDocumentImage,
+    routePermitImage: requiredDocumentImage,
     nidNumber: import_zod11.z.string().optional(),
-    nidFrontImage: import_zod11.z.string().url("Invalid image URL").optional().or(import_zod11.z.literal("")),
-    nidBackImage: import_zod11.z.string().url("Invalid image URL").optional().or(import_zod11.z.literal("")),
+    nidFrontImage: requiredDocumentImage,
+    nidBackImage: requiredDocumentImage,
     vehicleRegistrationImage: import_zod11.z.string().url("Invalid image URL").optional().or(import_zod11.z.literal("")),
     serviceZones: import_zod11.z.string().optional(),
     emergencyContactName: import_zod11.z.string().optional(),
@@ -4713,6 +4759,7 @@ var router12 = (0, import_express13.Router)();
 router12.use(authenticate, authorize("ADMIN"));
 router12.get("/stats", getStats);
 router12.get("/users", getUsers);
+router12.get("/sellers", getSellerApplications);
 router12.patch("/users/:id/seller-status", updateSeller);
 router12.patch("/users/:id/active", toggleUserActive2);
 router12.get("/products", getProducts);
@@ -4739,6 +4786,25 @@ var createDeliveryMan = async (data) => {
       throw new ApiError(409, "email", "Email already in use");
     }
     const hashedPassword = await import_bcryptjs2.default.hash(data.password, 10);
+    const documentImageFields = [
+      "drivingLicenseImage",
+      "registrationCertificateImage",
+      "taxTokenImage",
+      "fitnessCertificateImage",
+      "routePermitImage",
+      "nidFrontImage",
+      "nidBackImage"
+    ];
+    const documentImages = await Promise.all(documentImageFields.map(async (field) => {
+      const image = data[field];
+      if (!image) {
+        throw new ApiError(400, "DOCUMENT_REQUIRED", `${field} is required`);
+      }
+      return image.startsWith("data:image/") ? uploadImage(image, "delivery-documents") : image;
+    }));
+    const uploadedDocuments = Object.fromEntries(
+      documentImageFields.map((field, index) => [field, documentImages[index]])
+    );
     const user = await prisma.user.create({
       data: {
         name: data.name.trim(),
@@ -4776,14 +4842,14 @@ var createDeliveryMan = async (data) => {
             vehicleImage: data.vehicleImage,
             vehicleRegistrationNumber: data.vehicleRegistrationNumber,
             drivingLicenseNumber: data.drivingLicenseNumber,
-            drivingLicenseImage: data.drivingLicenseImage,
-            registrationCertificateImage: data.registrationCertificateImage,
-            taxTokenImage: data.taxTokenImage,
-            fitnessCertificateImage: data.fitnessCertificateImage,
-            routePermitImage: data.routePermitImage,
+            drivingLicenseImage: uploadedDocuments.drivingLicenseImage,
+            registrationCertificateImage: uploadedDocuments.registrationCertificateImage,
+            taxTokenImage: uploadedDocuments.taxTokenImage,
+            fitnessCertificateImage: uploadedDocuments.fitnessCertificateImage,
+            routePermitImage: uploadedDocuments.routePermitImage,
             nidNumber: data.nidNumber,
-            nidFrontImage: data.nidFrontImage,
-            nidBackImage: data.nidBackImage,
+            nidFrontImage: uploadedDocuments.nidFrontImage,
+            nidBackImage: uploadedDocuments.nidBackImage,
             vehicleRegistrationImage: data.vehicleRegistrationImage,
             serviceZones: data.serviceZones,
             emergencyContactName: data.emergencyContactName,
@@ -4955,6 +5021,36 @@ var getMyAssignments = async (userId) => {
     }
   });
   return subOrders;
+};
+var markAssignmentShiftedToCustomer = async (userId, subOrderId) => {
+  const deliveryMan = await prisma.deliveryMan.findUnique({
+    where: { userId },
+    select: { id: true, status: true }
+  });
+  if (!deliveryMan || deliveryMan.status !== "APPROVED") {
+    throw ApiError.forbidden("An approved delivery profile is required");
+  }
+  const subOrder = await prisma.subOrder.findFirst({
+    where: { id: subOrderId, deliveryManId: deliveryMan.id },
+    include: { masterOrder: { select: { status: true } } }
+  });
+  if (!subOrder) {
+    throw ApiError.notFound("Assigned sub-order not found");
+  }
+  if (!["PAID", "COMPLETED"].includes(subOrder.masterOrder.status)) {
+    throw ApiError.badRequest("The master order must be paid before delivery");
+  }
+  if (subOrder.status !== "SHIPPED") {
+    throw ApiError.badRequest("Only shipped packages can be marked as shifted to customer");
+  }
+  return prisma.subOrder.update({
+    where: { id: subOrder.id },
+    data: { status: "SHIFTED_TO_CUSTOMER" },
+    include: {
+      seller: { select: { id: true, shopName: true } },
+      masterOrder: { select: { id: true, customerId: true, status: true } }
+    }
+  });
 };
 
 // src/modules/delivery/delivery.controller.ts
@@ -5157,12 +5253,33 @@ var getMyAssignments2 = async (req, res) => {
     });
   }
 };
+var markAssignmentShiftedToCustomer2 = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const subOrderId = typeof req.params.id === "string" ? req.params.id : "";
+    if (!subOrderId) {
+      return res.status(400).json({ success: false, error: "Sub-order ID is required" });
+    }
+    const subOrder = await markAssignmentShiftedToCustomer(userId, subOrderId);
+    return res.status(200).json({
+      success: true,
+      message: "Package marked as shifted to customer",
+      data: subOrder
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      error: error.message || "Failed to update delivery status"
+    });
+  }
+};
 
 // src/modules/delivery/delivery.route.ts
 var router13 = (0, import_express14.Router)();
 router13.post("/register", validate(deliveryManSchema), registerDeliveryMan);
 router13.get("/me", authenticate, authorize("DELIVERY"), getMyProfile);
 router13.get("/my-assignments", authenticate, authorize("DELIVERY"), getMyAssignments2);
+router13.patch("/my-assignments/:id/status", authenticate, authorize("DELIVERY"), markAssignmentShiftedToCustomer2);
 router13.get("/", authenticate, authorize("ADMIN"), listDeliveryMen2);
 router13.get("/approved", authenticate, authorize("ADMIN", "SELLER"), listApprovedDeliveryMen);
 router13.patch("/:id/status", authenticate, authorize("ADMIN"), updateDeliveryManStatus2);
@@ -5255,19 +5372,30 @@ var createReturnRequest = async (userId, subOrderId, reason, requestedQty) => {
   if (subOrder.masterOrder.customerId !== userId) {
     throw ApiError.forbidden("You can only request return for your own orders");
   }
+  if (!["PAID", "COMPLETED"].includes(subOrder.masterOrder.status)) {
+    throw ApiError.badRequest("Returns are available only for paid orders");
+  }
+  if (subOrder.status !== "SHIFTED_TO_CUSTOMER" && subOrder.status !== "DELIVERED") {
+    throw ApiError.badRequest("You can request a return after the package is delivered");
+  }
   const totalQty = subOrder.items.reduce((sum, item) => sum + item.quantity, 0);
   if (requestedQty > totalQty) {
     throw ApiError.badRequest("Requested quantity exceeds ordered quantity");
   }
   const existingReturn = await prisma.returnRequest.findFirst({
-    where: { subOrderId, status: { in: ["PENDING", "APPROVED"] } }
+    where: { subOrderId, status: { in: ["PENDING", "APPROVED", "DISPUTED"] } }
   });
   if (existingReturn) {
     throw ApiError.conflict("RETURN_EXISTS", "A return request already exists for this sub-order");
   }
   const sellerId = subOrder.sellerId;
-  const unitPrice = Number(subOrder.items[0]?.unitPrice || 0);
-  const refundAmount = Number((unitPrice * requestedQty).toFixed(2));
+  let remainingQty = requestedQty;
+  const refundAmount = subOrder.items.reduce((sum, item) => {
+    const itemQty = Math.min(remainingQty, item.quantity);
+    remainingQty -= itemQty;
+    return sum + Number(item.unitPrice) * itemQty;
+  }, 0);
+  const roundedRefundAmount = Number(refundAmount.toFixed(2));
   const returnRequest = await prisma.returnRequest.create({
     data: {
       subOrderId,
@@ -5275,7 +5403,7 @@ var createReturnRequest = async (userId, subOrderId, reason, requestedQty) => {
       sellerId,
       reason,
       requestedQty,
-      refundAmount
+      refundAmount: roundedRefundAmount
     },
     include: {
       subOrder: {
@@ -5313,7 +5441,7 @@ var createReturnRequest = async (userId, subOrderId, reason, requestedQty) => {
   });
   return returnRequest;
 };
-var resolveReturnRequest = async (sellerId, returnId, action, note) => {
+var resolveReturnRequest = async (sellerId, returnId, action, note, isAdmin = false) => {
   const returnRequest = await prisma.returnRequest.findUnique({
     where: { id: returnId },
     include: { subOrder: true }
@@ -5321,7 +5449,7 @@ var resolveReturnRequest = async (sellerId, returnId, action, note) => {
   if (!returnRequest) {
     throw ApiError.notFound("Return request not found");
   }
-  if (returnRequest.sellerId !== sellerId) {
+  if (!isAdmin && returnRequest.sellerId !== sellerId) {
     throw ApiError.forbidden("You can only resolve returns for your own products");
   }
   if (returnRequest.status !== "PENDING") {
@@ -5401,6 +5529,7 @@ var resolveReturnRequest = async (sellerId, returnId, action, note) => {
   });
   return updated;
 };
+var resolveReturnRequestAsAdmin = (adminId, returnId, action, note) => resolveReturnRequest(adminId, returnId, action, note, true);
 var processRefund = async (adminId, returnId) => {
   const returnRequest = await prisma.returnRequest.findUnique({
     where: { id: returnId },
@@ -5416,22 +5545,56 @@ var processRefund = async (adminId, returnId) => {
     throw ApiError.notFound("Return request not found");
   }
   if (returnRequest.status !== "APPROVED") {
-    throw ApiError.badRequest("Only approved return requests can be refunded");
+    throw ApiError.badRequest(`Only approved return requests can be refunded. Current status: ${returnRequest.status}`);
   }
   const masterOrder = returnRequest.subOrder.masterOrder;
-  if (!masterOrder.stripePaymentIntent) {
-    throw ApiError.badRequest("No payment intent found for this order");
-  }
   const stripe2 = getStripeClient();
+  let paymentIntentId = masterOrder.stripePaymentIntent;
+  if (!paymentIntentId && masterOrder.stripeSessionId) {
+    try {
+      const session = await stripe2.checkout.sessions.retrieve(masterOrder.stripeSessionId);
+      paymentIntentId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null;
+      if (paymentIntentId) {
+        await prisma.masterOrder.update({
+          where: { id: masterOrder.id },
+          data: { stripePaymentIntent: paymentIntentId }
+        });
+      }
+    } catch (stripeError) {
+      throw new ApiError(502, "STRIPE_SESSION_LOOKUP_FAILED", `Could not look up the payment for this order: ${stripeError.message}`);
+    }
+  }
+  if (!paymentIntentId && !masterOrder.stripeSessionId) {
+    try {
+      for await (const session of stripe2.checkout.sessions.list({ limit: 100 })) {
+        if (session.metadata?.masterOrderId !== masterOrder.id) continue;
+        paymentIntentId = typeof session.payment_intent === "string" ? session.payment_intent : session.payment_intent?.id ?? null;
+        if (paymentIntentId) {
+          await prisma.masterOrder.update({
+            where: { id: masterOrder.id },
+            data: { stripeSessionId: session.id, stripePaymentIntent: paymentIntentId }
+          });
+        }
+        break;
+      }
+    } catch (stripeError) {
+      throw new ApiError(502, "STRIPE_SESSION_LOOKUP_FAILED", `Could not find the payment for this order: ${stripeError.message}`);
+    }
+  }
+  if (!paymentIntentId) {
+    throw ApiError.badRequest("No Stripe PaymentIntent was found for this order. Verify the payment was made through Stripe Checkout and contact support if it was.");
+  }
   try {
     const refund = await stripe2.refunds.create({
-      payment_intent: masterOrder.stripePaymentIntent,
+      payment_intent: paymentIntentId,
       amount: Math.round(Number(returnRequest.refundAmount) * 100),
       reason: "requested_by_customer",
       metadata: {
         returnRequestId: returnRequest.id,
         subOrderId: returnRequest.subOrderId
       }
+    }, {
+      idempotencyKey: `return_refund_${returnRequest.id}`
     });
     await prisma.returnRequest.update({
       where: { id: returnId },
@@ -5795,6 +5958,18 @@ var resolveReturn = async (req, res) => {
     return res.status(statusCode).json({ success: false, error: error.message || "Internal Server Error" });
   }
 };
+var adminResolveReturn = async (req, res) => {
+  try {
+    const adminId = req.user.id;
+    const id = typeof req.params.id === "string" ? req.params.id : Array.isArray(req.params.id) ? req.params.id[0] : "";
+    const { action, note } = req.body;
+    const result = await resolveReturnRequestAsAdmin(adminId, id, action, note);
+    return res.status(200).json({ success: true, message: `Return request ${action}ed successfully`, data: result });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ success: false, error: error.message || "Internal Server Error" });
+  }
+};
 var processRefund2 = async (req, res) => {
   try {
     const adminId = req.user.id;
@@ -5910,6 +6085,7 @@ var router16 = (0, import_express17.Router)();
 router16.post("/returns", authenticate, validate(createReturnSchema), createReturnRequest2);
 router16.get("/my/returns", authenticate, getMyReturns2);
 router16.patch("/returns/:id/resolve", authenticate, authorize("SELLER"), validate(resolveReturnSchema), resolveReturn);
+router16.patch("/admin/returns/:id/resolve", authenticate, authorize("ADMIN"), validate(resolveReturnSchema), adminResolveReturn);
 router16.patch("/returns/:id/refund", authenticate, authorize("ADMIN"), validate(processRefundSchema), processRefund2);
 router16.post("/disputes/:returnId", authenticate, createDispute2);
 router16.patch("/disputes/:disputeId/resolve", authenticate, authorize("ADMIN"), validate(createDisputeSchema), resolveDispute2);

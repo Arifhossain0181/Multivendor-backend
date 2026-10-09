@@ -21,6 +21,8 @@ const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "default_refresh_se
 // Timing Attack 
 const DUMMY_HASH = '$2b$10$nOUIs5kJ7naTuTFkPy1Ve.7ODq6D5bGF8gYmS.uWb2O2bH2hS1z6m';
 
+const authUserSelect = { id: true, name: true, email: true, role: true } as const;
+
 
 // HELPERS
 
@@ -70,7 +72,8 @@ export const login = async (email: string, password: string) => {
   }
   // find user by user from the data base and also trim and lowercase the email for consistency
   const user = await prisma.user.findUnique({ 
-    where: { email: email.trim().toLowerCase() } 
+    where: { email: email.trim().toLowerCase() },
+    select: { ...authUserSelect, passwordHash: true },
   });
 
   // Timing Attack Protection: If user is not found, we still perform a bcrypt compare with a dummy hash to ensure consistent response time, preventing attackers from inferring valid emails based on timing differences.
@@ -95,7 +98,7 @@ export const login = async (email: string, password: string) => {
   return buildAuthPayload(user);
 };
 
-export const register = async (name: string, email: string, password: string) => {
+export const register = async (name: string, email: string, password: string, phone?: string) => {
   if (!name?.trim() || !email?.trim() || !password || password.length < 6) {
     throw createHttpError(400, "Name, valid email and password (min 6 chars) are required");
   }
@@ -105,7 +108,10 @@ export const register = async (name: string, email: string, password: string) =>
     throw createHttpError(400, "Invalid email format");
   }
 
-  const exists = await prisma.user.findUnique({ where: { email: normalizedEmail } });
+  const exists = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+    select: { id: true },
+  });
   if (exists) {
     throw createHttpError(409, "Email already in use");
   }
@@ -113,14 +119,27 @@ export const register = async (name: string, email: string, password: string) =>
   // Fixed: Using bcrypt instead of brotliCompress
   const hashedPassword = await bcrypt.hash(password, 10);
   
-  const user = await prisma.user.create({
-    data: {
-      name: name.trim(),
-      email: normalizedEmail,
-      passwordHash: hashedPassword,
-      role: "USER"
-    }
-  });
+  const userData = {
+    name: name.trim(),
+    email: normalizedEmail,
+    passwordHash: hashedPassword,
+    role: "USER",
+  };
+
+  let user: { id: string; name: string; email: string; role: string };
+  try {
+    user = await prisma.user.create({
+      data: { ...userData, ...(phone?.trim() ? { phone: phone.trim() } : {}) },
+      select: authUserSelect,
+    });
+  } catch (error: any) {
+    const missingPhoneColumn = error?.code === "P2022" &&
+      /users\.phone|phone/i.test(String(error?.meta?.column ?? error?.message ?? ""));
+    if (!phone?.trim() || !missingPhoneColumn) throw error;
+
+    // Keep registration working on databases that have not applied add_user_phone yet.
+    user = await prisma.user.create({ data: userData, select: authUserSelect });
+  }
 
   return buildAuthPayload(user);
 };
@@ -132,7 +151,10 @@ export const refreshToken = async (token: string) => {
     // Verify the refresh token using the correct secret and extract the payload
     const decoded = jwt.verify(token, JWT_REFRESH_SECRET) as TokenPayload;
     
-    const user = await prisma.user.findUnique({ where: { id: decoded.userId } });
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      select: authUserSelect,
+    });
     if (!user) throw createHttpError(401, "Invalid refresh token");
 
     const newPayload: TokenPayload = { userId: user.id, email: user.email, role: user.role as Role };

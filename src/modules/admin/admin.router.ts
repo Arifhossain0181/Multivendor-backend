@@ -7,6 +7,7 @@ import {
   getProducts,
   getStats,
   getUsers,
+  getSellerApplications,
   updateProduct,
   updateSeller,
   getFulfillments,
@@ -23,6 +24,7 @@ router.use(authenticate, authorize('ADMIN'));
 
 router.get('/stats', getStats);
 router.get('/users', getUsers);
+router.get('/sellers', getSellerApplications);
 router.patch('/users/:id/seller-status', updateSeller);
 router.patch('/users/:id/active', toggleUserActive);
 router.get('/products', getProducts);

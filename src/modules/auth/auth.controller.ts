@@ -73,8 +73,8 @@ const clearAuthCookies = (res: Response) => {
 
 export const register = async (req: Request, res: Response) => {
     try {
-        const { name, email, password } = req.body;
-        const result = await registerUser(name, email, password);
+        const { name, email, password, phone } = req.body;
+        const result = await registerUser(name, email, password, phone);
 
         setAuthCookies(res, result.token, result.accessToken, result.refreshToken);
 

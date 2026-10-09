@@ -1,6 +1,5 @@
 import { prisma } from "../../prisma/client";
 import { ApiError } from "../../utlits/ApiError.js";
-import { decodeCursor, encodeCursor, PaginatedResult, buildCursorWhere } from "../common/pagination.js";
 
 const toNumber = (value: unknown) => {
   if (typeof value === "number") return value;
@@ -15,17 +14,19 @@ const toNumber = (value: unknown) => {
 
 export const getCustomerOrders = async (
   userId: string,
-  cursor?: string,
+  page = 1,
   limit = 10,
-): Promise<PaginatedResult<any>> => {
-  const decodedCursor = decodeCursor(cursor);
-  const where = buildCursorWhere({ customerId: userId }, decodedCursor);
+): Promise<{ orders: any[]; meta: { total: number; page: number; limit: number; totalPages: number } }> => {
+  const safePage = Math.max(1, page);
+  const safeLimit = Math.max(1, limit);
+  const where = { customerId: userId };
 
   const [total, orders] = await Promise.all([
     prisma.masterOrder.count({ where }),
     prisma.masterOrder.findMany({
       where,
-      take: limit + 1,
+      skip: (safePage - 1) * safeLimit,
+      take: safeLimit,
       orderBy: [{ createdAt: "desc" }, { id: "desc" }],
       select: {
         id: true,
@@ -67,8 +68,7 @@ export const getCustomerOrders = async (
     }),
   ]);
 
-  const hasMore = orders.length > limit;
-  const items = orders.slice(0, limit).map((order: any) => ({
+  const normalizedOrders = orders.map((order: any) => ({
     ...order,
     totalAmount: toNumber(order.totalAmount),
     subOrders: order.subOrders.map((subOrder: any) => ({
@@ -80,14 +80,14 @@ export const getCustomerOrders = async (
       })),
     })),
   }));
-  const lastItem = orders[items.length - 1];
-  const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
-
   return {
-    items,
-    nextCursor,
-    hasMore,
-    total,
+    orders: normalizedOrders,
+    meta: {
+      total,
+      page: safePage,
+      limit: safeLimit,
+      totalPages: Math.ceil(total / safeLimit),
+    },
   };
 };
 
@@ -159,63 +159,40 @@ export const markOrderAsReceived = async (
     throw ApiError.badRequest("Order is already completed");
   }
 
-  // Update all non-cancelled sub-orders to DELIVERED
-  const updatedSubOrders = await prisma.subOrder.updateMany({
-    where: {
-      masterOrderId,
-      status: {
-        not: "CANCELLED",
-      },
-    },
-    data: {
-      status: "DELIVERED",
-    },
-  });
+  const notReadySubOrder = order.subOrders.find(
+    (subOrder) => !["SHIFTED_TO_CUSTOMER", "CANCELLED"].includes(subOrder.status),
+  );
+  if (notReadySubOrder) {
+    throw ApiError.badRequest("You can mark the order as received after every package is shifted to customer");
+  }
 
-  const hasCancelledSubOrders = await prisma.subOrder.count({
-    where: {
-      masterOrderId,
-      status: "CANCELLED",
-    },
-  });
-
-  let updatedOrder = await prisma.masterOrder.findUnique({
-    where: { id: masterOrderId },
-    include: {
-      subOrders: {
-        include: {
-          items: true,
-        },
-      },
-    },
-  });
-
-  if (hasCancelledSubOrders === 0) {
-    updatedOrder = await prisma.masterOrder.update({
+  const { updatedSubOrders, updatedOrder } = await prisma.$transaction(async (tx: any) => {
+    const changed = await tx.subOrder.updateMany({
+      where: { masterOrderId, status: "SHIFTED_TO_CUSTOMER" },
+      data: { status: "DELIVERED" },
+    });
+    const completed = await tx.masterOrder.update({
       where: { id: masterOrderId },
       data: { status: "COMPLETED" },
-    include: {
-      subOrders: {
-        include: {
-          items: true,
-          deliveryMan: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-              mobileNumber: true,
-              user: {
-                select: {
-                  name: true,
-                },
+      include: {
+        subOrders: {
+          include: {
+            items: true,
+            deliveryMan: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                mobileNumber: true,
+                user: { select: { name: true } },
               },
             },
           },
         },
       },
-    },
     });
-  }
+    return { updatedSubOrders: changed, updatedOrder: completed };
+  });
 
   return {
     order: updatedOrder,

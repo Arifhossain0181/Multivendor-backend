@@ -106,8 +106,7 @@ export const transitionSubOrder = async (
     const currentStatus = subOrder.status;
     const isValidTransition =
       (currentStatus === "PENDING" && nextStatus === "CONFIRMED") ||
-      (currentStatus === "CONFIRMED" && nextStatus === "SHIPPED") ||
-      (currentStatus === "SHIPPED" && nextStatus === "DELIVERED");
+      (currentStatus === "CONFIRMED" && nextStatus === "SHIPPED");
 
     if (!isValidTransition) {
       throw new ApiError(
@@ -141,6 +140,7 @@ export const assignDeliveryMan = async (
   try {
     const subOrder = await prisma.subOrder.findUnique({
       where: { id: subOrderId },
+      include: { masterOrder: true },
     });
 
     if (!subOrder) {

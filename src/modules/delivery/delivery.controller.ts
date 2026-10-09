@@ -222,3 +222,25 @@ export const getMyAssignments = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const markAssignmentShiftedToCustomer = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    const subOrderId = typeof req.params.id === "string" ? req.params.id : "";
+    if (!subOrderId) {
+      return res.status(400).json({ success: false, error: "Sub-order ID is required" });
+    }
+
+    const subOrder = await deliveryService.markAssignmentShiftedToCustomer(userId, subOrderId);
+    return res.status(200).json({
+      success: true,
+      message: "Package marked as shifted to customer",
+      data: subOrder,
+    });
+  } catch (error: any) {
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      error: error.message || "Failed to update delivery status",
+    });
+  }
+};

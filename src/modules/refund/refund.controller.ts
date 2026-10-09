@@ -30,6 +30,19 @@ export const resolveReturn = async (req: Request, res: Response) => {
   }
 };
 
+export const adminResolveReturn = async (req: Request, res: Response) => {
+  try {
+    const adminId = (req as any).user.id;
+    const id = typeof req.params.id === 'string' ? req.params.id : Array.isArray(req.params.id) ? req.params.id[0] : '';
+    const { action, note } = req.body;
+    const result = await refundService.resolveReturnRequestAsAdmin(adminId, id, action, note);
+    return res.status(200).json({ success: true, message: `Return request ${action}ed successfully`, data: result });
+  } catch (error: any) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({ success: false, error: error.message || 'Internal Server Error' });
+  }
+};
+
 export const processRefund = async (req: Request, res: Response) => {
   try {
     const adminId = (req as any).user.id;

@@ -4,6 +4,7 @@ import { validate } from '../../middleware/validation.js';
 import {
   createReturnRequest,
   resolveReturn,
+  adminResolveReturn,
   processRefund,
   createDispute,
   resolveDispute,
@@ -27,6 +28,8 @@ router.post('/returns', authenticate, validate(createReturnSchema), createReturn
 router.get('/my/returns', authenticate, getMyReturns);
 
 router.patch('/returns/:id/resolve', authenticate, authorizeRole('SELLER'), validate(resolveReturnSchema), resolveReturn);
+
+router.patch('/admin/returns/:id/resolve', authenticate, authorizeRole('ADMIN'), validate(resolveReturnSchema), adminResolveReturn);
 
 router.patch('/returns/:id/refund', authenticate, authorizeRole('ADMIN'), validate(processRefundSchema), processRefund);
 

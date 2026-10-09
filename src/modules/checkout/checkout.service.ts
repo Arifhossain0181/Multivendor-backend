@@ -253,7 +253,14 @@ export const verifyCheckoutSuccess = async (sessionId: string) => {
       }
       await tx.masterOrder.update({
         where: { id: masterOrderId },
-        data: { status: "PAID" },
+        data: {
+          status: "PAID",
+          stripeSessionId: session.id,
+          stripePaymentIntent:
+            typeof session.payment_intent === "string"
+              ? session.payment_intent
+              : session.payment_intent?.id ?? null,
+        },
       });
       await clearCart(order.customerId);
     });

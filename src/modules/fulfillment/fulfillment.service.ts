@@ -16,6 +16,13 @@ export const getSellerSubOrders = async (sellerId: string, cursor?: string, limi
             take: limit + 1,
             include: {
                 items: true,
+                deliveryMan: {
+                    select: {
+                        id: true,
+                        mobileNumber: true,
+                        user: { select: { name: true } },
+                    },
+                },
                 masterOrder: {
                     select: {
                         id: true,
@@ -34,7 +41,16 @@ export const getSellerSubOrders = async (sellerId: string, cursor?: string, limi
     ]);
 
     const hasMore = subOrders.length > limit;
-    const items = subOrders.slice(0, limit);
+    const items = subOrders.slice(0, limit).map((subOrder: any) => ({
+        ...subOrder,
+        deliveryMan: subOrder.deliveryMan
+            ? {
+                id: subOrder.deliveryMan.id,
+                name: subOrder.deliveryMan.user?.name ?? "Delivery man",
+                mobileNumber: subOrder.deliveryMan.mobileNumber,
+            }
+            : null,
+    }));
     const lastItem = items[items.length - 1];
     const nextCursor = hasMore && lastItem ? encodeCursor({ createdAt: lastItem.createdAt.toISOString(), id: lastItem.id }) : null;
 
@@ -61,8 +77,7 @@ export const transitionSubOrderStatus = async (subOrderId: string, sellerId: str
         const currentStatus = subOrder.status;
         const isValidTransition = 
             (currentStatus === 'PENDING' && nextStatus === 'CONFIRMED') ||
-            (currentStatus === 'CONFIRMED' && nextStatus === 'SHIPPED') ||
-            (currentStatus === 'SHIPPED' && nextStatus === 'DELIVERED');
+            (currentStatus === 'CONFIRMED' && nextStatus === 'SHIPPED');
 
         if (!isValidTransition) {
             throw ApiError.badRequest(`Invalid state transition from ${currentStatus} to ${nextStatus}`);

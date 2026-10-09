@@ -105,13 +105,13 @@ export const processStripeEvent = async (event: any) => {
     return;
   }
 
-  await handleSuccessfulPayment(masterOrderId, event.id, event);
+  await handleSuccessfulPayment(masterOrderId, event.id, event.data?.object);
 };
 
 const handleSuccessfulPayment = async (
   masterOrderId: string,
   stripeEventId: string,
-  _event?: any,
+  session?: any,
 ) => {
   const stripeEvent = await prisma.stripeEvent.findUnique({
     where: { eventId: stripeEventId },
@@ -143,7 +143,22 @@ const handleSuccessfulPayment = async (
     throw ApiError.notFound("Master order not found for webhook");
   }
 
-  if (masterOrder.status === "PAID") return;
+  if (masterOrder.status === "PAID") {
+    const paymentIntent =
+      typeof session?.payment_intent === "string"
+        ? session.payment_intent
+        : session?.payment_intent?.id;
+    if (paymentIntent || session?.id) {
+      await prisma.masterOrder.update({
+        where: { id: masterOrderId },
+        data: {
+          stripeSessionId: session?.id ?? undefined,
+          stripePaymentIntent: paymentIntent ?? undefined,
+        },
+      });
+    }
+    return;
+  }
 
   const allItems = masterOrder.subOrders.flatMap((sub: any) => sub.items);
 
@@ -205,7 +220,14 @@ const handleSuccessfulPayment = async (
       }
       await tx.masterOrder.update({
         where: { id: masterOrderId },
-        data: { status: "PAID" },
+        data: {
+          status: "PAID",
+          stripeSessionId: session?.id ?? undefined,
+          stripePaymentIntent:
+            typeof session?.payment_intent === "string"
+              ? session.payment_intent
+              : session?.payment_intent?.id ?? undefined,
+        },
       });
       await clearCart(masterOrder.customerId);
     });

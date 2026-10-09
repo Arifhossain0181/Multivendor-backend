@@ -90,6 +90,18 @@ const mapUser = (user: any) => {
           (a: any, b: any) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         )[0]?.createdAt ?? null,
+    paidSellerShops: Array.from(
+      successfulOrders.reduce((shops: Map<string, { shopName: string; paidOrderCount: number; totalPaidAmount: number }>, order: any) => {
+        for (const subOrder of order.subOrders ?? []) {
+          const shopName = subOrder.seller?.shopName ?? "Unknown seller";
+          const current = shops.get(shopName) ?? { shopName, paidOrderCount: 0, totalPaidAmount: 0 };
+          current.paidOrderCount += 1;
+          current.totalPaidAmount += toNumber(subOrder.subtotal);
+          shops.set(shopName, current);
+        }
+        return shops;
+      }, new Map()).values(),
+    ),
     createdAt: toIso(user.createdAt),
   };
 };
@@ -173,7 +185,12 @@ export const listUsers = async (
 ): Promise<PaginatedResult<ReturnType<typeof mapUser>>> => {
   const safeLimit = Math.min(limit, MAX_PAGE_SIZE);
   const decodedCursor = decodeCursor(cursor);
-  const where: any = buildCursorWhere(role && role !== "ALL" ? { role } : {}, decodedCursor);
+  const roleFilter = role === "CUSTOMER"
+    ? { role: { in: ["CUSTOMER", "USER"] } }
+    : role && role !== "ALL"
+      ? { role }
+      : {};
+  const where: any = buildCursorWhere(roleFilter, decodedCursor);
 
   if (filters?.hasPaidOrders) {
     where.masterOrders = {
@@ -209,6 +226,12 @@ export const listUsers = async (
             status: true,
             createdAt: true,
             totalAmount: true,
+            subOrders: {
+              select: {
+                subtotal: true,
+                seller: { select: { shopName: true } },
+              },
+            },
           },
         },
       },
@@ -226,6 +249,21 @@ export const listUsers = async (
     hasMore,
     total,
   };
+};
+
+export const listSellerApplications = async (status?: string) => {
+  const where = status && ["PENDING", "APPROVED", "REJECTED", "SUSPENDED"].includes(status)
+    ? { status: status as SellerModerationStatus }
+    : {};
+  const applications = await prisma.sellerProfile.findMany({
+    where,
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
+    include: {
+      user: { select: { id: true, name: true, email: true, role: true, isActive: true } },
+    },
+  });
+
+  return applications;
 };
 
 export const updateSellerStatus = async (

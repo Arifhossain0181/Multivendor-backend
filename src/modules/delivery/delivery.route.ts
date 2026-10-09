@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { registerDeliveryMan, getMyProfile, listDeliveryMen, listApprovedDeliveryMen, updateDeliveryManStatus, deleteDeliveryMan, getMyAssignments } from './delivery.controller';
+import { registerDeliveryMan, getMyProfile, listDeliveryMen, listApprovedDeliveryMen, updateDeliveryManStatus, deleteDeliveryMan, getMyAssignments, markAssignmentShiftedToCustomer } from './delivery.controller';
 import { validate } from '../../middleware/validation.js';
 import { deliveryManSchema } from './delivery.schema';
 import { authenticate } from '../../middleware/authenticate.js';
@@ -12,6 +12,7 @@ router.post('/register', validate(deliveryManSchema), registerDeliveryMan);
 router.get('/me', authenticate, authorize('DELIVERY'), getMyProfile);
 
 router.get('/my-assignments', authenticate, authorize('DELIVERY'), getMyAssignments);
+router.patch('/my-assignments/:id/status', authenticate, authorize('DELIVERY'), markAssignmentShiftedToCustomer);
 
 router.get('/', authenticate, authorize('ADMIN'), listDeliveryMen);
 

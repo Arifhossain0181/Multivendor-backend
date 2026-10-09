@@ -3,6 +3,7 @@ model User {
     email  String  @unique
     passwordHash String
     name String
+    phone String?
     role String  @default("CUSTOMER")
     isActive Boolean @default(true)
     createdAt DateTime @default(now())

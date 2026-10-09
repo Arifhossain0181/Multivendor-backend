@@ -7,10 +7,10 @@ export const getMyOrders = async (req: Request, res: Response) => {
     try {
         const userId = (req as any).user.id;
 
-        const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
+        const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);
         const limit = parseInt(req.query.limit as string) || 10;
 
-        const result = await orderService.getCustomerOrders(userId, cursor, limit);
+        const result = await orderService.getCustomerOrders(userId, page, limit);
 
         return res.status(200).json({
             success: true,

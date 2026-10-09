@@ -10,6 +10,7 @@ export const registerSchema = z.object({
       .nonempty("Email is required")
       .toLowerCase()
       .email("Invalid email address"),
+    phone: z.string().trim().min(7).max(20).optional(),
  
     password: z
       .string()

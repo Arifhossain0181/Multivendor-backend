@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+const requiredDocumentImage = z.string().min(1, "Document image is required").refine(
+  (value) => value.startsWith("data:image/") || /^https?:\/\//i.test(value),
+  "Upload a valid document image",
+).refine(
+  (value) => !value.startsWith("data:image/") || value.length <= 1_300_000,
+  "Document image must be 900 KB or smaller",
+);
+
 export const deliveryManSchema = z.object({
   body: z.object({
     name: z.string().min(2, "Name is required"),
@@ -15,14 +23,14 @@ export const deliveryManSchema = z.object({
     vehicleImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
     vehicleRegistrationNumber: z.string().optional(),
     drivingLicenseNumber: z.string().optional(),
-    drivingLicenseImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
-    registrationCertificateImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
-    taxTokenImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
-    fitnessCertificateImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
-    routePermitImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
+    drivingLicenseImage: requiredDocumentImage,
+    registrationCertificateImage: requiredDocumentImage,
+    taxTokenImage: requiredDocumentImage,
+    fitnessCertificateImage: requiredDocumentImage,
+    routePermitImage: requiredDocumentImage,
     nidNumber: z.string().optional(),
-    nidFrontImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
-    nidBackImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
+    nidFrontImage: requiredDocumentImage,
+    nidBackImage: requiredDocumentImage,
     vehicleRegistrationImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
     serviceZones: z.string().optional(),
     emergencyContactName: z.string().optional(),
