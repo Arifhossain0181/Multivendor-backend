@@ -24,6 +24,13 @@ import auditLogRouter from './modules/auditLog/auditLog.router';
 
 const app = express();
 
+app.get('/', (_req, res) => {
+	res.status(200).json({
+		success: true,
+		message: 'Welcome to the Multivendor API',
+	});
+});
+
 // 1 STRIPE WEBHOOK ROUTE 
 //
 app.use('/api/webhooks', webhookRouter);
