@@ -36,8 +36,17 @@ app.get('/', (_req, res) => {
 app.use('/api/webhooks', webhookRouter);
 
 // global middlewares
-const corsOptions = {
-	origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:3000')
+	.split(',')
+	.map((origin) => origin.trim().replace(/\/$/, ''))
+	.filter(Boolean);
+const corsOptions: cors.CorsOptions = {
+	origin: (origin, callback) => {
+		// Requests without an Origin header (health checks, server-to-server)
+		// do not use browser CORS and should remain available.
+		if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) return callback(null, true);
+		return callback(new Error('Origin is not allowed by CORS'));
+	},
 	credentials: true,
 };
 

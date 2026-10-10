@@ -492,34 +492,31 @@ var getErrorMessage = (error) => {
 };
 var setAuthCookies = (res, token, accessToken, refreshToken2) => {
   const isProd = process.env.NODE_ENV === "production";
+  const sameSite = process.env.AUTH_COOKIE_SAME_SITE || (isProd ? "none" : "lax");
+  const cookieOptions = { httpOnly: true, secure: isProd || sameSite === "none", sameSite };
   res.cookie("token", token, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: "lax",
+    ...cookieOptions,
     maxAge: 24 * 60 * 60 * 1e3
     // 24 Hours
   });
   res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: "lax",
+    ...cookieOptions,
     maxAge: 15 * 60 * 1e3
     // 15 Minutes
   });
   res.cookie("refreshToken", refreshToken2, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: "lax",
+    ...cookieOptions,
     maxAge: 7 * 24 * 60 * 60 * 1e3
     // 7 Days
   });
 };
 var clearAuthCookies = (res) => {
   const isProd = process.env.NODE_ENV === "production";
+  const sameSite = process.env.AUTH_COOKIE_SAME_SITE || (isProd ? "none" : "lax");
   const cookieOptions = {
     httpOnly: true,
-    secure: isProd,
-    sameSite: "lax"
+    secure: isProd || sameSite === "none",
+    sameSite
   };
   res.clearCookie("token", cookieOptions);
   res.clearCookie("accessToken", cookieOptions);
@@ -565,16 +562,14 @@ var refresh = async (req, res) => {
     const refreshToken2 = fromCookie || req.body?.refreshToken;
     const result = await refreshToken(refreshToken2);
     const isProd = process.env.NODE_ENV === "production";
+    const sameSite = process.env.AUTH_COOKIE_SAME_SITE || (isProd ? "none" : "lax");
+    const cookieOptions = { httpOnly: true, secure: isProd || sameSite === "none", sameSite };
     res.cookie("token", result.token, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: "lax",
+      ...cookieOptions,
       maxAge: 24 * 60 * 60 * 1e3
     });
     res.cookie("accessToken", result.accessToken, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: "lax",
+      ...cookieOptions,
       maxAge: 15 * 60 * 1e3
     });
     res.status(200).json({ message: "Access token refreshed successfully", ...result });
@@ -613,7 +608,7 @@ var logout = async (_req, res) => {
 
 // src/middleware/authenticate.ts
 var import_jsonwebtoken3 = __toESM(require("jsonwebtoken"), 1);
-var JWT_ACCESS_SECRET3 = process.env.JWT_ACCESS_SECRET;
+var JWT_ACCESS_SECRET3 = process.env.JWT_ACCESS_SECRET || "default_access_secret";
 var authenticate = async (req, res, next) => {
   try {
     let token;
@@ -622,27 +617,20 @@ var authenticate = async (req, res, next) => {
       const accessTokenPart = cookieParts.find((part) => part.startsWith("accessToken="));
       const tokenPart = cookieParts.find((part) => part.startsWith("token="));
       token = accessTokenPart?.split("=")[1] || tokenPart?.split("=")[1];
-      console.log("Auth middleware - Cookies found:", cookieParts.length);
-      console.log("Auth middleware - accessToken found:", !!accessTokenPart);
-      console.log("Auth middleware - token found:", !!tokenPart);
-      console.log("Auth middleware - using token:", !!token);
     }
     if (!token && req.headers.authorization?.startsWith("Bearer ")) {
       token = req.headers.authorization.split(" ")[1];
     }
     if (!token) {
-      console.log("Auth middleware - No token found, returning 401");
       return res.status(401).json({ error: "Authentication required. Please log in." });
     }
     const decoded = import_jsonwebtoken3.default.verify(token, JWT_ACCESS_SECRET3);
-    console.log("Auth middleware - Token verified for user:", decoded.userId, "role:", decoded.role);
     req.user = {
       id: decoded.userId,
       role: decoded.role
     };
     next();
   } catch (error) {
-    console.error("Auth middleware - Token verification failed:", error);
     return res.status(401).json({ error: "Invalid or expired access token." });
   }
 };
@@ -1836,7 +1824,8 @@ var visualSearchProducts = async (req, res) => {
 var import_multer = __toESM(require("multer"), 1);
 var import_path2 = __toESM(require("path"), 1);
 var import_fs2 = __toESM(require("fs"), 1);
-var uploadDir = import_path2.default.join(process.cwd(), "tmp-uploads");
+var import_os = __toESM(require("os"), 1);
+var uploadDir = process.env.VERCEL ? import_path2.default.join(import_os.default.tmpdir(), "tmp-uploads") : import_path2.default.join(process.cwd(), "tmp-uploads");
 if (!import_fs2.default.existsSync(uploadDir)) {
   import_fs2.default.mkdirSync(uploadDir, { recursive: true });
 }
@@ -6165,8 +6154,12 @@ app.get("/", (_req, res) => {
   });
 });
 app.use("/api/webhooks", webhook_router_default);
+var allowedOrigins = (process.env.FRONTEND_URL || "http://localhost:3000").split(",").map((origin) => origin.trim().replace(/\/$/, "")).filter(Boolean);
 var corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ""))) return callback(null, true);
+    return callback(new Error("Origin is not allowed by CORS"));
+  },
   credentials: true
 };
 app.use((0, import_cors.default)(corsOptions));

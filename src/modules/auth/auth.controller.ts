@@ -31,38 +31,36 @@ const getErrorMessage = (error: unknown) => {
  */
 const setAuthCookies = (res: Response, token: string, accessToken: string, refreshToken: string) => {
     const isProd = process.env.NODE_ENV === 'production';
-    
+    // Deployed frontend and API commonly live on different sites. Such requests
+    // require SameSite=None; browsers only accept that setting over HTTPS.
+    const sameSite = (process.env.AUTH_COOKIE_SAME_SITE || (isProd ? 'none' : 'lax')) as 'lax' | 'strict' | 'none';
+    const cookieOptions = { httpOnly: true, secure: isProd || sameSite === 'none', sameSite };
     
     res.cookie('token', token, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: 'lax',
+        ...cookieOptions,
         maxAge: 24 * 60 * 60 * 1000, // 24 Hours
     });
 
    
     res.cookie('accessToken', accessToken, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: 'lax',
+        ...cookieOptions,
         maxAge: 15 * 60 * 1000, // 15 Minutes
     });
 
     
     res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: 'lax',
+        ...cookieOptions,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 Days
     });
 };
 
 const clearAuthCookies = (res: Response) => {
     const isProd = process.env.NODE_ENV === 'production';
+    const sameSite = (process.env.AUTH_COOKIE_SAME_SITE || (isProd ? 'none' : 'lax')) as 'lax' | 'strict' | 'none';
     const cookieOptions = {
         httpOnly: true,
-        secure: isProd,
-        sameSite: 'lax' as const,
+        secure: isProd || sameSite === 'none',
+        sameSite,
     };
 
     res.clearCookie('token', cookieOptions);
@@ -120,19 +118,16 @@ export const refresh = async (req: Request, res: Response) => {
         const result = await refreshAccessToken(refreshToken);
 
         const isProd = process.env.NODE_ENV === 'production';
-
+        const sameSite = (process.env.AUTH_COOKIE_SAME_SITE || (isProd ? 'none' : 'lax')) as 'lax' | 'strict' | 'none';
+        const cookieOptions = { httpOnly: true, secure: isProd || sameSite === 'none', sameSite };
 
         res.cookie('token', result.token, {
-            httpOnly: true,
-            secure: isProd,
-            sameSite: 'lax',
+            ...cookieOptions,
             maxAge: 24 * 60 * 60 * 1000,
         });
 
         res.cookie('accessToken', result.accessToken, {
-            httpOnly: true,
-            secure: isProd,
-            sameSite: 'lax',
+            ...cookieOptions,
             maxAge: 15 * 60 * 1000,
         });
 

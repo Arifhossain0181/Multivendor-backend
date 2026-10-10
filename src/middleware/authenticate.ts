@@ -1,7 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET as string;
+// Keep verification consistent with auth.service.ts so a missing deployment
+// override does not make freshly issued access tokens unverifiable.
+const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'default_access_secret';
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -18,10 +20,6 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
             
             token = accessTokenPart?.split('=')[1] || tokenPart?.split('=')[1];
             
-            console.log('Auth middleware - Cookies found:', cookieParts.length);
-            console.log('Auth middleware - accessToken found:', !!accessTokenPart);
-            console.log('Auth middleware - token found:', !!tokenPart);
-            console.log('Auth middleware - using token:', !!token);
         }
 
         // ২. cookies na thakle Authorization header theke Bearer token ana
@@ -31,13 +29,11 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
         
         if (!token) {
-            console.log('Auth middleware - No token found, returning 401');
             return res.status(401).json({ error: 'Authentication required. Please log in.' });
         }
 
         // ৩. token verify kora
         const decoded = jwt.verify(token, JWT_ACCESS_SECRET) as { userId: string; role: string };
-        console.log('Auth middleware - Token verified for user:', decoded.userId, 'role:', decoded.role);
 
         // ৪. token thik thakle user info req object e attach kora
         (req as any).user = {
@@ -47,7 +43,6 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
         next();
     } catch (error) {
-        console.error('Auth middleware - Token verification failed:', error);
         return res.status(401).json({ error: 'Invalid or expired access token.' });
     }
 };
